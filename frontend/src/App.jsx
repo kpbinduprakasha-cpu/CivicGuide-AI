@@ -8,7 +8,6 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 
 // Pages
-import Welcome from './pages/Welcome';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -30,8 +29,8 @@ const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -42,15 +41,15 @@ const AdminRoute = ({ children }) => {
   const { isAdmin, loading } = useAuth();
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
   return isAdmin ? children : <Navigate to="/admin/login" replace />;
 };
 
-// Layout with conditional Navbar/Footer
+// Layout with global Navbar & Footer
 const Layout = ({ children }) => {
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
@@ -63,32 +62,44 @@ const Layout = ({ children }) => {
   );
 };
 
+// Root Gateway: One-time login experience
+// When unauthenticated, displays the clean Login page first (with option to browse as guest)
+// When authenticated, directly displays the Home page with all schemes and tools
+const RootGateway = () => {
+  const { isAuthenticated, loading } = useAuth();
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+  return isAuthenticated ? (
+    <Layout>
+      <Home />
+    </Layout>
+  ) : (
+    <Login />
+  );
+};
+
 function App() {
   return (
     <AuthProvider>
       <LanguageProvider>
         <Router>
           <Routes>
-            {/* Opening Welcome & Auth Pages */}
-            <Route path="/" element={<Welcome />} />
-            <Route path="/welcome" element={<Welcome />} />
+            {/* Root: Login first when unauthenticated; Home page when authenticated */}
+            <Route path="/" element={<RootGateway />} />
+
+            {/* Standalone Authentication Pages */}
+            <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/verify-otp" element={<VerifyOTP />} />
-            <Route path="/login" element={<Login />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/admin/login" element={<AdminLogin />} />
 
-            {/* Authenticated Citizen Dashboard */}
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <UserDashboard />
-                </ProtectedRoute>
-              }
-            />
-
-            {/* Main Application Pages with Global Layout */}
+            {/* Home & Public Core Services */}
             <Route
               path="/home"
               element={
@@ -140,6 +151,16 @@ function App() {
                 <Layout>
                   <GovernmentServiceMapPage />
                 </Layout>
+              }
+            />
+
+            {/* Authenticated Citizen Dashboard & Profile */}
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <UserDashboard />
+                </ProtectedRoute>
               }
             />
 
