@@ -46,43 +46,62 @@ def list_schemes():
     category = request.args.get('category', '').strip()
     level = request.args.get('level', '').strip()
     state = request.args.get('state', '').strip()
+    mode = request.args.get('mode', '').strip() # 'all', 'central', 'state'
     scope = request.args.get('scope', '').strip() # 'state_only', 'central_only', or 'all'
+    include_central = request.args.get('include_central', 'false').lower() in ['true', '1', 'yes']
     lang = request.args.get('lang', 'en').strip()
 
     query = Scheme.query
 
+    # Category filter
     if category and category != 'All':
         query = query.filter(Scheme.category.ilike(f'%{category}%'))
 
-    # If level is explicitly 'Central Government'
-    if level and level not in ['All', '']:
-        if 'Central' in level:
-            query = query.filter(Scheme.government_level.ilike('%Central%'))
-        elif level == 'State Government':
+    # Jurisdiction / Mode / State filtering
+    if mode == 'central' or level == 'Central Government' or scope == 'central_only':
+        # Show ONLY Central Government schemes
+        query = query.filter(Scheme.government_level.ilike('%Central%'))
+    elif mode == 'state' or level == 'State Government':
+        # State Government schemes mode
+        if state and state not in ['All', 'All India', 'All States', '']:
+            clean_state = state.replace(' State', '').strip()
+            if include_central or scope == 'all':
+                query = query.filter(
+                    (Scheme.state.ilike(f'%{clean_state}%')) |
+                    (Scheme.government_level.ilike(f'%{clean_state}%')) |
+                    (Scheme.government_level.ilike('%Central%'))
+                )
+            else:
+                query = query.filter(
+                    (Scheme.state.ilike(f'%{clean_state}%')) |
+                    (Scheme.government_level.ilike(f'%{clean_state}%'))
+                )
+        else:
+            # All state government schemes across all states
             query = query.filter(~Scheme.government_level.ilike('%Central%'))
-        else:
-            # If a specific state like 'Karnataka State' was chosen in level
-            query = query.filter(Scheme.government_level.ilike(f'%{level}%'))
-
-    # If state is specified (e.g. 'Karnataka', 'Maharashtra', 'Delhi', etc.)
-    if state and state not in ['All', 'All India', 'All States', '']:
+    elif state and state not in ['All', 'All India', 'All States', '']:
         clean_state = state.replace(' State', '').strip()
-        if scope == 'state_only' or level == 'State Government':
-            # Only this state's specific schemes
-            query = query.filter(
-                (Scheme.state.ilike(f'%{clean_state}%')) |
-                (Scheme.government_level.ilike(f'%{clean_state}%'))
-            )
-        elif scope == 'central_only' or level == 'Central Government':
-            # Only Central schemes
+        if scope == 'central_only':
             query = query.filter(Scheme.government_level.ilike('%Central%'))
-        else:
-            # Default: Show this State's schemes + Central schemes (which apply across India)
+        elif scope == 'all' or include_central:
             query = query.filter(
                 (Scheme.state.ilike(f'%{clean_state}%')) |
                 (Scheme.government_level.ilike(f'%{clean_state}%')) |
                 (Scheme.government_level.ilike('%Central%'))
             )
+        else:
+            # When specific state is selected, show that state's schemes
+            query = query.filter(
+                (Scheme.state.ilike(f'%{clean_state}%')) |
+                (Scheme.government_level.ilike(f'%{clean_state}%'))
+            )
+    elif level and level not in ['All', '']:
+        if 'Central' in level:
+            query = query.filter(Scheme.government_level.ilike('%Central%'))
+        elif 'State' in level:
+            query = query.filter(~Scheme.government_level.ilike('%Central%'))
+        else:
+            query = query.filter(Scheme.government_level.ilike(f'%{level}%'))
 
     if q:
         search_filter = (

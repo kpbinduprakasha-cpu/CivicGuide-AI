@@ -21,7 +21,9 @@ import {
   CheckCircle2,
   X,
   Globe2,
-  Check
+  Check,
+  Building2,
+  RotateCcw
 } from 'lucide-react';
 
 export const ALL_INDIAN_STATES = [
@@ -35,8 +37,6 @@ export const ALL_INDIAN_STATES = [
 ];
 
 const POPULAR_STATES = [
-  "All India",
-  "Central Government",
   "Karnataka",
   "Maharashtra",
   "Delhi",
@@ -62,16 +62,27 @@ const GovernmentSchemes = () => {
 
   const [schemes, setSchemes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState('');
   const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'All');
   
-  // State selection filter
+  // Jurisdiction Mode: 'all' | 'central' | 'state'
+  const initialMode = 
+    searchParams.get('level') === 'Central Government' || searchParams.get('mode') === 'central' ? 'central' :
+    searchParams.get('level') === 'State Government' || searchParams.get('mode') === 'state' || searchParams.get('state') ? 'state' :
+    'all';
+  
+  const [jurisdictionMode, setJurisdictionMode] = useState(initialMode);
+  
+  // Selected Indian State for State Mode
   const [selectedState, setSelectedState] = useState(
-    searchParams.get('state') || searchParams.get('level') || 'All India'
+    searchParams.get('state') || user?.state || 'Karnataka'
   );
   
-  // Scope: 'all' (State + Central), 'state_only', 'central_only'
-  const [scope, setScope] = useState(searchParams.get('scope') || 'all');
+  // Toggle to also include Central schemes when a State is selected
+  const [includeCentral, setIncludeCentral] = useState(
+    searchParams.get('include_central') === 'true'
+  );
 
   const categories = [
     'All',
@@ -100,18 +111,30 @@ const GovernmentSchemes = () => {
     const fetchSchemes = async () => {
       try {
         setLoading(true);
+        setErrorMsg('');
         const params = new URLSearchParams();
-        if (searchQuery.trim()) params.append('q', searchQuery.trim());
-        if (selectedCategory !== 'All') params.append('category', selectedCategory);
+        
+        if (searchQuery.trim()) {
+          params.append('q', searchQuery.trim());
+        }
+        
+        if (selectedCategory !== 'All') {
+          params.append('category', selectedCategory);
+        }
 
-        if (selectedState === 'Central Government') {
-          params.append('level', 'Central Government');
-        } else if (selectedState && selectedState !== 'All India' && selectedState !== 'All') {
-          params.append('state', selectedState);
-          if (scope !== 'all') {
-            params.append('scope', scope);
+        // Apply jurisdiction filter
+        if (jurisdictionMode === 'central') {
+          params.append('mode', 'central');
+        } else if (jurisdictionMode === 'state') {
+          params.append('mode', 'state');
+          if (selectedState && selectedState !== 'All India') {
+            params.append('state', selectedState);
+          }
+          if (includeCentral) {
+            params.append('include_central', 'true');
           }
         }
+        // If jurisdictionMode === 'all', no mode param is needed -> returns all schemes
         
         params.append('lang', language);
 
@@ -119,13 +142,14 @@ const GovernmentSchemes = () => {
         setSchemes(res.data.schemes || []);
       } catch (err) {
         console.error('Error fetching schemes:', err);
+        setErrorMsg('Unable to connect to the schemes service. Please check your connection or retry.');
       } finally {
         setLoading(false);
       }
     };
 
     fetchSchemes();
-  }, [searchQuery, selectedCategory, selectedState, scope, language]);
+  }, [searchQuery, selectedCategory, jurisdictionMode, selectedState, includeCentral, language]);
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -136,14 +160,24 @@ const GovernmentSchemes = () => {
     });
   };
 
+  const handleModeChange = (mode) => {
+    setJurisdictionMode(mode);
+    setSearchParams(prev => {
+      if (mode !== 'all') prev.set('mode', mode);
+      else {
+        prev.delete('mode');
+        prev.delete('level');
+      }
+      return prev;
+    });
+  };
+
   const handleStateSelect = (st) => {
     setSelectedState(st);
+    setJurisdictionMode('state');
     setSearchParams(prev => {
-      if (st && st !== 'All India' && st !== 'All') {
-        prev.set('state', st);
-      } else {
-        prev.delete('state');
-      }
+      prev.set('mode', 'state');
+      if (st) prev.set('state', st);
       return prev;
     });
   };
@@ -157,13 +191,13 @@ const GovernmentSchemes = () => {
     });
   };
 
-  const handleScopeChange = (newScope) => {
-    setScope(newScope);
-    setSearchParams(prev => {
-      if (newScope !== 'all') prev.set('scope', newScope);
-      else prev.delete('scope');
-      return prev;
-    });
+  const handleResetFilters = () => {
+    setSearchQuery('');
+    setSelectedCategory('All');
+    setJurisdictionMode('all');
+    setSelectedState(user?.state || 'Karnataka');
+    setIncludeCentral(false);
+    setSearchParams({});
   };
 
   // Helper for badge colors based on state or central
@@ -207,12 +241,12 @@ const GovernmentSchemes = () => {
           {t('schemes')}
         </h1>
         <p className="text-sm text-slate-600 max-w-2xl leading-relaxed">
-          Search and explore Central Government and State welfare schemes across India. Select any Indian state to view all verified state schemes and nationwide welfare initiatives.
+          Explore verified Central Government schemes and state welfare schemes across India. Select Central or your State below to browse targeted benefits.
         </p>
       </div>
 
-      {/* Search & Filter Toolbar */}
-      <div className="bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-5">
+      {/* Main Filter & Control Panel */}
+      <div className="bg-white p-5 sm:p-7 rounded-3xl border border-slate-200/80 shadow-xs space-y-6">
         
         {/* Search Bar */}
         <form onSubmit={handleSearchSubmit} className="relative flex items-center">
@@ -241,152 +275,177 @@ const GovernmentSchemes = () => {
           </button>
         </form>
 
-        {/* State Selection Bar */}
-        <div className="pt-3 border-t border-slate-100 space-y-3">
-          
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            
-            <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg bg-emerald-50 border border-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
-                <MapPin className="w-4 h-4" />
-              </div>
+        {/* STEP 1: Main Jurisdiction Mode Tabs (All India vs Central Government vs State Governments) */}
+        <div className="pt-2 border-t border-slate-100 space-y-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <span className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+              <Filter className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Step 1: Choose Government Level</span>
+            </span>
+            <span className="text-xs text-slate-500">
+              Showing <strong className="text-slate-900">{schemes.length}</strong> verified schemes
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            {/* Tab 1: All India */}
+            <button
+              type="button"
+              onClick={() => handleModeChange('all')}
+              className={`p-3 rounded-2xl border text-left transition-all flex items-center justify-between ${
+                jurisdictionMode === 'all'
+                  ? 'bg-emerald-50 border-emerald-500 text-emerald-950 ring-2 ring-emerald-500/20'
+                  : 'bg-slate-50/70 border-slate-200 hover:bg-slate-100 text-slate-700'
+              }`}
+            >
               <div>
-                <span className="text-xs font-bold text-slate-800">Select Indian State / Territory:</span>
-                <span className="text-[11px] text-slate-500 block">Choose your state to see all regional & national welfare schemes</span>
+                <div className="text-xs font-bold flex items-center gap-1.5">
+                  <span>🇮🇳 All India</span>
+                  {jurisdictionMode === 'all' && <Check className="w-3.5 h-3.5 text-emerald-600" />}
+                </div>
+                <div className="text-[11px] text-slate-500 mt-0.5">Central & All States (47 schemes)</div>
               </div>
-            </div>
+            </button>
 
-            {/* Dropdown for All 36 States & UTs */}
-            <div className="flex items-center gap-2">
-              <select
-                value={selectedState}
-                onChange={(e) => handleStateSelect(e.target.value)}
-                className="px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 bg-slate-50 hover:bg-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500 transition-all cursor-pointer"
-              >
-                <option value="All India">🇮🇳 All India (All States & UTs)</option>
-                <option value="Central Government">🏛️ Central Government Only</option>
-                <optgroup label="Indian States & Union Territories">
-                  {ALL_INDIAN_STATES.map((st) => (
-                    <option key={st} value={st}>
-                      {st}
-                    </option>
-                  ))}
-                </optgroup>
-              </select>
+            {/* Tab 2: Central Government Only */}
+            <button
+              type="button"
+              onClick={() => handleModeChange('central')}
+              className={`p-3 rounded-2xl border text-left transition-all flex items-center justify-between ${
+                jurisdictionMode === 'central'
+                  ? 'bg-blue-50 border-blue-500 text-blue-950 ring-2 ring-blue-500/20'
+                  : 'bg-slate-50/70 border-slate-200 hover:bg-slate-100 text-slate-700'
+              }`}
+            >
+              <div>
+                <div className="text-xs font-bold flex items-center gap-1.5">
+                  <span>🏛️ Central Government Only</span>
+                  {jurisdictionMode === 'central' && <Check className="w-3.5 h-3.5 text-blue-600" />}
+                </div>
+                <div className="text-[11px] text-slate-500 mt-0.5">Nationwide Central Schemes (10 schemes)</div>
+              </div>
+            </button>
 
-              {user?.state && selectedState !== user.state && (
-                <button
-                  type="button"
-                  onClick={() => handleStateSelect(user.state)}
-                  className="px-2.5 py-1.5 rounded-xl text-[11px] font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 shrink-0 transition-colors"
-                  title={`Switch to your registered state: ${user.state}`}
-                >
-                  My State ({user.state})
-                </button>
-              )}
-            </div>
-
+            {/* Tab 3: State Governments */}
+            <button
+              type="button"
+              onClick={() => handleModeChange('state')}
+              className={`p-3 rounded-2xl border text-left transition-all flex items-center justify-between ${
+                jurisdictionMode === 'state'
+                  ? 'bg-amber-50 border-amber-500 text-amber-950 ring-2 ring-amber-500/20'
+                  : 'bg-slate-50/70 border-slate-200 hover:bg-slate-100 text-slate-700'
+              }`}
+            >
+              <div>
+                <div className="text-xs font-bold flex items-center gap-1.5">
+                  <span>📍 State Government Schemes</span>
+                  {jurisdictionMode === 'state' && <Check className="w-3.5 h-3.5 text-amber-600" />}
+                </div>
+                <div className="text-[11px] text-slate-500 mt-0.5">Select a State to view regional schemes</div>
+              </div>
+            </button>
           </div>
-
-          {/* Quick Popular State Pills */}
-          <div className="flex flex-wrap items-center gap-1.5">
-            {POPULAR_STATES.map((st) => {
-              const isSelected = selectedState === st;
-              return (
-                <button
-                  key={st}
-                  onClick={() => handleStateSelect(st)}
-                  className={`px-3 py-1 rounded-xl text-xs font-semibold transition-all ${
-                    isSelected
-                      ? 'bg-emerald-600 text-white shadow-xs'
-                      : 'bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200/60'
-                  }`}
-                >
-                  {st === 'All India' && '🇮🇳 '}
-                  {st === 'Central Government' && '🏛️ '}
-                  {st}
-                </button>
-              );
-            })}
-          </div>
-
         </div>
 
-        {/* Selected State Banner with Scope Selector (State Only vs All Schemes) */}
-        {selectedState && selectedState !== 'All India' && selectedState !== 'Central Government' && (
-          <div className="p-3.5 rounded-2xl bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse" />
-              <span className="text-slate-800">
-                Viewing schemes accessible in <strong className="text-emerald-900 font-bold">{selectedState}</strong>
-              </span>
-            </div>
-
-            <div className="flex items-center gap-2 shrink-0">
-              <span className="text-[11px] text-slate-500 font-medium">Filter view:</span>
-              <div className="inline-flex rounded-xl bg-white/90 p-0.5 border border-emerald-200 shadow-xs">
-                <button
-                  type="button"
-                  onClick={() => handleScopeChange('all')}
-                  className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all ${
-                    scope === 'all'
-                      ? 'bg-emerald-600 text-white shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  State + Central ({schemes.length})
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleScopeChange('state_only')}
-                  className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all ${
-                    scope === 'state_only'
-                      ? 'bg-emerald-600 text-white shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  {selectedState} Only
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleScopeChange('central_only')}
-                  className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all ${
-                    scope === 'central_only'
-                      ? 'bg-emerald-600 text-white shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  Central Only
-                </button>
+        {/* STEP 2: State Selector Sub-Bar (Visible when State Government Mode is selected) */}
+        {jurisdictionMode === 'state' && (
+          <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-50/70 via-emerald-50/40 to-slate-50 border border-amber-200 space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-amber-600 shrink-0" />
+                <span className="text-xs font-bold text-slate-800">
+                  Select State: <strong className="text-amber-900">{selectedState}</strong>
+                </span>
               </div>
 
-              <button
-                type="button"
-                onClick={() => handleStateSelect('All India')}
-                className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-emerald-100"
-                title="Reset to All India"
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
+              {/* State Dropdown & My State shortcut */}
+              <div className="flex items-center gap-2">
+                <select
+                  value={selectedState}
+                  onChange={(e) => handleStateSelect(e.target.value)}
+                  className="px-3 py-1.5 rounded-xl border border-amber-300 text-xs font-semibold text-slate-800 bg-white focus:outline-hidden focus:ring-2 focus:ring-amber-500 cursor-pointer"
+                >
+                  <optgroup label="Select Any Indian State / Territory">
+                    {ALL_INDIAN_STATES.map((st) => (
+                      <option key={st} value={st}>
+                        {st}
+                      </option>
+                    ))}
+                  </optgroup>
+                </select>
+
+                {user?.state && selectedState !== user.state && (
+                  <button
+                    type="button"
+                    onClick={() => handleStateSelect(user.state)}
+                    className="px-2.5 py-1 rounded-xl text-[11px] font-semibold text-amber-800 bg-amber-100 hover:bg-amber-200 border border-amber-300 transition-colors shrink-0"
+                  >
+                    My State ({user.state})
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Quick State Chips */}
+            <div className="flex flex-wrap items-center gap-1.5 pt-1">
+              <span className="text-[11px] text-slate-500 font-medium">Popular:</span>
+              {POPULAR_STATES.map((st) => (
+                <button
+                  key={st}
+                  type="button"
+                  onClick={() => handleStateSelect(st)}
+                  className={`px-2.5 py-0.5 rounded-lg text-[11px] font-semibold transition-all ${
+                    selectedState === st
+                      ? 'bg-amber-600 text-white shadow-xs'
+                      : 'bg-white hover:bg-amber-100 text-slate-700 border border-amber-200'
+                  }`}
+                >
+                  {st}
+                </button>
+              ))}
+            </div>
+
+            {/* Checkbox to include Central Schemes */}
+            <div className="pt-2 border-t border-amber-200/60 flex items-center justify-between text-xs">
+              <label className="inline-flex items-center gap-2 cursor-pointer text-slate-700">
+                <input
+                  type="checkbox"
+                  checked={includeCentral}
+                  onChange={(e) => setIncludeCentral(e.target.checked)}
+                  className="rounded border-amber-300 text-emerald-600 focus:ring-emerald-500 w-4 h-4 cursor-pointer"
+                />
+                <span>Also include Central Government schemes applicable in {selectedState}</span>
+              </label>
+
+              <span className="text-[11px] text-slate-500 font-medium">
+                Showing {schemes.length} schemes
+              </span>
             </div>
           </div>
         )}
 
-        {/* Categories Chips */}
+        {/* STEP 3: Category Filter Chips */}
         <div className="pt-2 border-t border-slate-100 space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
-              Filter by Category:
+              Step 2: Filter by Category:
             </span>
-            <span className="text-xs text-slate-500 font-medium">
-              Showing <strong className="text-slate-900">{schemes.length}</strong> verified schemes
-            </span>
+            {selectedCategory !== 'All' && (
+              <button
+                type="button"
+                onClick={() => setSelectedCategory('All')}
+                className="text-[11px] text-emerald-700 hover:underline font-semibold"
+              >
+                Clear Category (Show All)
+              </button>
+            )}
           </div>
 
           <div className="flex flex-wrap gap-1.5">
             {categories.map((cat) => (
               <button
                 key={cat}
+                type="button"
                 onClick={() => handleCategorySelect(cat)}
                 className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all ${
                   selectedCategory === cat
@@ -409,32 +468,41 @@ const GovernmentSchemes = () => {
           <p className="text-xs text-slate-500">Loading verified government schemes...</p>
         </div>
       ) : schemes.length === 0 ? (
-        <div className="text-center py-16 bg-white rounded-3xl border border-slate-200 p-8 space-y-4">
+        <div className="text-center py-16 bg-white rounded-3xl border border-slate-200 p-8 space-y-4 shadow-xs">
           <Landmark className="w-12 h-12 text-slate-300 mx-auto" />
           <h3 className="text-base font-bold text-slate-800">
-            No schemes found matching "{selectedState}" in this category.
+            No schemes found matching your current filter.
           </h3>
           <p className="text-xs text-slate-500 max-w-sm mx-auto">
-            Try switching to "All India" to view all 47 Central and State welfare initiatives, or reset your filters.
+            {selectedCategory !== 'All' 
+              ? `There are no schemes under '${selectedCategory}' for ${jurisdictionMode === 'state' ? selectedState : jurisdictionMode === 'central' ? 'Central Government' : 'this selection'}.`
+              : 'Try selecting All India or switching between Central and State Governments to view available schemes.'}
           </p>
-          <button
-            onClick={() => {
-              setSearchQuery('');
-              setSelectedCategory('All');
-              setSelectedState('All India');
-              setScope('all');
-            }}
-            className="mt-2 px-5 py-2.5 rounded-xl text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 shadow-xs"
-          >
-            Reset Filters & View All India Schemes
-          </button>
+          <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
+            <button
+              type="button"
+              onClick={handleResetFilters}
+              className="px-5 py-2.5 rounded-xl text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 shadow-xs flex items-center gap-1.5"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>Reset All Filters & View All 47 Schemes</span>
+            </button>
+            {selectedCategory !== 'All' && (
+              <button
+                type="button"
+                onClick={() => setSelectedCategory('All')}
+                className="px-4 py-2.5 rounded-xl text-xs font-semibold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200"
+              >
+                View All Categories in {jurisdictionMode === 'state' ? selectedState : 'Current View'}
+              </button>
+            )}
+          </div>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {schemes.map((scheme) => {
             const Icon = categoryIcons[scheme.category] || Landmark;
             const badgeClass = getStateBadgeStyle(scheme);
-            const isCentral = scheme.government_level?.includes('Central') || scheme.state === 'All India';
 
             return (
               <div
@@ -463,7 +531,7 @@ const GovernmentSchemes = () => {
                         {scheme.name}
                       </h3>
                       <span className="text-[11px] text-emerald-600 font-medium">
-                        {scheme.category} {scheme.state && scheme.state !== 'All India' ? `• ${scheme.state}` : '• Nationwide'}
+                        {scheme.category} {scheme.state && scheme.state !== 'All India' ? `• ${scheme.state}` : '• All India'}
                       </span>
                     </div>
                   </div>
