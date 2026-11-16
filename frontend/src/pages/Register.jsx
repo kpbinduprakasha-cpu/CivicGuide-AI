@@ -21,9 +21,12 @@ import {
 } from 'lucide-react';
 import LanguageSelector from '../components/LanguageSelector';
 
-const POPULAR_LANGUAGES = [
-  'English', 'Kannada', 'Hindi', 'Telugu', 'Tamil', 
-  'Marathi', 'Bengali', 'Gujarati', 'Malayalam', 'Urdu', 'Punjabi', 'Odia'
+const ALL_INDIAN_LANGUAGES = [
+  'English', 'Hindi', 'Kannada', 'Telugu', 'Tamil', 
+  'Marathi', 'Bengali', 'Gujarati', 'Malayalam', 'Punjabi', 
+  'Odia', 'Assamese', 'Urdu', 'Sanskrit', 'Konkani', 
+  'Nepali', 'Maithili', 'Santali', 'Kashmiri', 'Sindhi', 
+  'Dogri', 'Manipuri', 'Bodo'
 ];
 
 const DEFAULT_INDIAN_STATES = [
@@ -369,8 +372,8 @@ const Register = () => {
                 {formData.languages.length} selected
               </span>
             </div>
-            <div className="flex flex-wrap gap-1.5 p-3 rounded-2xl bg-slate-50/60 border border-slate-200">
-              {POPULAR_LANGUAGES.map(lang => {
+            <div className="flex flex-wrap gap-1.5 p-3 rounded-2xl bg-slate-50/60 border border-slate-200 max-h-36 overflow-y-auto">
+              {ALL_INDIAN_LANGUAGES.map(lang => {
                 const isSelected = formData.languages.includes(lang);
                 return (
                   <button

@@ -18,8 +18,8 @@ def chat():
         return jsonify({'error': 'Please provide a question.'}), 400
 
     if g.current_user and not language:
-        language = g.current_user.preferred_language or 'en'
-    elif language not in ['en', 'kn', 'hi']:
+        language = 'en'
+    if not language:
         language = 'en'
 
     # Generate answer with RAG + Ollama Qwen

@@ -3,6 +3,32 @@ import requests
 import json
 from ..rag.rag_engine import rag_engine
 
+INDIAN_LANGUAGES_MAP = {
+    'en': {'name': 'English', 'native': 'English', 'instruction': 'Provide your answer in clear, simple English for Indian citizens.'},
+    'hi': {'name': 'Hindi', 'native': 'हिन्दी', 'instruction': 'उत्तर को सरल एवं स्पष्ट हिंदी में दें, ताकि आम नागरिक आसानी से समझ सकें।'},
+    'kn': {'name': 'Kannada', 'native': 'ಕನ್ನಡ', 'instruction': 'ಉತ್ತರವನ್ನು ಸರಳ ಹಾಗೂ ಸ್ಪಷ್ಟ ಕನ್ನಡದಲ್ಲಿ ನೀಡಿ. ಕಷ್ಟಕರ ಕಾನೂನು ಪದಗಳ ಬದಲಿಗೆ ಸಾಮಾನ್ಯ ನಾಗರಿಕರಿಗೆ ಅರ್ಥವಾಗುವಂತೆ ತಿಳಿಸಿ.'},
+    'te': {'name': 'Telugu', 'native': 'తెలుగు', 'instruction': 'సమాధానాన్ని స్పష్టమైన మరియు సరళమైన తెలుగు భాషలో అందించండి, సాధారణ పౌరులకు సులభంగా అర్థమయ్యేలా వివరించండి.'},
+    'ta': {'name': 'Tamil', 'native': 'தமிழ்', 'instruction': 'பதிலை எளிய மற்றும் தெளிவான தமிழ் மொழியில் வழங்கவும், சாதாரண குடிமக்களுக்கு எளிதாக புரியும் வகையில் கூறவும்.'},
+    'mr': {'name': 'Marathi', 'native': 'मराठी', 'instruction': 'उत्तर सोप्या आणि स्पष्ट मराठी भाषेत द्या, जेणेकरून सामान्य नागरिकांना सहज समजेल.'},
+    'bn': {'name': 'Bengali', 'native': 'বাংলা', 'instruction': 'উত্তরটি সহজ এবং স্পষ্ট বাংলা ভাষায় দিন, যাতে সাধারণ নাগরিকরা সহজেই বুঝতে পারেন।'},
+    'gu': {'name': 'Gujarati', 'native': 'ગુજરાતી', 'instruction': 'જવાબ સરળ અને સ્પષ્ટ ગુજરાતી ભાષામાં આપો, જેથી સામાન્ય નાગરિકો સરળતાથી સમજી શકે.'},
+    'ml': {'name': 'Malayalam', 'native': 'മലയാളം', 'instruction': 'ഉത്തരം ലളിതവും വ്യക്തവുമായ മലയാളത്തിൽ നൽകുക, സാധാരണ പൗരന്മാർക്ക് എളുപ്പത്തിൽ മനസ്സിലാകാൻ സഹായിക്കുക.'},
+    'pa': {'name': 'Punjabi', 'native': 'ਪੰਜਾਬੀ', 'instruction': 'ਜਵਾਬ ਸਪਸ਼ਟ ਅਤੇ ਸਰਲ ਪੰਜਾਬੀ ਭਾਸ਼ਾ ਵਿੱਚ ਦਿਓ ਤਾਂ ਜੋ ਆਮ ਨਾਗਰਿਕ ਆਸਾਨੀ ਨਾਲ ਸਮਝ ਸਕਣ।'},
+    'or': {'name': 'Odia', 'native': 'ଓଡ଼ିଆ', 'instruction': 'ଉତ୍ତରଟି ସରଳ ଏବଂ ସ୍ପଷ୍ଟ ଓଡ଼ିଆ ଭାଷାରେ ପ୍ରଦାନ କରନ୍ତୁ, ଯାହାଦ୍ୱାରା ସାଧାରଣ ନାଗରିକ ସହଜରେ ବୁଝିପାରିବେ।'},
+    'as': {'name': 'Assamese', 'native': 'অসমীয়া', 'instruction': 'উত্তৰটো সহজ আৰু স্পষ্ট অসমীয়া ভাষাত দিয়ক যাতে সাধাৰণ নাগৰিকে সহজে বুজি পায়।'},
+    'ur': {'name': 'Urdu', 'native': 'اردو', 'instruction': 'جواب آسان اور واضح اردو میں دیں تاکہ عام شہری آسانی سے سمجھ سکیں۔'},
+    'sa': {'name': 'Sanskrit', 'native': 'संस्कृतम्', 'instruction': 'उत्तरं सरलया संस्कृतभाषया विशदतया च प्रतिपादयतु।'},
+    'kok': {'name': 'Konkani', 'native': 'कोंकणी', 'instruction': 'जाप सोप्या आनी स्पश्ट कोंकणी भाशेंत दियात, जेन्ना सामान्य नागरिकांक सोंपेंपणान समजतले.'},
+    'ne': {'name': 'Nepali', 'native': 'नेपाली', 'instruction': 'उत्तर सरल र स्पष्ट नेपाली भाषामा दिनुहोस्, ताकि सामान्य नागरिकले सजिलै बुझ्न सकून्।'},
+    'mai': {'name': 'Maithili', 'native': 'मैथिली', 'instruction': 'उत्तर सरल आ स्पष्ट मैथिली भाषा में दी, जाहि सं आम नागरिक आसानी सं बुझि सकथि।'},
+    'ks': {'name': 'Kashmiri', 'native': 'کٲشُر', 'instruction': 'جواب سادٕ تہٕ صاف کشمیری زبانہِ منٛز دِیو تاکہ عام لوگَن آسٲنی سان سمجھ یِیہِ۔'},
+    'sd': {'name': 'Sindhi', 'native': 'سنڌي', 'instruction': 'جواب آسان ۽ صاف سنڌي ٻوليءَ ۾ ڏيو ته جيئن عام شهري آسانيءَ سان سمجهي سگهن.'},
+    'doi': {'name': 'Dogri', 'native': 'डोगरी', 'instruction': 'उत्तर सरल ते स्पष्ट डोगरी भाशा च देओ तां जे आम नागरिक आसानी कन्नै समझी सकन।'},
+    'mni': {'name': 'Manipuri', 'native': 'মৈতৈলোন্', 'instruction': 'পাখুম অসি লাইরবা অমসুং শেংলবা মৈতৈলোনদা পীয়ু মরমদি মীয়াম্না লায়না খঙবা ঙম্নবা।'},
+    'brx': {'name': 'Bodo', 'native': 'बर\'', 'instruction': 'फिननायखौ गोरलै आरो रोखा बर\' रावजों हो जाहाथे सरासनस्रा सुबुंफोरा गोरलैयैनो बुजिनो हायो।'},
+    'sat': {'name': 'Santali', 'native': 'ᱥᱟᱱᱛᱟᱲᱤ', 'instruction': 'ᱛᱮᱞᱟ ᱫᱚ ᱟᱞᱜᱟ ᱟᱨ ᱥᱟᱯᱷᱟ ᱥᱟᱱᱛᱟᱲᱤ ᱯᱟᱹᱨᱥᱤ ᱛᱮ ᱮᱢ ᱢᱮ ᱡᱮᱢᱚᱱ ᱥᱟᱫᱷᱟᱨᱚᱱ ᱦᱚᱲ ᱟᱞᱜᱟ ᱛᱮᱠᱚ ᱵᱩᱡᱷᱟᱹᱣ ᱫᱟᱲᱮᱭᱟᱜ-ᱟ ᱾'}
+}
+
 class OllamaClient:
     def __init__(self, base_url=None, model=None):
         self.base_url = base_url or os.environ.get('OLLAMA_URL', 'http://localhost:11434')
@@ -65,12 +91,9 @@ class OllamaClient:
             
         context_text = "\n\n".join(context_blocks) if context_blocks else "No specific document excerpt found. Rely on verified government portal guidelines."
         
-        # Language instructions
-        lang_instruction = "Provide your answer in clear, simple English for Indian citizens."
-        if language == 'kn':
-            lang_instruction = "ಉತ್ತರವನ್ನು ಸರಳ ಹಾಗೂ ಸ್ಪಷ್ಟ ಕನ್ನಡದಲ್ಲಿ (in simple, helpful Kannada language) ನೀಡಿ. ಕಷ್ಟಕರ ಕಾನೂನು ಪದಗಳ ಬದಲಿಗೆ ಸಾಮಾನ್ಯ ನಾಗರಿಕರಿಗೆ ಅರ್ಥವಾಗುವಂತೆ ತಿಳಿಸಿ."
-        elif language == 'hi':
-            lang_instruction = "उत्तर को सरल एवं स्पष्ट हिंदी में (in simple, helpful Hindi language) दें, ताकि आम नागरिक आसानी से समझ सकें।"
+        # Language instructions for all Indian languages
+        lang_entry = INDIAN_LANGUAGES_MAP.get(language, INDIAN_LANGUAGES_MAP['en'])
+        lang_instruction = lang_entry['instruction']
 
         # System prompt with strict verification rules
         system_prompt = (
@@ -159,13 +182,86 @@ class OllamaClient:
                     f"💡 **सलाह:** आवेदन करने के लिए अपने नजदीकी ग्राम वन (Grama One) या सेवा सिंधु / सीएससी केंद्र पर जाएं। "
                     f"आवेदन हेतु आधार कार्ड, राशन कार्ड और बैंक पासबुक अवश्य साथ रखें।"
                 )
-            else:
+            elif language == 'te':
                 text = (
-                    f"**Verified Government Record ({title})**\n\n"
+                    f"**అధికారిక ప్రభుత్వ సమాచారం ({title})**\n\n"
+                    f"{best_chunk}\n\n"
+                    f"📌 **ప్రాధికార సంస్థ:** {authority}\n"
+                    f"🔗 **అధికారిక పోర్టల్:** {source_url}\n"
+                    f"💡 **గమనిక:** దరఖాస్తు చేసుకోవడానికి ఆధార్ కార్డు, రేషన్ కార్డు మరియు బ్యాంక్ ఖాతా వివరాలు అవసరం."
+                )
+            elif language == 'ta':
+                text = (
+                    f"**அதிகாரப்பூர்வ அரசு ஆவணத் தகவல் ({title})**\n\n"
+                    f"{best_chunk}\n\n"
+                    f"📌 **அங்கீகரிக்கப்பட்ட ஆணையம்:** {authority}\n"
+                    f"🔗 **அதிகாரப்பூர்வ தளம்:** {source_url}\n"
+                    f"💡 **குறிப்பு:** விண்ணப்பிக்க ஆதார் அட்டை, குடும்ப அட்டை மற்றும் வங்கி கணக்கு விவரங்கள் தேவைப்படும்."
+                )
+            elif language == 'mr':
+                text = (
+                    f"**अधिकृत शासकीय दस्तऐवज माहिती ({title})**\n\n"
+                    f"{best_chunk}\n\n"
+                    f"📌 **सत्यापित प्राधिकरण:** {authority}\n"
+                    f"🔗 **अधिकृत पोर्टल:** {source_url}\n"
+                    f"💡 **सूचना:** अर्जासाठी आधार कार्ड, रेशन कार्ड आणि बँक पासबुक आवश्यक आहे."
+                )
+            elif language == 'bn':
+                text = (
+                    f"**অফিসিয়াল সরকারী নথির তথ্য ({title})**\n\n"
+                    f"{best_chunk}\n\n"
+                    f"📌 **যাচাইকৃত কর্তৃপক্ষ:** {authority}\n"
+                    f"🔗 **অফিসিয়াল পোর্টাল:** {source_url}\n"
+                    f"💡 **পরামর্শ:** আবেদনের জন্য আধার কার্ড, রেশন কার্ড এবং ব্যাংক অ্যাকাউন্টের বিবরণ প্রয়োজন।"
+                )
+            elif language == 'gu':
+                text = (
+                    f"**સત્તાવાર સરકારી દસ્તાવેજ માહિતી ({title})**\n\n"
+                    f"{best_chunk}\n\n"
+                    f"📌 **પ્રમાણિત સત્તામંડળ:** {authority}\n"
+                    f"🔗 **સત્તાવાર પોર્ટલ:** {source_url}\n"
+                    f"💡 **નોંધ:** અરજી માટે આધાર કાર્ડ, રેશન કાર્ડ અને બેંક ખાતાની વિગતો જરૂરી છે."
+                )
+            elif language == 'ml':
+                text = (
+                    f"**ഔദ്യോഗിക സർക്കാർ രേഖാ വിവരങ്ങൾ ({title})**\n\n"
+                    f"{best_chunk}\n\n"
+                    f"📌 **അംഗീകൃത അതോറിറ്റി:** {authority}\n"
+                    f"🔗 **ഔദ്യോഗിക പോർട്ടൽ:** {source_url}\n"
+                    f"💡 **കുറിപ്പ്:** അപേക്ഷിക്കുന്നതിന് ആധാർ കാർഡ്, റേഷൻ കാർഡ്, ബാങ്ക് വിവരങ്ങൾ എന്നിവ ആവശ്യമാണ്."
+                )
+            elif language == 'pa':
+                text = (
+                    f"**ਸਰਕਾਰੀ ਰਿਕਾਰਡ ਜਾਣਕਾਰੀ ({title})**\n\n"
+                    f"{best_chunk}\n\n"
+                    f"📌 **ਅਧਿਕਾਰਤ ਅਥਾਰਟੀ:** {authority}\n"
+                    f"🔗 **ਸਰਕਾਰੀ ਪੋਰਟਲ:** {source_url}\n"
+                    f"💡 **ਨੋਟ:** ਅਰਜ਼ੀ ਦੇਣ ਲਈ ਆਧਾਰ ਕਾਰਡ, ਰਾਸ਼ਨ ਕਾਰਡ ਅਤੇ ਬੈਂਕ ਖਾਤੇ ਦੇ ਵੇਰਵੇ ਲੋੜੀਂਦੇ ਹਨ।"
+                )
+            elif language == 'or':
+                text = (
+                    f"**ସରକାରୀ ନଥି ସୂଚନା ({title})**\n\n"
+                    f"{best_chunk}\n\n"
+                    f"📌 **ଅଧିକାରୀକ ସଂସ୍ଥା:** {authority}\n"
+                    f"🔗 **ସରକାରୀ ପୋର୍ଟାଲ:** {source_url}\n"
+                    f"💡 **ସୂଚନା:** ଆବେଦନ ପାଇଁ ଆଧାର କାର୍ଡ, ରାସନ କାର୍ଡ ଏବଂ ବ୍ୟାଙ୍କ ଖାତା ବିବରଣୀ ଆବଶ୍ୟକ।"
+                )
+            elif language == 'ur':
+                text = (
+                    f"**سرکاری دستاویز کی معلومات ({title})**\n\n"
+                    f"{best_chunk}\n\n"
+                    f"📌 **تصدیق شدہ ادارہ:** {authority}\n"
+                    f"🔗 **سرکاری پورٹل:** {source_url}\n"
+                    f"💡 **رہنمائی:** درخواست دینے کے لیے آدھار کارڈ، راشن کارڈ اور بینک اکاؤنٹ کی تفصیلات درکار ہیں۔"
+                )
+            else:
+                lang_name = INDIAN_LANGUAGES_MAP.get(language, {}).get('name', 'English')
+                text = (
+                    f"**Verified Government Record ({title}) [{lang_name}]**\n\n"
                     f"{best_chunk}\n\n"
                     f"📌 **Issuing Authority:** {authority}\n"
                     f"🔗 **Official Portal:** {source_url}\n"
-                    f"💡 **Important Note:** To apply, citizens in Vijayanagara District can visit their nearest Grama One center, Common Service Centre (CSC), or the official Seva Sindhu portal. Keep Aadhaar, Ration Card, and bank passbook handy."
+                    f"💡 **Important Note:** To apply, citizens can visit their nearest Common Service Centre (CSC) or official state portal. Keep Aadhaar, Ration Card, and bank passbook handy."
                 )
             return text
             
