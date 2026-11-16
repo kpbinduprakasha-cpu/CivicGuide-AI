@@ -183,7 +183,7 @@ const Home = () => {
       </section>
 
       {/* Main Core Features 3-Card Spotlight */}
-      <section className="w-full px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 2xl:px-16 -mt-10 relative z-20">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 relative z-20">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           
           {/* Card 1: AI Chatbot */}
@@ -250,7 +250,7 @@ const Home = () => {
       </section>
 
       {/* Popular Schemes Directory Preview */}
-      <section className="w-full px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 2xl:px-16 space-y-6">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
             <div className="text-xs uppercase font-bold tracking-wider text-emerald-600">
@@ -342,7 +342,7 @@ const Home = () => {
 
       {/* How it Works Section */}
       <section className="bg-slate-50 border-y border-slate-200/80 py-16">
-        <div className="w-full px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 2xl:px-16 space-y-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           
           <div className="text-center max-w-2xl mx-auto space-y-2">
             <span className="text-xs uppercase font-bold tracking-wider text-emerald-600">
@@ -388,7 +388,7 @@ const Home = () => {
       </section>
 
       {/* Vijayanagara District Taluks Spotlight Banner */}
-      <section className="w-full px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 2xl:px-16">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="rounded-3xl bg-gradient-to-r from-emerald-800 to-slate-900 text-white p-8 sm:p-12 shadow-xl flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="space-y-4 max-w-xl">
             <span className="text-xs uppercase font-bold tracking-widest text-amber-300">
