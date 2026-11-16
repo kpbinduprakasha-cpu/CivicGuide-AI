@@ -108,9 +108,6 @@ const Login = () => {
           <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
             Welcome to CivicGuide AI
           </h1>
-          <p className="text-xs text-slate-500 mt-1.5 max-w-xs mx-auto">
-            Log in once with your User ID to explore welfare schemes, rights, and regional AI support.
-          </p>
         </div>
 
         {/* Unverified Email Warning Banner */}
@@ -261,14 +258,6 @@ const Login = () => {
           </Link>
 
         </form>
-
-        {/* Demo Credentials Helper Pill */}
-        <div className="mt-6 p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 flex items-center justify-between">
-          <span>Demo Citizen:</span>
-          <code className="text-emerald-700 font-mono font-bold bg-white px-2 py-0.5 rounded border border-slate-200">
-            citizen / Citizen@2026
-          </code>
-        </div>
 
         {/* Create Account Link */}
         <div className="mt-6 pt-5 border-t border-slate-100 text-center">
