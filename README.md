@@ -1,61 +1,95 @@
 # CivicGuide AI – Multilingual Policy, Rights & Government Scheme Explainer
+### Secure User Registration, Email OTP Verification & Citizen Identity Portal
 
 <p align="center">
-  <b>Empowering Indian Citizens with Simple, Verified Regional Language Explanations</b><br>
-  <i>Coverage: All India (Central Government, States & Union Territories)</i>
+  <b>Empowering Indian Citizens with Verified Regional Language Explanations, Secure Identity, and Instant Eligibility</b><br>
+  <i>Coverage: All India (Central Government, 28 States & 8 Union Territories) with Local Mapping for Vijayanagara District</i>
 </p>
 
 ---
 
 ## 🏛️ Project Overview
-**CivicGuide AI** is a full-stack, production-ready AI web application built to help Indian citizens across all 28 States, 8 Union Territories, and the Central Government understand welfare schemes, public policies, citizen rights, and public administrative services. It includes specialized local taluk-level mapping for Karnataka (covering all 6 taluks of Vijayanagara District).
 
-The application supports three languages:
-1. **English**
-2. **Kannada (ಕನ್ನಡ)**
-3. **Hindi (हिन्दी)**
+**CivicGuide AI** is a complete, full-stack, production-grade web application built to help Indian citizens understand welfare schemes, public policies, citizen rights, and government administrative services.
+
+It features a **bank-grade secure registration and authentication system** designed according to strict citizen verification guidelines:
+1. **Welcome Page**: Modern landing page with **Create Account** and **Login** entry points in a blue, purple, and white responsive design.
+2. **One-Time Registration Form**: Collects 9 personal attributes (Full Name, Age, Mobile Number, State, Sex, Languages Known, Email Address, Password, Confirm Password).
+3. **Automated Unique User ID Generation**: Auto-generates a clean, unique alphanumeric User ID derived from the citizen's registered name (e.g. *Rahul Kumar* → `@rahul123`) used for all future logins.
+4. **Compulsory Email OTP Verification**: Dispatches a 6-digit OTP code to the citizen's email address with a 60-second cooldown resend timer and 5-minute expiry. Accounts cannot log in before email verification.
+5. **Streamlined Returning Citizen Login**: Returning citizens sign in using only their **User ID** and **Password** (no repeated OTP required on regular logins).
+6. **Self-Service Password Recovery**: Secure 6-digit password reset OTP workflow to the registered email address.
+7. **Personal Citizen Dashboard**: Displays complete citizen profile (User ID, Name, Email, Age, Mobile, State, Sex, Languages, Verification Status, Creation Date), Edit Profile, Change Password, and Logout.
 
 ---
 
-## 🌟 Key Features
+## 🔐 Authentication & Identity Architecture
 
-1. **Authentication & User Privacy**:
-   - Opening login page with logo, show/hide password, remember me, forgot password, and registration links.
-   - Separate accounts for every citizen with encrypted password storage (`werkzeug.security`).
-   - Guest browsing access to public government schemes.
-   - Private conversation history per user; users cannot access another user's data.
-   - Option to clear private chat history at any time.
+```
+                       ┌────────────────────────┐
+                       │   1. Welcome Page      │
+                       │ [Create Account][Login]│
+                       └───────────┬────────────┘
+                                   │
+              ┌────────────────────┴────────────────────┐
+              ▼                                         ▼
+   ┌──────────────────────┐                  ┌──────────────────────┐
+   │ 2. Registration Form │                  │ 4. Returning Login   │
+   │  - 9 Citizen Fields  │                  │  - User ID (@rahul123)│
+   │  - Auto User ID Gen  │                  │  - Password          │
+   └──────────┬───────────┘                  └──────────┬───────────┘
+              │                                         │
+              ▼                                         ▼
+   ┌──────────────────────┐                  ┌──────────────────────┐
+   │ 3. Email OTP Screen  │                  │ 6. Citizen Dashboard │
+   │  - 6-Digit Code      │                  │  - Profile Details   │
+   │  - 60s Resend Timer  │──────Verified───▶│  - Edit Profile      │
+   │  - 5-Min Expiration  │                  │  - Change Password   │
+   └──────────────────────┘                  │  - Welfare & Services│
+                                             └──────────────────────┘
+```
 
-2. **AI Chatbot with Local Ollama & RAG**:
-   - Connects to local **Ollama** running a **Qwen** model (`qwen2.5:latest` / `qwen2:1.5b`).
-   - Graceful offline fallback: If Ollama is offline or model is missing, the system utilizes a high-accuracy, verified **RAG Knowledge Engine** powered by official government documents.
-   - Displays citations, issuing authorities, publication dates, and official government portal links.
-   - Multilingual voice input (Microphone speech-to-text) and voice output (Text-to-speech read aloud).
+### Registration Fields (9 Required Attributes)
+1. **Full Name** (e.g. Rahul Kumar)
+2. **Age** (Validated 1 to 120)
+3. **Mobile Number** (10-digit Indian phone number)
+4. **State / UT** (Dropdown with all 36 Indian States and Union Territories)
+5. **Sex** (Male / Female / Other / Prefer not to say)
+6. **Languages Known** (Multi-select interactive pills: English, Kannada, Hindi, Telugu, Tamil, Marathi, Bengali, Gujarati, Malayalam, Urdu, Punjabi, Odia)
+7. **Email Address** (Compulsory OTP destination)
+8. **Password** (Minimum 8 characters with strength indicator)
+9. **Confirm Password** (Real-time match check)
 
-3. **Government Schemes Directory (Central & State Initiatives)**:
-   - Comprehensive directory of Central Government initiatives (PM-Kisan, Ayushman Bharat PM-JAY, PM Surya Ghar: Muft Bijli Yojana, PM Vishwakarma, Pradhan Mantri Mudra Yojana, Sukanya Samriddhi Yojana, Atal Pension Yojana, National Scholarship Portal, Kisan Credit Card) and State schemes (Gruha Lakshmi, Yuva Nidhi, Gruha Jyothi, Shakti, SSP Scholarships, Majhi Ladki Bahin Yojana, Delhi Lifeline Water & Electricity).
-   - Filter by categories: Education, Agriculture, Healthcare, Employment, Housing, Women & Child Welfare, Financial Assistance, Social Welfare.
-   - Filter by State or Central government level.
+---
 
-4. **AI Eligibility Checker**:
+## 🌟 Key Application Features
+
+1. **Multilingual AI Policy Chatbot**:
+   - Integrated with local **Ollama** running a **Qwen** model (`qwen2.5:latest` / `qwen2:1.5b`).
+   - High-precision offline RAG fallback using official gazettes when Ollama is offline.
+   - Multilingual voice input (Speech-to-text) and speech synthesis (Text-to-speech) in Kannada, Hindi, and English.
+   - Direct citations, issuing authorities, and official portal links.
+
+2. **National & State Welfare Schemes Directory**:
+   - Central schemes: PM-Kisan, Ayushman Bharat PM-JAY, PM Surya Ghar: Muft Bijli Yojana, PM Vishwakarma, Pradhan Mantri Mudra Yojana, Sukanya Samriddhi Yojana, Atal Pension Yojana, NSP, KCC.
+   - State schemes: Karnataka Gruha Lakshmi, Yuva Nidhi, Gruha Jyothi, Shakti, SSP Scholarships, Majhi Ladki Bahin, etc.
+   - Filter by categories: Education, Agriculture, Healthcare, Employment, Housing, Women & Child Welfare, Financial Assistance.
+
+3. **AI Eligibility Screening Engine**:
    - Interactive screening tool evaluating age, income, ration card category (BPL/AAY/APL), occupation, gender, state, and district.
-   - Evaluates across Central and State schemes.
-   - Provides broken-down satisfied vs unmet conditions, required documents, and official application portals.
-   - Explicit disclaimer explaining that final approval belongs to the competent government department.
+   - Detailed breakdown of satisfied vs unmet criteria, required documents, and official application portals.
 
-5. **All India Interactive Map & Public Services Directory**:
+4. **All India Interactive Map & Public Services Directory**:
    - Built with **React Leaflet** and **OpenStreetMap**.
-   - Covers Central Government ministries & offices (New Delhi, North Block, NITI Aayog), AIIMS & Apex Hospitals, Passport Seva Kendras, State Secretariats, District Collectorates, and Common Service Centres (CSCs).
-   - In-depth taluk breakdown for Karnataka (Hosapete, Harapanahalli, Kudligi, Huvina Hadagali, Hagaribommanahalli, Kottur).
-   - Filter by State/UT, Jurisdiction Level (`Central Government` vs `State Government`), Service Category, and Taluk.
-   - Popups with addresses, verified phone numbers, and one-click OpenStreetMap directions.
+   - Covers Central ministries, Apex hospitals (AIIMS), Passport Seva Kendras, State Secretariats, District Collectorates, and Common Service Centres (CSCs).
+   - In-depth taluk breakdown for Vijayanagara District (Hosapete, Harapanahalli, Kudligi, Huvina Hadagali, Hagaribommanahalli, Kottur).
 
-6. **Admin Dashboard (RBAC)**:
-   - Dedicated administrator portal.
+5. **Administrator Console (RBAC)**:
+   - Dedicated admin portal at `/admin/login` and `/admin`.
    - Manage government schemes (Add, edit, delete).
-   - Manage public service locations with GPS coordinates.
-   - Upload government PDF/text documents; automatically vectorized and indexed into ChromaDB.
-   - View registered users and audit system analytics.
+   - Manage public service coordinates with GPS verification.
+   - Upload government PDF/text documents for automated vectorization into ChromaDB.
+   - Audit registered citizen profiles.
 
 ---
 
@@ -64,105 +98,103 @@ The application supports three languages:
 | Layer | Technologies |
 |---|---|
 | **Frontend** | React 19, Vite, Tailwind CSS v4, React Router v7, Axios, Lucide React icons |
-| **Map** | React Leaflet, Leaflet, OpenStreetMap |
-| **Voice** | Web Speech API (SpeechRecognition & SpeechSynthesis for Kannada, Hindi, English) |
-| **Backend** | Python 3.14, Flask, Flask-CORS, SQLAlchemy, itsdangerous, Werkzeug |
-| **Database** | SQLite (`database/civicguide.db`) |
+| **Backend** | Python 3.14 / 3.11, Flask, Flask-CORS, SQLAlchemy, itsdangerous, Werkzeug |
+| **Authentication** | Werkzeug secure password hashing, JWT Bearer tokens, 6-digit OTP verification |
+| **Email Service** | SMTP (Gmail SMTP with App Password) + Dev fallback logging to `database/dev_otp_inbox.json` |
+| **Database** | SQLite (`database/civicguide.db`) for development, PostgreSQL-ready for production |
 | **AI / RAG** | Ollama local AI (Qwen model), ChromaDB, scikit-learn TF-IDF, pypdf |
+| **Interactive Map** | React Leaflet, Leaflet, OpenStreetMap |
+| **Voice** | Web Speech API (SpeechRecognition & SpeechSynthesis for Kannada, Hindi, English) |
 
 ---
 
-## 🚀 Quick Start Guide (Windows)
+## 🚀 Quick Start Guide (Windows / VS Code)
 
 ### 1. Prerequisites
-Ensure you have the following installed on Windows:
 - **Node.js** (v18 or higher)
-- **Python** (3.10 to 3.14)
-- **Ollama** (Optional for live LLM; download from [ollama.com](https://ollama.com))
+- **Python** (v3.10 to 3.14)
+- **Git**
 
 ---
 
-### 2. Run the Backend (Flask & SQLite)
+### 2. Configure Environment (`.env`)
 
-Open a PowerShell or Command Prompt terminal in the project root:
+Copy the template file:
+```powershell
+cp .env.example .env
+```
+
+*In `.env`, configure live Gmail SMTP credentials (optional) or leave empty to use built-in Dev Mode logging.*
+
+```ini
+SMTP_SERVER=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USERNAME=your-email@gmail.com
+SMTP_PASSWORD=your-16-char-app-password
+DEV_MODE_MOCK_EMAIL=True
+```
+
+> **Dev Mode Note**: When running locally without SMTP credentials, OTP codes are logged prominently to the backend terminal and stored in `database/dev_otp_inbox.json`. The frontend verification screen also displays a convenient **Auto Fill** badge during testing.
+
+---
+
+### 3. Run the Backend (Flask REST API)
+
+In a PowerShell terminal:
 
 ```powershell
 # Navigate to project directory
 cd "c:\Users\Lenovo\OneDrive\Desktop\CivicGuide AI"
 
-# Install backend dependencies (if not already installed)
+# Install backend dependencies
 python -m pip install -r backend/requirements.txt
 
 # Start the Flask backend server
 python backend/run.py
 ```
 
-*The backend starts at `http://127.0.0.1:5000` and automatically initializes the SQLite database and seeds verified schemes, public services, and RAG document vectors.*
+*The backend server runs on `http://127.0.0.1:5000` and initializes the database automatically.*
 
 ---
 
-### 3. Run the Frontend (React + Vite)
+### 4. Run the Frontend (React + Vite)
 
-Open a second terminal window:
+In a second terminal window:
 
 ```powershell
 cd "c:\Users\Lenovo\OneDrive\Desktop\CivicGuide AI\frontend"
 
-# Install npm dependencies (if not already installed)
+# Install npm dependencies
 npm install
 
 # Start Vite development server
 npm run dev
 ```
 
-*The frontend starts at `http://localhost:5173`.*
+*The frontend opens at `http://localhost:5173`.*
 
 Open your web browser and navigate to:
 👉 **`http://localhost:5173`**
 
 ---
 
-### 4. Optional: Run Local Ollama with Qwen
+### 5. Running Automated Tests
 
-To activate live local Qwen LLM responses:
+Run the comprehensive test suite verifying registration, OTP verification, User ID generation, login, profile updates, and RAG services:
 
 ```powershell
-# In a separate terminal or background
-ollama run qwen2.5:latest
-# or lightweight version:
-ollama run qwen2:1.5b
+$env:PYTHONIOENCODING="utf-8"
+python tests/test_backend.py
 ```
-
-> **Note**: If Ollama is not running, CivicGuide AI automatically detects this and seamlessly answers using its verified RAG knowledge base from official government gazettes, ensuring zero downtime!
 
 ---
 
 ## 🔑 Pre-Seeded Demonstration Accounts
 
-For college project evaluation and testing, the application includes pre-seeded accounts:
-
-| Role | Username | Password | Email | Description |
+| Role | User ID / Handle | Password | Verification Status | Description |
 |---|---|---|---|---|
-| **Citizen (User)** | `citizen` | `Citizen@2026` | `citizen@civicguide.gov.in` | Standard citizen account with private chat history |
-| **Administrator** | `admin` | `Admin@CivicGuide2026` | `admin@civicguide.gov.in` | Full access to Admin Console, Scheme & Service management |
-
----
-
-## 🧪 Running Automated Tests
-
-A comprehensive unit test suite is included in `tests/test_backend.py`. Run it with:
-
-```powershell
-python tests/test_backend.py
-```
-
-Tests cover:
-- Citizen registration, field validation, duplicate detection, and login
-- Government scheme directory and category filters
-- Vijayanagara 6 taluks public services verification
-- Scheme eligibility screening engine (e.g., Gruha Lakshmi, Yuva Nidhi)
-- AI Chatbot RAG context retrieval
-- Role-based access control (RBAC) security
+| **Citizen (Demo)** | `citizen` | `Citizen@2026` | Verified | Standard citizen profile with sample queries |
+| **Administrator** | `admin` | `Admin@CivicGuide2026` | Verified | Full access to Admin Console, Scheme & Document management |
 
 ---
 
@@ -174,42 +206,41 @@ CivicGuide-AI/
 │   ├── app/
 │   │   ├── ai/               # Ollama client and RAG synthesis
 │   │   ├── auth/             # Token generator and @login_required decorators
-│   │   ├── models/           # SQLAlchemy User, Scheme, Service, Chat, Document
+│   │   ├── models/           # User, OTPVerification, Scheme, Service, Chat, Document
 │   │   ├── rag/              # Document processor & ChromaDB vector store
-│   │   ├── routes/           # REST API endpoints (auth, chat, schemes, services, etc.)
-│   │   ├── services/         # Eligibility criteria engine
-│   │   └── utils/            # Database seeder (Vijayanagara data & schemes)
-│   ├── config.py             # Environment configurations
+│   │   ├── routes/           # REST API routes (auth, chat, schemes, services, admin)
+│   │   ├── services/         # EmailService (SMTP + Dev Mode) & Eligibility Engine
+│   │   └── utils/            # User ID generator & Database seeder
+│   ├── config.py             # App & SMTP configuration
 │   ├── requirements.txt      # Python dependencies
 │   └── run.py                # Flask server entry point
-├── database/                 # SQLite database & ChromaDB store
-├── documents/                # Verified government policy documents for RAG
+├── database/                 # SQLite database (`civicguide.db`) & Dev OTP inbox
+├── documents/                # Government policy documents for RAG indexing
 ├── frontend/
 │   ├── src/
-│   │   ├── components/       # Navbar, Footer, LanguageSelector, VoiceButton
-│   │   ├── context/          # AuthContext, LanguageContext (en, kn, hi)
-│   │   ├── pages/            # 14 distinct pages (Home, Login, Schemes, Chat, Map, etc.)
-│   │   ├── services/         # Axios API service
-│   │   ├── App.jsx           # React Router and layout
+│   │   ├── components/       # Navbar, Footer, LanguageSelector
+│   │   ├── context/          # AuthContext (login, register, verifyOTP, logout), LanguageContext
+│   │   ├── pages/            # Welcome, Register, VerifyOTP, Login, ForgotPassword, UserDashboard, etc.
+│   │   ├── services/         # Axios API client
+│   │   ├── App.jsx           # React Router v7 configuration
 │   │   └── main.jsx          # React DOM entry
 │   ├── package.json
 │   └── vite.config.js
-├── tests/                    # Automated test suite
+├── tests/                    # Automated backend test suite (`test_backend.py`)
 ├── .env.example              # Environment variables template
 ├── .gitignore
-├── README.md                 # Full documentation
-└── SPEC.md                   # Technical specification
+└── README.md                 # Project documentation
 ```
 
 ---
 
 ## 📜 Official Citations & Data Sources
+- **Central Government Portals**: [PM-Kisan](https://pmkisan.gov.in), [Ayushman Bharat PM-JAY](https://pmjay.gov.in), [PMAY-Gramin](https://pmayg.nic.in), [National Portal of India](https://india.gov.in).
 - **Karnataka State Portals**: [Seva Sindhu](https://sevasindhugs.karnataka.gov.in), [Nadakacheri](https://nadakacheri.karnataka.gov.in), [SSP Karnataka](https://ssp.postmatric.karnataka.gov.in).
-- **Central Government Portals**: [PM-Kisan](https://pmkisan.gov.in), [Ayushman Bharat PM-JAY](https://pmjay.gov.in), [PMAY-Gramin](https://pmayg.nic.in).
 - **District Administration**: [Vijayanagara District Administration, Hosapete](https://vijayanagara.nic.in).
 - **Cartography**: OpenStreetMap contributors.
 
 ---
 
-## 🎓 Academic Project Credit
-Developed as a B.Tech Artificial Intelligence & Data Science capstone project demonstration.
+## 🎓 Academic Capstone Project
+Developed as an advanced full-stack AI and Citizen Identity System capstone project demonstration.

@@ -8,33 +8,46 @@ def seed_database(app):
         db.create_all()
 
         # 1. Seed Initial Admin and Demo User if none exists
-        admin_user = User.query.filter_by(username='admin').first()
+        admin_user = User.query.filter((User.user_id == 'admin') | (User.email == 'admin@civicguide.gov.in')).first()
         if not admin_user:
             admin_user = User(
+                user_id='admin',
                 full_name='National & State Administrator - CivicGuide AI',
                 email='admin@civicguide.gov.in',
-                username='admin',
+                age=35,
+                mobile_number='9876543210',
+                state='Delhi',
+                sex='Prefer not to say',
                 role='admin',
-                preferred_language='en'
+                is_verified=True
             )
+            admin_user.set_languages_list(['English', 'Hindi'])
             admin_user.set_password('Admin@CivicGuide2026')
             db.session.add(admin_user)
-            print("[Seed] Created default Administrator account: admin / Admin@CivicGuide2026")
+            print("[Seed] Created default Administrator account: User ID 'admin' / Admin@CivicGuide2026")
         else:
             admin_user.full_name = 'National & State Administrator - CivicGuide AI'
+            admin_user.is_verified = True
 
-        citizen_user = User.query.filter_by(username='citizen').first()
+        citizen_user = User.query.filter((User.user_id == 'citizen') | (User.email == 'citizen@civicguide.gov.in')).first()
         if not citizen_user:
             citizen_user = User(
-                full_name='Ramesh Kumar',
+                user_id='citizen',
+                full_name='Rahul Kumar',
                 email='citizen@civicguide.gov.in',
-                username='citizen',
+                age=28,
+                mobile_number='9876543211',
+                state='Karnataka',
+                sex='Male',
                 role='user',
-                preferred_language='kn'
+                is_verified=True
             )
+            citizen_user.set_languages_list(['English', 'Kannada', 'Hindi'])
             citizen_user.set_password('Citizen@2026')
             db.session.add(citizen_user)
-            print("[Seed] Created default Citizen demo account: citizen / Citizen@2026")
+            print("[Seed] Created default Citizen demo account: User ID 'citizen' / Citizen@2026")
+        else:
+            citizen_user.is_verified = True
 
         # 2. Seed Government Schemes (Central Government + Major State Schemes)
         if Scheme.query.count() == 0:

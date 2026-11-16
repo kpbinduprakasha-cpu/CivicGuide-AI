@@ -30,7 +30,7 @@ const Navbar = () => {
   };
 
   const navLinks = [
-    { to: '/', label: t('home'), icon: Compass },
+    { to: '/home', label: t('home'), icon: Compass },
     { to: '/schemes', label: t('schemes'), icon: Landmark },
     { to: '/chat', label: t('chatbot'), icon: Bot },
     { to: '/eligibility', label: t('eligibility'), icon: FileCheck2 },

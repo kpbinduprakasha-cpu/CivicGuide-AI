@@ -14,6 +14,9 @@ ENV/
 # Databases & Vector store cache
 database/civicguide.db
 database/chroma_store/
+database/*.db
+database/*.json
+backend/database/
 test_civicguide.db
 
 # Node & Frontend

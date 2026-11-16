@@ -1,7 +1,7 @@
 import functools
 from flask import request, jsonify, g, current_app
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
-from ..models.user import User
+from ..models import db, User
 
 def get_serializer():
     secret_key = current_app.config['SECRET_KEY']
@@ -43,7 +43,7 @@ def login_required(f):
         if not payload:
             return jsonify({'error': 'Invalid or expired session. Please log in again.'}), 401
         
-        user = User.query.get(payload.get('user_id'))
+        user = db.session.get(User, payload.get('user_id'))
         if not user:
             return jsonify({'error': 'User account not found.'}), 401
         
@@ -65,7 +65,7 @@ def admin_required(f):
         if payload.get('role') != 'admin':
             return jsonify({'error': 'Access denied. Administrator privileges required.'}), 403
         
-        user = User.query.get(payload.get('user_id'))
+        user = db.session.get(User, payload.get('user_id'))
         if not user or user.role != 'admin':
             return jsonify({'error': 'Access denied. Administrator privileges required.'}), 403
         
@@ -81,6 +81,8 @@ def optional_login(f):
         if token:
             payload = verify_auth_token(token)
             if payload:
-                g.current_user = User.query.get(payload.get('user_id'))
+                user = db.session.get(User, payload.get('user_id'))
+                if user:
+                    g.current_user = user
         return f(*args, **kwargs)
     return decorated_function

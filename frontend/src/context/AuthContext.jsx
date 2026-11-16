@@ -28,28 +28,55 @@ export const AuthProvider = ({ children }) => {
     fetchMe();
   }, [token]);
 
-  const login = async (identifier, password) => {
-    const res = await api.post('/auth/login', { identifier, password });
+  const login = async (userId, password) => {
+    const res = await api.post('/auth/login', { user_id: userId, password });
     const { token: receivedToken, user } = res.data;
     localStorage.setItem('civicguide_token', receivedToken);
     setToken(receivedToken);
     setCurrentUser(user);
-    if (user.preferred_language) {
-      localStorage.setItem('civicguide_lang', user.preferred_language);
-    }
-    return user;
+    return res.data;
   };
 
-  const register = async (userData) => {
-    const res = await api.post('/auth/register', userData);
+  const register = async (formData) => {
+    const res = await api.post('/auth/register', formData);
+    return res.data;
+  };
+
+  const verifyOTP = async (email, otp) => {
+    const res = await api.post('/auth/verify-otp', { email, otp });
     const { token: receivedToken, user } = res.data;
+    if (receivedToken && user) {
+      localStorage.setItem('civicguide_token', receivedToken);
+      setToken(receivedToken);
+      setCurrentUser(user);
+    }
+    return res.data;
+  };
+
+  const resendOTP = async (email, purpose = 'registration') => {
+    const res = await api.post('/auth/resend-otp', { email, purpose });
+    return res.data;
+  };
+
+  const forgotPassword = async (email) => {
+    const res = await api.post('/auth/forgot-password', { email });
+    return res.data;
+  };
+
+  const resetPassword = async (payload) => {
+    const res = await api.post('/auth/reset-password', payload);
+    return res.data;
+  };
+
+  const changePassword = async (payload) => {
+    const res = await api.put('/auth/change-password', payload);
+    return res.data;
+  };
+
+  const setAuthSession = (receivedToken, user) => {
     localStorage.setItem('civicguide_token', receivedToken);
     setToken(receivedToken);
     setCurrentUser(user);
-    if (user.preferred_language) {
-      localStorage.setItem('civicguide_lang', user.preferred_language);
-    }
-    return user;
   };
 
   const logout = () => {
@@ -80,6 +107,12 @@ export const AuthProvider = ({ children }) => {
         isAdmin,
         login,
         register,
+        verifyOTP,
+        resendOTP,
+        forgotPassword,
+        resetPassword,
+        changePassword,
+        setAuthSession,
         logout,
         updateProfile,
       }}

@@ -45,7 +45,7 @@ def update_user_role(user_id):
     if new_role not in ['user', 'admin']:
         return jsonify({'error': "Role must be 'user' or 'admin'."}), 400
 
-    user = User.query.get(user_id)
+    user = db.session.get(User, user_id)
     if not user:
         return jsonify({'error': 'User not found.'}), 404
 
