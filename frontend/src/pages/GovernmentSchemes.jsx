@@ -499,7 +499,7 @@ const GovernmentSchemes = () => {
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3 gap-6 sm:gap-7 lg:gap-8">
           {schemes.map((scheme) => {
             const Icon = categoryIcons[scheme.category] || Landmark;
             const badgeClass = getStateBadgeStyle(scheme);
