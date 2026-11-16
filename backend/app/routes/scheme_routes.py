@@ -4,11 +4,49 @@ from ..auth.jwt_auth import admin_required
 
 scheme_bp = Blueprint('schemes', __name__, url_prefix='/api/schemes')
 
+INDIAN_STATES_LIST = [
+    "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
+    "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka",
+    "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram",
+    "Nagaland", "Odisha", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu",
+    "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal",
+    "Andaman and Nicobar Islands", "Chandigarh", "Dadra and Nagar Haveli and Daman and Diu",
+    "Delhi", "Jammu and Kashmir", "Ladakh", "Lakshadweep", "Puducherry"
+]
+
+@scheme_bp.route('/states', methods=['GET'])
+def list_states():
+    """Return all Indian States/UTs with their count of verified schemes."""
+    # Count Central Government schemes
+    central_count = Scheme.query.filter(Scheme.government_level.ilike('%Central%')).count()
+    total_count = Scheme.query.count()
+
+    state_data = []
+    for state_name in INDIAN_STATES_LIST:
+        # Count schemes matching this state
+        st_count = Scheme.query.filter(
+            (Scheme.state.ilike(f'%{state_name}%')) |
+            (Scheme.government_level.ilike(f'%{state_name}%'))
+        ).count()
+        state_data.append({
+            'name': state_name,
+            'state_schemes_count': st_count,
+            'total_accessible_count': st_count + central_count
+        })
+
+    return jsonify({
+        'total_schemes': total_count,
+        'central_schemes_count': central_count,
+        'states': state_data
+    }), 200
+
 @scheme_bp.route('', methods=['GET'])
 def list_schemes():
     q = request.args.get('q', '').strip()
     category = request.args.get('category', '').strip()
     level = request.args.get('level', '').strip()
+    state = request.args.get('state', '').strip()
+    scope = request.args.get('scope', '').strip() # 'state_only', 'central_only', or 'all'
     lang = request.args.get('lang', 'en').strip()
 
     query = Scheme.query
@@ -16,8 +54,35 @@ def list_schemes():
     if category and category != 'All':
         query = query.filter(Scheme.category.ilike(f'%{category}%'))
 
-    if level and level != 'All':
-        query = query.filter(Scheme.government_level.ilike(f'%{level}%'))
+    # If level is explicitly 'Central Government'
+    if level and level not in ['All', '']:
+        if 'Central' in level:
+            query = query.filter(Scheme.government_level.ilike('%Central%'))
+        elif level == 'State Government':
+            query = query.filter(~Scheme.government_level.ilike('%Central%'))
+        else:
+            # If a specific state like 'Karnataka State' was chosen in level
+            query = query.filter(Scheme.government_level.ilike(f'%{level}%'))
+
+    # If state is specified (e.g. 'Karnataka', 'Maharashtra', 'Delhi', etc.)
+    if state and state not in ['All', 'All India', 'All States', '']:
+        clean_state = state.replace(' State', '').strip()
+        if scope == 'state_only' or level == 'State Government':
+            # Only this state's specific schemes
+            query = query.filter(
+                (Scheme.state.ilike(f'%{clean_state}%')) |
+                (Scheme.government_level.ilike(f'%{clean_state}%'))
+            )
+        elif scope == 'central_only' or level == 'Central Government':
+            # Only Central schemes
+            query = query.filter(Scheme.government_level.ilike('%Central%'))
+        else:
+            # Default: Show this State's schemes + Central schemes (which apply across India)
+            query = query.filter(
+                (Scheme.state.ilike(f'%{clean_state}%')) |
+                (Scheme.government_level.ilike(f'%{clean_state}%')) |
+                (Scheme.government_level.ilike('%Central%'))
+            )
 
     if q:
         search_filter = (
@@ -26,7 +91,8 @@ def list_schemes():
             Scheme.name_hi.ilike(f'%{q}%') |
             Scheme.description.ilike(f'%{q}%') |
             Scheme.benefits.ilike(f'%{q}%') |
-            Scheme.category.ilike(f'%{q}%')
+            Scheme.category.ilike(f'%{q}%') |
+            (Scheme.state.ilike(f'%{q}%'))
         )
         query = query.filter(search_filter)
 
@@ -34,6 +100,7 @@ def list_schemes():
     
     return jsonify({
         'count': len(schemes),
+        'selected_state': state or 'All India',
         'schemes': [s.to_dict(lang=lang) for s in schemes]
     }), 200
 
@@ -75,6 +142,7 @@ def create_scheme():
         application_process=data['application_process'].strip(),
         official_url=data['official_url'].strip(),
         government_level=data.get('government_level', 'Karnataka State'),
+        state=data.get('state', 'All India' if 'Central' in data.get('government_level', '') else 'Karnataka'),
         source_date=data.get('source_date', '2024-2026'),
         verified=bool(data.get('verified', True))
     )
@@ -103,7 +171,7 @@ def update_scheme(scheme_id):
         'eligibility', 'eligibility_kn', 'eligibility_hi',
         'benefits', 'benefits_kn', 'benefits_hi',
         'required_documents', 'application_process',
-        'official_url', 'government_level', 'source_date', 'verified'
+        'official_url', 'government_level', 'state', 'source_date', 'verified'
     ]
 
     for field in updatable_fields:

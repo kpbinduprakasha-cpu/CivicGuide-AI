@@ -114,21 +114,48 @@ const Home = () => {
             </div>
           </form>
 
-          {/* Quick Tags */}
-          <div className="flex flex-wrap items-center justify-center gap-2 pt-2 text-xs text-slate-300">
-            <span className="text-slate-400">Popular:</span>
-            <button onClick={() => navigate('/schemes?q=Gruha Lakshmi')} className="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 transition-colors">
-              Gruha Lakshmi
-            </button>
-            <button onClick={() => navigate('/schemes?q=Yuva Nidhi')} className="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 transition-colors">
-              Yuva Nidhi
-            </button>
-            <button onClick={() => navigate('/schemes?q=PM-Kisan')} className="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 transition-colors">
-              PM-Kisan
-            </button>
-            <button onClick={() => navigate('/schemes?q=Ayushman')} className="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 transition-colors">
-              Ayushman Bharat
-            </button>
+          {/* Quick Tags & State Jump */}
+          <div className="flex flex-col items-center gap-2 pt-2 text-xs text-slate-300">
+            <div className="flex flex-wrap items-center justify-center gap-1.5">
+              <span className="text-slate-400">Popular:</span>
+              <button onClick={() => navigate('/schemes?q=Gruha Lakshmi')} className="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 transition-colors">
+                Gruha Lakshmi
+              </button>
+              <button onClick={() => navigate('/schemes?q=PM-Kisan')} className="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 transition-colors">
+                PM-Kisan
+              </button>
+              <button onClick={() => navigate('/schemes?q=Ayushman')} className="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 transition-colors">
+                Ayushman Bharat
+              </button>
+              <button onClick={() => navigate('/schemes?q=Ladki Bahin')} className="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 transition-colors">
+                Ladki Bahin
+              </button>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-center gap-1.5 pt-1">
+              <span className="text-emerald-300 font-medium">Explore by State:</span>
+              <button onClick={() => navigate('/schemes?state=Karnataka')} className="px-2.5 py-0.5 rounded-md bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-200 border border-emerald-500/30 transition-colors">
+                Karnataka
+              </button>
+              <button onClick={() => navigate('/schemes?state=Maharashtra')} className="px-2.5 py-0.5 rounded-md bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-200 border border-emerald-500/30 transition-colors">
+                Maharashtra
+              </button>
+              <button onClick={() => navigate('/schemes?state=Delhi')} className="px-2.5 py-0.5 rounded-md bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-200 border border-emerald-500/30 transition-colors">
+                Delhi
+              </button>
+              <button onClick={() => navigate('/schemes?state=Tamil Nadu')} className="px-2.5 py-0.5 rounded-md bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-200 border border-emerald-500/30 transition-colors">
+                Tamil Nadu
+              </button>
+              <button onClick={() => navigate('/schemes?state=Uttar Pradesh')} className="px-2.5 py-0.5 rounded-md bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-200 border border-emerald-500/30 transition-colors">
+                Uttar Pradesh
+              </button>
+              <button onClick={() => navigate('/schemes?state=West Bengal')} className="px-2.5 py-0.5 rounded-md bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-200 border border-emerald-500/30 transition-colors">
+                West Bengal
+              </button>
+              <button onClick={() => navigate('/schemes')} className="px-2.5 py-0.5 rounded-md bg-white/10 hover:bg-white/20 text-slate-300 transition-colors">
+                All India →
+              </button>
+            </div>
           </div>
 
         </div>
@@ -136,7 +163,7 @@ const Home = () => {
         {/* Highlight Stats Strip */}
         <div className="max-w-5xl mx-auto mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
           <div className="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
-            <div className="text-2xl font-bold text-white">15+</div>
+            <div className="text-2xl font-bold text-white">45+</div>
             <div className="text-xs text-slate-400 mt-0.5">National & State Schemes</div>
           </div>
           <div className="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
@@ -144,8 +171,8 @@ const Home = () => {
             <div className="text-xs text-slate-400 mt-0.5">Central & 28+ States/UTs</div>
           </div>
           <div className="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
-            <div className="text-2xl font-bold text-amber-400">3 Languages</div>
-            <div className="text-xs text-slate-400 mt-0.5">Kannada, Hindi & English</div>
+            <div className="text-2xl font-bold text-amber-400">23 Languages</div>
+            <div className="text-xs text-slate-400 mt-0.5">All Scheduled Indian Languages</div>
           </div>
           <div className="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
             <div className="text-2xl font-bold text-white">100% RAG</div>

@@ -30,6 +30,7 @@ class Scheme(db.Model):
     official_url = db.Column(db.String(350), nullable=False)
     
     government_level = db.Column(db.String(50), default='Karnataka State', nullable=False) # 'Karnataka State' or 'Central Government'
+    state = db.Column(db.String(100), default='All India', nullable=True) # e.g. 'Karnataka', 'Maharashtra', 'Delhi', 'All India'
     source_date = db.Column(db.String(50), nullable=True)
     verified = db.Column(db.Boolean, default=True, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -50,6 +51,19 @@ class Scheme(db.Model):
             description = self.description_hi or self.description
             eligibility = self.eligibility_hi or self.eligibility
             benefits = self.benefits_hi or self.benefits
+
+        state_val = self.state
+        if not state_val:
+            if 'Central' in (self.government_level or ''):
+                state_val = 'All India'
+            elif 'Karnataka' in (self.government_level or ''):
+                state_val = 'Karnataka'
+            elif 'Maharashtra' in (self.government_level or ''):
+                state_val = 'Maharashtra'
+            elif 'Delhi' in (self.government_level or ''):
+                state_val = 'Delhi'
+            else:
+                state_val = (self.government_level or '').replace(' State', '').strip()
 
         return {
             'id': self.id,
@@ -74,6 +88,7 @@ class Scheme(db.Model):
             'application_process': self.application_process,
             'official_url': self.official_url,
             'government_level': self.government_level,
+            'state': state_val,
             'source_date': self.source_date,
             'verified': self.verified,
             'created_at': self.created_at.isoformat() if self.created_at else None

@@ -82,12 +82,22 @@ const SchemeDetails = () => {
         </Link>
 
         <div className="flex items-center gap-2">
-          <span className={`text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full ${
-            scheme.government_level === 'Karnataka State'
-              ? 'bg-amber-50 text-amber-900 border border-amber-200'
-              : 'bg-blue-50 text-blue-900 border border-blue-200'
+          <span className={`text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full border ${
+            scheme.government_level?.includes('Central') || scheme.state === 'All India'
+              ? 'bg-blue-50 text-blue-900 border-blue-200'
+              : scheme.government_level?.includes('Karnataka') || scheme.state === 'Karnataka'
+              ? 'bg-amber-50 text-amber-900 border-amber-200'
+              : scheme.government_level?.includes('Maharashtra') || scheme.state === 'Maharashtra'
+              ? 'bg-emerald-50 text-emerald-900 border-emerald-200'
+              : scheme.government_level?.includes('Delhi') || scheme.state === 'Delhi'
+              ? 'bg-purple-50 text-purple-900 border-purple-200'
+              : scheme.government_level?.includes('Tamil Nadu') || scheme.state === 'Tamil Nadu'
+              ? 'bg-rose-50 text-rose-900 border-rose-200'
+              : scheme.government_level?.includes('Uttar Pradesh') || scheme.state === 'Uttar Pradesh'
+              ? 'bg-indigo-50 text-indigo-900 border-indigo-200'
+              : 'bg-emerald-50 text-emerald-900 border-emerald-200'
           }`}>
-            {scheme.government_level}
+            {scheme.government_level} {scheme.state && scheme.state !== 'All India' ? `(${scheme.state})` : ''}
           </span>
           <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />

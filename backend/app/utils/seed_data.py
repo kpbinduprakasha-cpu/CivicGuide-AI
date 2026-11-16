@@ -1,6 +1,8 @@
 import os
+from sqlalchemy import inspect, text
 from ..models import db, User, Scheme, PublicService, Document
 from ..rag.rag_engine import rag_engine
+from .all_india_schemes_data import ALL_INDIA_SCHEMES
 
 def seed_database(app):
     with app.app_context():
@@ -49,377 +51,37 @@ def seed_database(app):
         else:
             citizen_user.is_verified = True
 
-        # 2. Seed Government Schemes (Central Government + Major State Schemes)
-        if Scheme.query.count() == 0:
-            schemes_data = [
-                # --- CENTRAL GOVERNMENT SCHEMES ---
-                {
-                    "name": "PM-Kisan Samman Nidhi",
-                    "name_kn": "ಪಿಎಂ-ಕಿಸಾನ್ ಸಮ್ಮಾನ್ ನಿಧಿ",
-                    "name_hi": "पीएम-किसान सम्मान निधि",
-                    "description": "Central government direct income support scheme providing Rs. 6,000 annually in three installments to all eligible landholding farmer families across India.",
-                    "description_kn": "ಭಾರತದ ಎಲ್ಲಾ ಕೃಷಿ ಭೂಮಿ ಹೊಂದಿರುವ ರೈತ ಕುಟುಂಬಗಳಿಗೆ ವಾರ್ಷಿಕ ರೂ. 6,000 ನೇರ ಆದಾಯ ಬೆಂಬಲ ನೀಡುವ ಕೇಂದ್ರ ಸರ್ಕಾರದ ಯೋಜನೆ.",
-                    "description_hi": "भारत के सभी भूमिधारक किसान परिवारों को प्रति वर्ष 6,000 रुपये की प्रत्यक्ष आय सहायता।",
-                    "category": "Agriculture",
-                    "eligibility": "All landholding farmer families with cultivable land registered in their name. Institutional landholders, income tax payees, and government employees are excluded.",
-                    "eligibility_kn": "ಕೃಷಿ ಭೂಮಿಯ ಮಾಲೀಕತ್ವ ಹೊಂದಿರುವ ಎಲ್ಲಾ ಸಣ್ಣ ಮತ್ತು ಅತಿ ಸಣ್ಣ ರೈತ ಕುಟುಂಬಗಳು. ಸಾಂಸ್ಥಿಕ ಭೂಮಾಲೀಕರು ಹಾಗೂ ಸರ್ಕಾರಿ ನೌಕರರಿಗೆ ಅನ್ವಯಿಸುವುದಿಲ್ಲ.",
-                    "eligibility_hi": "कृषि भूमि के मालिक सभी किसान परिवार। आयकर दाता और सेवारत/सेवानिवृत्त सरकारी कर्मचारी इस योजना से बाहर हैं।",
-                    "benefits": "Rs. 6,000 per year transferred in three equal quarterly installments of Rs. 2,000 directly into the Aadhaar-linked bank account via DBT.",
-                    "benefits_kn": "ವಾರ್ಷಿಕ ರೂ. 6,000 ಹಣವನ್ನು ಮೂರು ಕಂತುಗಳಲ್ಲಿ (ಪ್ರತಿ ಕಂತಿಗೆ ರೂ. 2,000) ನೇರವಾಗಿ ಬ್ಯಾಂಕ್ ಖಾತೆಗೆ ಜಮೆ.",
-                    "benefits_hi": "सालाना 6,000 रुपये तीन समान किस्तों (2,000 रुपये प्रत्येक) में सीधे बैंक खाते में डीबीटी द्वारा।",
-                    "required_documents": "Land Record (Pahani / RTC / Khata / Jamabandi), Aadhaar Card, Bank Account linked with NPCI/Aadhaar, Active Mobile Number",
-                    "application_process": "Register online at pmkisan.gov.in (Farmers Corner) or visit your nearest Common Service Centre (CSC) or Agriculture Office.",
-                    "official_url": "https://pmkisan.gov.in",
-                    "government_level": "Central Government",
-                    "source_date": "2024-2026",
-                    "verified": True
-                },
-                {
-                    "name": "Ayushman Bharat - PM-JAY",
-                    "name_kn": "ಆಯುಷ್ಮಾನ್ ಭಾರತ್ - ಪಿಎಂ-ಜೆಎವೈ",
-                    "name_hi": "आयुष्मान भारत - प्रधानमंत्री जन आरोग्य योजना (पीएम-जय)",
-                    "description": "Flagship national health protection scheme offering up to Rs. 5 Lakh cashless hospitalization coverage per family per year for secondary and tertiary healthcare.",
-                    "description_kn": "ದ್ವಿತೀಯ ಮತ್ತು ತೃತೀಯ ಹಂತದ ವೈದ್ಯಕೀಯ ಚಿಕಿತ್ಸೆಗಳಿಗೆ ಪ್ರತಿ ಕುಟುಂಬಕ್ಕೆ ವಾರ್ಷಿಕ ರೂ. 5 ಲಕ್ಷದವರೆಗೆ ನಗದು ರಹಿತ ಆರೋಗ್ಯ ವಿಮೆ ಒದಗಿಸುವ ಯೋಜನೆ.",
-                    "description_hi": "गंभीर बीमारियों के इलाज हेतु प्रति परिवार प्रति वर्ष 5 लाख रुपये तक का कैशलेस स्वास्थ्य सुरक्षा कवर।",
-                    "category": "Healthcare",
-                    "eligibility": "Families identified in Socio-Economic Caste Census (SECC 2011) and NFSA / State ration card database (BPL / Antyodaya). Recently expanded to all senior citizens aged 70+ irrespective of income.",
-                    "eligibility_kn": "ಬಿಪಿಎಲ್ ಹಾಗೂ ಅಂತ್ಯೋದಯ ಪಡಿತರ ಚೀಟಿ ಹೊಂದಿರುವ ಕುಟುಂಬಗಳು ಮತ್ತು 70 ವರ್ಷ ದಾಟಿದ ಹಿರಿಯ ನಾಗರಿಕರು.",
-                    "eligibility_hi": "बीपीएल/अंत्योदय कार्डधारक और 70 वर्ष से अधिक आयु के सभी वरिष्ठ नागरिक।",
-                    "benefits": "Cashless treatment up to Rs. 5,00,000 per family per year across empaneled public and private hospitals throughout India.",
-                    "benefits_kn": "ನೋಂದಾಯಿತ ಸರ್ಕಾರಿ ಹಾಗೂ ಖಾಸಗಿ ಆಸ್ಪತ್ರೆಗಳಲ್ಲಿ ವಾರ್ಷಿಕ ರೂ 5,00,000 ದವರೆಗೆ ಉಚಿತ ನಗದುರಹಿತ ಚಿಕಿತ್ಸೆ.",
-                    "benefits_hi": "देशभर के सूचीबद्ध अस्पतालों में प्रति वर्ष प्रति परिवार 5,00,000 रुपये तक कैशलेस इलाज।",
-                    "required_documents": "Aadhaar Card, Ration Card, Ayushman Card (ABHA ID), Mobile Number",
-                    "application_process": "Generate Ayushman Card at any empaneled government/private hospital, Ayushman Arogya Mandir, or Common Service Centre (CSC) via beneficiary.nha.gov.in.",
-                    "official_url": "https://pmjay.gov.in",
-                    "government_level": "Central Government",
-                    "source_date": "2024-2026",
-                    "verified": True
-                },
-                {
-                    "name": "PM Surya Ghar: Muft Bijli Yojana",
-                    "name_kn": "ಪಿಎಂ ಸೂರ್ಯ ಘರ್: ಮುಫ್ತ್ ಬಿಜ್ಲಿ ಯೋಜನೆ",
-                    "name_hi": "पीएम सूर्य घर: मुफ्त बिजली योजना",
-                    "description": "Central scheme providing up to 300 units of free electricity per month to households by giving capital subsidies up to Rs. 78,000 for installing rooftop solar systems.",
-                    "description_kn": "ಮನೆಗಳ ಛಾವಣಿಯ ಮೇಲೆ ಸೌರ ವಿದ್ಯುತ್ ಘಟಕ ಅಳವಡಿಸಲು ರೂ 78,000 ವರೆಗೆ ಸಹಾಯಧನ ಹಾಗೂ ತಿಂಗಳಿಗೆ 300 ಯೂನಿಟ್‌ವರೆಗೆ ಉಚಿತ ವಿದ್ಯುತ್ ನೀಡುವ ಕೇಂದ್ರ ಯೋಜನೆ.",
-                    "description_hi": "छत पर सोलर पैनल लगाने हेतु 78,000 रुपये तक की सब्सिडी एवं 300 यूनिट तक मुफ्त बिजली प्रदान करने वाली राष्ट्रीय योजना।",
-                    "category": "Financial assistance",
-                    "eligibility": "Indian households with domestic residential electricity connection, suitable unshaded roof space, and no prior rooftop solar subsidy.",
-                    "eligibility_kn": "ಸ್ವಂತ ಮನೆ ಹಾಗೂ ಗೃಹಬಳಕೆ ವಿದ್ಯುತ್ ಸಂಪರ್ಕ ಹೊಂದಿರುವ ಎಲ್ಲಾ ಭಾರತೀಯ ನಾಗರಿಕರು.",
-                    "eligibility_hi": "घरेलू बिजली कनेक्शन और उपयुक्त छत वाले सभी भारतीय नागरिक।",
-                    "benefits": "Direct subsidy up to Rs. 78,000 for 3 kW system (Rs. 30,000 for 1 kW, Rs. 60,000 for 2 kW), zero electricity bills, and income from selling surplus power back to the grid.",
-                    "benefits_kn": "3 ಕಿಲೋವ್ಯಾಟ್ ವ್ಯವಸ್ಥೆಗೆ ರೂ. 78,000 ವರೆಗೆ ನೇರ ಸಹಾಯಧನ ಹಾಗೂ ಉಳಿದ ವಿದ್ಯುತ್ ಅನ್ನು ಗ್ರಿಡ್‌ಗೆ ಮಾರಾಟ ಮಾಡುವ ಸೌಲಭ್ಯ.",
-                    "benefits_hi": "3 किलोवाट तक के सिस्टम पर 78,000 रुपये तक सीधी सब्सिडी एवं अतिरिक्त बिजली ग्रिड को बेचकर कमाई।",
-                    "required_documents": "Electricity bill (with Consumer Account Number), Aadhaar Card, Property ownership/roof rights proof, Aadhaar-linked Bank Passbook",
-                    "application_process": "Register on the national portal pmsuryaghar.gov.in, select your local electricity company (DISCOM), choose an empaneled vendor, and receive DBT subsidy after net-meter commissioning.",
-                    "official_url": "https://pmsuryaghar.gov.in",
-                    "government_level": "Central Government",
-                    "source_date": "2024-2026",
-                    "verified": True
-                },
-                {
-                    "name": "PM Vishwakarma Yojana",
-                    "name_kn": "ಪಿಎಂ ವಿಶ್ವಕರ್ಮ ಯೋಜನೆ",
-                    "name_hi": "पीएम विश्वकर्मा योजना",
-                    "description": "Holistic support initiative for traditional artisans and craftspeople across 18 trades, offering official ID, Rs. 15,000 toolkit voucher, training stipend, and collateral-free 5% loans up to Rs. 3 Lakh.",
-                    "description_kn": "18 ಸಾಂಪ್ರದಾಯಿಕ ಕಸುಬುದಾರರು ಮತ್ತು ಕುಶಲಕರ್ಮಿಗಳಿಗೆ ತರಬೇತಿ, ರೂ. 15,000 ಟೂಲ್‌ಕಿಟ್ ಅನುದಾನ ಹಾಗೂ ಶೇ. 5 ಬಡ್ಡಿದರದಲ್ಲಿ ರೂ. 3 ಲಕ್ಷದವರೆಗೆ ಸಾಲ ನೀಡುವ ಯೋಜನೆ.",
-                    "description_hi": "18 पारंपरिक व्यवसायों के शिल्पकारों हेतु पहचान पत्र, 15,000 रुपये का टूलकिट अनुदान, कौशल प्रशिक्षण एवं 5% रियायती ब्याज पर ऋण।",
-                    "category": "Employment",
-                    "eligibility": "Artisans and craftspeople working with hands and tools in one of 18 traditional family trades (carpenters, blacksmiths, goldsmiths, potters, cobblers, tailors, masons, etc.). Minimum age 18.",
-                    "eligibility_kn": "ಕೈ ಹಾಗೂ ಉಪಕರಣಗಳಿಂದ ಸಾಂಪ್ರದಾಯಿಕ ಕಸುಬುಗಳಲ್ಲಿ ತೊಡಗಿಸಿಕೊಂಡಿರುವ ಕುಶಲಕರ್ಮಿಗಳು (ಬಡಗಿ, ಕಮ್ಮಾರ, ಅಕ್ಕಸಾಲಿಗ, ಕುಂಬಾರ, ಕ್ಷೌರಿಕ, ದರ್ಜಿ ಮುಂತಾದವರು).",
-                    "eligibility_hi": "पारंपरिक 18 शिल्पों से जुड़े कारीगर एवं शिल्पकार (बढ़ई, लोहार, सुनार, कुम्हार, मोची, दर्जी आदि)।",
-                    "benefits": "PM Vishwakarma Certificate & ID, 5-7 days training with Rs. 500/day stipend, Rs. 15,000 e-voucher for modern tools, and collateral-free loan of Rs. 1 Lakh (1st tranche) & Rs. 2 Lakh (2nd tranche) at 5% interest.",
-                    "benefits_kn": "ವಿಶ್ವಕರ್ಮ ಪ್ರಮಾಣಪತ್ರ, ರೂ. 500 ದಿನಭತ್ಯೆಯೊಂದಿಗೆ ಕೌಶಲ ತರಬೇತಿ, ರೂ. 15,000 ಟೂಲ್‌ಕಿಟ್ ನೆರವು, ಶೇ. 5 ಬಡ್ಡಿದರದಲ್ಲಿ ಜಾಮೀನು ರಹಿತ ಸಾಲ.",
-                    "benefits_hi": "पीएम विश्वकर्मा प्रमाण-पत्र, 500 रुपये/दिन स्टाइपेंड संग प्रशिक्षण, 15,000 रुपये टूलकिट वाउचर एवं 3 लाख तक सस्ता ऋण।",
-                    "required_documents": "Aadhaar Card, Mobile Number, Bank Passbook, Ration Card, Trade Proof",
-                    "application_process": "Apply free of charge through any Common Service Centre (CSC) in your locality, followed by three-stage Gram Panchayat / ULB verification.",
-                    "official_url": "https://pmvishwakarma.gov.in",
-                    "government_level": "Central Government",
-                    "source_date": "2024-2026",
-                    "verified": True
-                },
-                {
-                    "name": "Pradhan Mantri Mudra Yojana (PMMY)",
-                    "name_kn": "ಪ್ರಧಾನ ಮಂತ್ರಿ ಮುದ್ರಾ ಯೋಜನೆ",
-                    "name_hi": "प्रधानमंत्री मुद्रा योजना (पीएमएमवाई)",
-                    "description": "Collateral-free institutional micro-credit scheme providing loans up to Rs. 20 Lakh to non-corporate, non-farm small and micro enterprises across India.",
-                    "description_kn": "ಸಣ್ಣ ವ್ಯಾಪಾರಿಗಳು, ಸಣ್ಣ ಉದ್ಯಮಿಗಳು ಹಾಗೂ ಅಂಗಡಿಕಾರರಿಗೆ ಯಾವುದೇ ಆಸ್ತಿ ಅಡಮಾನವಿಲ್ಲದೆ ರೂ. 20 ಲಕ್ಷದವರೆಗೆ ಬ್ಯಾಂಕ್ ಸಾಲ ನೀಡುವ ಕೇಂದ್ರ ಯೋಜನೆ.",
-                    "description_hi": "गैर-कॉर्पोरेट और गैर-कृषि लघु उद्यमों को बिना किसी गारंटी के 20 लाख रुपये तक का संस्थागत ऋण देने वाली योजना।",
-                    "category": "Financial assistance",
-                    "eligibility": "Any Indian citizen engaged in or planning a non-farm income-generating small business (manufacturing, trading, services, transport, shopkeepers, repair centers).",
-                    "eligibility_kn": "ಉತ್ಪಾದನೆ, ವ್ಯಾಪಾರ ಅಥವಾ ಸೇವಾ ವಲಯದಲ್ಲಿ ಸಣ್ಣ ಉದ್ಯಮ ಹೊಂದಿರುವ ಅಥವಾ ಪ್ರಾರಂಭಿಸಲು ಇಚ್ಛಿಸುವ ಯಾವುದೇ ಭಾರತೀಯ ನಾಗರಿಕರು.",
-                    "eligibility_hi": "विनिर्माण, व्यापार या सेवा क्षेत्र में छोटा व्यवसाय शुरू करने या बढ़ाने वाले भारतीय नागरिक।",
-                    "benefits": "Zero collateral security: Shishu (loans up to Rs. 50,000), Kishor (Rs. 50,001 to Rs. 5,00,000), Tarun (Rs. 5,00,001 to Rs. 10,00,000), and Tarun Plus (up to Rs. 20,00,000) with MUDRA RuPay Debit Card.",
-                    "benefits_kn": "ಜಾಮೀನು ರಹಿತ ಸಾಲ: ಶಿಶು (ರೂ. 50,000 ವರೆಗೆ), ಕಿಶೋರ್ (ರೂ. 5 ಲಕ್ಷದವರೆಗೆ), ತರುಣ್ (ರೂ. 10 ಲಕ್ಷದಿಂದ 20 ಲಕ್ಷದವರೆಗೆ).",
-                    "benefits_hi": "बिना गारंटी ऋण: शिशु (50,000 तक), किशोर (5 लाख तक), तरुण (10 से 20 लाख तक) मुद्रा रुपे कार्ड के साथ।",
-                    "required_documents": "Identity proof (Aadhaar/Voter ID), Address proof, Business registration/license, Quotation of machinery/items, Bank account statement for 6 months",
-                    "application_process": "Apply online at udyamimitra.in or jansamarth.in, or visit any commercial bank, regional rural bank, or small finance bank branch.",
-                    "official_url": "https://www.mudra.org.in",
-                    "government_level": "Central Government",
-                    "source_date": "2024-2026",
-                    "verified": True
-                },
-                {
-                    "name": "Pradhan Mantri Awas Yojana (PMAY - Gramin & Urban)",
-                    "name_kn": "ಪ್ರಧಾನ ಮಂತ್ರಿ ಆವಾಸ್ ಯೋಜನೆ (ಗ್ರಾಮೀಣ ಮತ್ತು ನಗರ)",
-                    "name_hi": "प्रधानमंत्री आवास योजना (पीएमएवाई)",
-                    "description": "Comprehensive national mission providing financial assistance to homeless citizens and families living in kutcha/dilapidated homes to construct durable pucca houses.",
-                    "description_kn": "ಗ್ರಾಮೀಣ ಮತ್ತು ನಗರ ಪ್ರದೇಶಗಳಲ್ಲಿ ವಸತಿರಹಿತ ಬಡ ಕುಟುಂಬಗಳಿಗೆ ಸುಸಜ್ಜಿತ ಪಕ್ಕಾ ಮನೆ ನಿರ್ಮಿಸಿಕೊಳ್ಳಲು ಆರ್ಥಿಕ ಅನುದಾನ ನೀಡುವ ಯೋಜನೆ.",
-                    "description_hi": "बेघर या कच्चे मकानों में रहने वाले परिवारों को पक्का मकान बनाने हेतु वित्तीय अनुदान प्रदान करने वाली योजना।",
-                    "category": "Housing",
-                    "eligibility": "Families without a pucca house in India; verified through SECC list / Gram Sabha (for Gramin) or EWS/LIG income brackets (for Urban).",
-                    "eligibility_kn": "ಭಾರತದಲ್ಲಿ ಸ್ವಂತ ಪಕ್ಕಾ ಮನೆ ಇಲ್ಲದ ಬಡ ಕುಟುಂಬಗಳು; ಗ್ರಾಮ ಸಭೆ ಅಥವಾ ಸ್ಥಳೀಯ ಸಂಸ್ಥೆಗಳಿಂದ ಅನುಮೋದಿತ ಫಲಾನುಭವಿಗಳು.",
-                    "eligibility_hi": "भारत में स्वयं का पक्का मकान न रखने वाले परिवार (ग्राम सभा या स्थानीय निकाय द्वारा सत्यापित)।",
-                    "benefits": "Financial grant of Rs. 1,20,000 (plains) to Rs. 1,30,000 (hilly states) plus 90 days MGNREGS wage employment and toilet incentive; interest subsidy under Credit Linked Subsidy Scheme (CLSS) for urban homes.",
-                    "benefits_kn": "ಮನೆ ನಿರ್ಮಾಣಕ್ಕೆ ರೂ. 1,20,000 ಸಹಾಯಧನ ಜೊತೆಗೆ ನರೇಗಾ ದಿನಗೂಲಿ ಹಾಗೂ ಶೌಚಾಲಯ ನಿರ್ಮಾಣಕ್ಕೆ ಪ್ರೋತ್ಸಾಹಧನ.",
-                    "benefits_hi": "मकान निर्माण हेतु 1,20,000 रुपये का अनुदान, मनरेगा के तहत 90 दिन की मजदूरी एवं शौचालय प्रोत्साहन।",
-                    "required_documents": "Aadhaar Card, BPL Ration Card, Bank Passbook, Land title/patta, MGNREGS Job Card (Gramin)",
-                    "application_process": "Apply via Gram Panchayat / Block Development Office (PMAY-G) or Urban Local Body municipality / pmaymis.gov.in (PMAY-U).",
-                    "official_url": "https://pmayg.nic.in",
-                    "government_level": "Central Government",
-                    "source_date": "2024-2026",
-                    "verified": True
-                },
-                {
-                    "name": "Sukanya Samriddhi Yojana (SSY)",
-                    "name_kn": "ಸುಕನ್ಯಾ ಸಮೃದ್ಧಿ ಯೋಜನೆ",
-                    "name_hi": "सुकन्या समृद्धि योजना",
-                    "description": "Beti Bachao Beti Padhao campaign initiative offering a high-interest government savings account for the education and marriage expenses of girl children.",
-                    "description_kn": "ಹೆಣ್ಣು ಮಕ್ಕಳ ಉನ್ನತ ಶಿಕ್ಷಣ ಹಾಗೂ ವಿವಾಹ ವೆಚ್ಚಕ್ಕಾಗಿ ಗರಿಷ್ಠ ಬಡ್ಡಿ ಮತ್ತು ತೆರಿಗೆ ವಿನಾಯಿತಿ ನೀಡುವ ಕೇಂದ್ರ ಸರ್ಕಾರದ ವಿಶೇಷ ಉಳಿತಾಯ ಯೋಜನೆ.",
-                    "description_hi": "बालिकाओं के उज्ज्वल भविष्य, उच्च शिक्षा एवं विवाह हेतु आकर्षक ब्याज दर वाली बचत योजना।",
-                    "category": "Women and child welfare",
-                    "eligibility": "Can be opened by legal parents/guardians for a girl child from her birth up to the age of 10 years. Maximum two girl children per family.",
-                    "eligibility_kn": "10 ವರ್ಷದೊಳಗಿನ ಹೆಣ್ಣು ಮಗುವಿನ ಹೆಸರಿನಲ್ಲಿ ಪೋಷಕರು ಖಾತೆ ತೆರೆಯಬಹುದು (ಪ್ರತಿ ಕುಟುಂಬಕ್ಕೆ ಗರಿಷ್ಠ 2 ಹೆಣ್ಣು ಮಕ್ಕಳು).",
-                    "eligibility_hi": "10 वर्ष से कम उम्र की बालिकाओं के नाम पर अभिभावक द्वारा खाता खोला जा सकता है।",
-                    "benefits": "High compound interest rate (8.2% p.a. for recent quarters), complete tax exemption under Section 80C, partial withdrawal up to 50% for higher education after age 18, and full maturity after 21 years.",
-                    "benefits_kn": "ವಾರ್ಷಿಕ ಶೇ. 8.2 ಬಡ್ಡಿದರ, ಆದಾಯ ತೆರಿಗೆ ಕಾಯ್ದೆ ಸೆಕ್ಷನ್ 80ಸಿ ಅಡಿಯಲ್ಲಿ ಸಂಪೂರ್ಣ ತೆರಿಗೆ ವಿನಾಯಿತಿ, 18 ವರ್ಷಕ್ಕೆ ಉನ್ನತ ಶಿಕ್ಷಣಕ್ಕಾಗಿ ಶೇ. 50 ಹಿಂಪಡೆಯುವಿಕೆ.",
-                    "benefits_hi": "8.2% चक्रवृद्धि ब्याज दर, धारा 80C के तहत पूर्ण कर छूट, 18 वर्ष की आयु में 50% निकासी की सुविधा।",
-                    "required_documents": "Birth Certificate of Girl Child, Aadhaar Card & PAN card of Guardian, Address Proof, Passport Photographs",
-                    "application_process": "Open account at any Post Office or authorized public/private commercial bank branch by submitting Form-1 with minimum initial deposit of Rs. 250.",
-                    "official_url": "https://www.indiapost.gov.in",
-                    "government_level": "Central Government",
-                    "source_date": "2024-2026",
-                    "verified": True
-                },
-                {
-                    "name": "Atal Pension Yojana (APY)",
-                    "name_kn": "ಅಟಲ್ ಪಿಂಚಣಿ ಯೋಜನೆ",
-                    "name_hi": "अटल पेंशन योजना",
-                    "description": "Universal social security scheme providing guaranteed monthly pension of Rs. 1,000 to Rs. 5,000 to citizens working in the unorganized sector upon reaching 60 years of age.",
-                    "description_kn": "ಅಸಂಘಟಿತ ವಲಯದ ಕಾರ್ಮಿಕರು 60 ವರ್ಷ ತುಂಬಿದ ನಂತರ ಪ್ರತಿ ತಿಂಗಳು ರೂ. 1,000 ದಿಂದ 5,000 ವರೆಗೆ ಖಾತರಿಯ ಪಿಂಚಣಿ ಪಡೆಯುವ ಯೋಜನೆ.",
-                    "description_hi": "असंगठित क्षेत्र के कामगारों को 60 वर्ष की आयु के बाद 1,000 से 5,000 रुपये तक मासिक पेंशन की गारंटी।",
-                    "category": "Social welfare",
-                    "eligibility": "All Indian citizens aged between 18 and 40 years holding a savings bank account. Must not be an income tax payer.",
-                    "eligibility_kn": "18 ರಿಂದ 40 ವರ್ಷ ವಯಸ್ಸಿನ ಯಾವುದೇ ಭಾರತೀಯ ನಾಗರಿಕರು. ಆದಾಯ ತೆರಿಗೆ ಪಾವತಿದಾರರಿಗೆ ಅನ್ವಯಿಸುವುದಿಲ್ಲ.",
-                    "eligibility_hi": "18 से 40 वर्ष की आयु के सभी भारतीय नागरिक जिनका बैंक खाता हो (गैर-आयकर दाता)।",
-                    "benefits": "Guaranteed monthly pension of Rs. 1,000, Rs. 2,000, Rs. 3,000, Rs. 4,000, or Rs. 5,000 after age 60; same pension continues to spouse upon demise, and full corpus returned to nominee.",
-                    "benefits_kn": "60 ವರ್ಷದ ನಂತರ ತಿಂಗಳಿಗೆ ರೂ. 1,000 ದಿಂದ 5,000 ವರೆಗೆ ಖಚಿತ ಪಿಂಚಣಿ, ದಂಪತಿಗಳಿಗೆ ಜೀವಿತಾವಧಿ ಭದ್ರತೆ.",
-                    "benefits_hi": "60 वर्ष के बाद 1,000 से 5,000 रुपये प्रति माह आजीवन पेंशन, पति/पत्नी को निरंतरता एवं नॉमिनी को संपूर्ण राशि।",
-                    "required_documents": "Aadhaar Card, Active Savings Bank Account details with auto-debit consent, Mobile number",
-                    "application_process": "Enroll through your bank branch, net banking portal, or post office bank where you maintain your savings account.",
-                    "official_url": "https://www.npscra.nsdl.co.in",
-                    "government_level": "Central Government",
-                    "source_date": "2024-2026",
-                    "verified": True
-                },
-                {
-                    "name": "National Scholarship Portal (NSP) Central Schemes",
-                    "name_kn": "ರಾಷ್ಟ್ರೀಯ ವಿದ್ಯಾರ್ಥಿವೇತನ ಪೋರ್ಟಲ್ (ಎನ್‌ಎಸ್‌ಪಿ)",
-                    "name_hi": "राष्ट्रीय छात्रवृत्ति पोर्टल (एनएसपी) केंद्रीय योजनाएं",
-                    "description": "Unified national platform delivering Central Government pre-matric, post-matric, merit-cum-means, and top-class higher education scholarships directly to students' accounts.",
-                    "description_kn": "ಭಾರತ ಸರ್ಕಾರದ ಅಲ್ಪಸಂಖ್ಯಾತ, ಪರಿಶಿಷ್ಟ ಜಾತಿ, ಪಂಗಡ ಹಾಗೂ ಆರ್ಥಿಕವಾಗಿ ಹಿಂದುಳಿದ ವಿದ್ಯಾರ್ಥಿಗಳಿಗೆ ಶಾಲಾ-ಕಾಲೇಜು ವಿದ್ಯಾರ್ಥಿವೇತನ ಒದಗಿಸುವ ಏಕೀಕೃತ ರಾಷ್ಟ್ರೀಯ ಪೋರ್ಟಲ್.",
-                    "description_hi": "देशभर के छात्रों को प्री-मैट्रिक, पोस्ट-मैट्रिक एवं मेरिट-कम-मीन्स छात्रवृत्तियां प्रदान करने वाला एकीकृत केंद्रीय मंच।",
-                    "category": "Education",
-                    "eligibility": "School, college, and university students across India belonging to SC, ST, OBC, Minority, or EWS categories meeting scheme-specific merit and parental income limits.",
-                    "eligibility_kn": "ಭಾರತದ ಶಾಲಾ-ಕಾಲೇಜುಗಳಲ್ಲಿ ವ್ಯಾಸಂಗ ಮಾಡುತ್ತಿರುವ ವಿದ್ಯಾರ್ಥಿಗಳು; ನಿಯಮಿತ ಶೈಕ್ಷಣಿಕ ಅಂಕಗಳು ಹಾಗೂ ಕುಟುಂಬದ ಆದಾಯ ಮಿತಿ.",
-                    "eligibility_hi": "मान्यता प्राप्त संस्थान में अध्ययनरत छात्र, जो आय एवं मेरिट मानदंडों को पूरा करते हों।",
-                    "benefits": "Direct financial reimbursement of tuition fees, admission fees, and monthly maintenance allowance directly credited into student's Aadhaar-seeded bank account.",
-                    "benefits_kn": "ಬೋಧನಾ ಶುಲ್ಕ ಮರುಪಾವತಿ ಹಾಗೂ ಮಾಸಿಕ ನಿರ್ವಹಣಾ ಭತ್ಯೆ ನೇರವಾಗಿ ವಿದ್ಯಾರ್ಥಿಯ ಬ್ಯಾಂಕ್ ಖಾತೆಗೆ ಜಮೆ.",
-                    "benefits_hi": "शिक्षण शुल्क की प्रतिपूर्ति एवं मासिक अनुरक्षण भत्ता सीधे छात्र के आधार-लिंक्ड बैंक खाते में।",
-                    "required_documents": "Student Aadhaar, Previous Marksheet, Verified Bonafide Student Certificate, Income Certificate, Caste/Minority Certificate, Bank Passbook",
-                    "application_process": "Register using OTR (One Time Registration) on the National Scholarship Portal at scholarships.gov.in.",
-                    "official_url": "https://scholarships.gov.in",
-                    "government_level": "Central Government",
-                    "source_date": "2024-2026",
-                    "verified": True
-                },
-                {
-                    "name": "Kisan Credit Card (KCC) Scheme",
-                    "name_kn": "ಕಿಸಾನ್ ಕ್ರೆಡಿಟ್ ಕಾರ್ಡ್ (ಕೆಸಿಸಿ)",
-                    "name_hi": "किसान क्रेडिट कार्ड (केसीसी)",
-                    "description": "Timely and adequate credit support to farmers across India for cultivating crops, purchasing seeds and fertilizers, and meeting post-harvest and animal husbandry expenses at subsidized interest.",
-                    "description_kn": "ಕೃಷಿ, ತೋಟಗಾರಿಕೆ, ಹೈನುಗಾರಿಕೆ ಹಾಗೂ ಮೀನುಗಾರಿಕೆ ಚಟುವಟಿಕೆಗಳಿಗಾಗಿ ರಿಯಾಯಿತಿ ಬಡ್ಡಿದರದಲ್ಲಿ ರೈತರಿಗೆ ತ್ವರಿತ ಬ್ಯಾಂಕ್ ಸಾಲ ಸೌಲಭ್ಯ ಒದಗಿಸುವ ಕಾರ್ಡ್.",
-                    "description_hi": "किसानों को फसल उत्पादन, खाद-बीज और पशुपालन हेतु रियायती ब्याज दर पर समय पर संस्थागत ऋण उपलब्ध कराने वाली योजना।",
-                    "category": "Agriculture",
-                    "eligibility": "All farmers - individual/joint borrowers, owner cultivators, tenant farmers, oral lessees, sharecroppers, and Self-Help Groups (SHGs) of farmers.",
-                    "eligibility_kn": "ಸ್ವಂತ ಜಮೀನು ಹೊಂದಿರುವ ರೈತರು, ಗೇಣಿದಾರರು, ಹೈನುಗಾರರು ಹಾಗೂ ಮೀನುಗಾರರು.",
-                    "eligibility_hi": "स्वयं की भूमि वाले किसान, बटाईदार, पट्टेदार, पशुपालक एवं मत्स्यपालक।",
-                    "benefits": "Credit limit up to Rs. 3 Lakh at an effective subsidized interest rate of 4% p.a. (with timely repayment), hassle-free renewal up to 5 years, and RuPay KCC card for ATM withdrawals.",
-                    "benefits_kn": "ಸಕಾಲಿಕ ಮರುಪಾವತಿಯೊಂದಿಗೆ ಕೇವಲ ಶೇ. 4 ರಿಯಾಯಿತಿ ಬಡ್ಡಿದರದಲ್ಲಿ ರೂ. 3 ಲಕ್ಷದವರೆಗೆ ಕೃಷಿ ಸಾಲ ಹಾಗೂ ಎಟಿಎಂ ಕಾರ್ಡ್ ಸೌಲಭ್ಯ.",
-                    "benefits_hi": "समय पर भुगतान करने पर मात्र 4% प्रभावी ब्याज दर पर 3 लाख तक ऋण एवं रुपे एटीएम कार्ड।",
-                    "required_documents": "Land ownership documents (RTC / Pahani / 7/12 extract / Patta), Aadhaar Card, PAN card, Passport photo, Crop declaration",
-                    "application_process": "Submit KCC application to your local public/private bank branch, District Central Cooperative Bank, or online via Agriculture Portal.",
-                    "official_url": "https://agricoop.nic.in",
-                    "government_level": "Central Government",
-                    "source_date": "2024-2026",
-                    "verified": True
-                },
+        # 2. Ensure 'state' column exists on schemes table & Seed All-India Schemes
+        try:
+            inspector = inspect(db.engine)
+            if 'schemes' in inspector.get_table_names():
+                columns = [c['name'] for c in inspector.get_columns('schemes')]
+                if 'state' not in columns:
+                    with db.engine.connect() as conn:
+                        conn.execute(text("ALTER TABLE schemes ADD COLUMN state VARCHAR(100) DEFAULT 'All India'"))
+                        conn.commit()
+                    print("[Seed] Successfully migrated schemes table: added 'state' column.")
+        except Exception as e:
+            print(f"[Seed] Scheme state column check/migration warning: {e}")
 
-                # --- KARNATAKA STATE SCHEMES ---
-                {
-                    "name": "Gruha Lakshmi Scheme",
-                    "name_kn": "ಗೃಹ ಲಕ್ಷ್ಮಿ ಯೋಜನೆ",
-                    "name_hi": "गृह लक्ष्मी योजना",
-                    "description": "Karnataka flagship empowerment scheme providing Rs. 2,000 monthly direct cash assistance to the woman head of every eligible family in Karnataka.",
-                    "description_kn": "ಕರ್ನಾಟಕದ ಅರ್ಹ ಕುಟುಂಬದ ಮಹಿಳಾ ಯಜಮಾನಿಗೆ ಪ್ರತಿ ತಿಂಗಳು ರೂ 2,000 ಆರ್ಥಿಕ ನೆರವು ನೀಡುವ ಪ್ರಮುಖ ಯೋಜನೆ.",
-                    "description_hi": "कर्नाटक में प्रत्येक पात्र परिवार की महिला मुखिया को प्रति माह 2,000 रुपये की नकद सहायता प्रदान करने वाली योजना।",
-                    "category": "Women and child welfare",
-                    "eligibility": "Resident of Karnataka; Woman identified as head of the family on Antyodaya/BPL/APL ration card; Neither the woman nor her spouse can be an Income Tax or GST payer; Government employees are excluded.",
-                    "eligibility_kn": "ಕರ್ನಾಟಕದ ಖಾಯಂ ನಿವಾಸಿ; ರೇಷನ್ ಕಾರ್ಡ್‌ನಲ್ಲಿ ಮಹಿಳೆ ಕುಟುಂಬದ ಮುಖ್ಯಸ್ಥಳಾಗಿರಬೇಕು; ಮಹಿಳೆ ಅಥವಾ ಆಕೆಯ ಪತಿ ಆದಾಯ ತೆರಿಗೆ ಅಥವಾ ಜಿಎಸ್‌ಟಿ ಪಾವತಿದಾರರಾಗಿರಬಾರದು.",
-                    "eligibility_hi": "कर्नाटक की निवासी; राशन कार्ड में महिला मुखिया हो; महिला या उसका पति आयकर या जीएसटी दाता न हो।",
-                    "benefits": "Rs. 2,000 per month credited directly via Direct Benefit Transfer (DBT) into the Aadhaar-linked bank account.",
-                    "benefits_kn": "ಪ್ರತಿ ತಿಂಗಳು ರೂ. 2,000 ನೇರವಾಗಿ ಆಧಾರ್ ಜೋಡಣೆಯಾಗಿರುವ ಬ್ಯಾಂಕ್ ಖಾತೆಗೆ ಜಮೆ.",
-                    "benefits_hi": "प्रति माह 2,000 रुपये सीधे आधार से जुड़े बैंक खाते में डीबीटी द्वारा।",
-                    "required_documents": "Aadhaar card of woman beneficiary, Aadhaar card of husband, Ration card (BPL/AAY/APL), Bank passbook linked with Aadhaar, Mobile number",
-                    "application_process": "Apply online at Seva Sindhu portal (sevasindhugs.karnataka.gov.in) or visit Grama One, Karnataka One, or Bapuji Seva Kendra in your taluk.",
-                    "official_url": "https://sevasindhugs.karnataka.gov.in",
-                    "government_level": "Karnataka State",
-                    "source_date": "2024-2026",
-                    "verified": True
-                },
-                {
-                    "name": "Yuva Nidhi Scheme",
-                    "name_kn": "ಯುವ ನಿಧಿ ಯೋಜನೆ",
-                    "name_hi": "युवा निधि योजना",
-                    "description": "Karnataka unemployment allowance scheme providing monthly financial support and skill training assistance to unemployed graduates and diploma holders.",
-                    "description_kn": "ಕರ್ನಾಟಕದ ನಿರುದ್ಯೋಗಿ ಪದವೀಧರರು ಮತ್ತು ಡಿಪ್ಲೊಮಾ ಪೂರೈಸಿದ ಯುವಕರಿಗೆ ಮಾಸಿಕ ಆರ್ಥಿಕ ಭದ್ರತೆ ನೀಡುವ ಯೋಜನೆ.",
-                    "description_hi": "कर्नाटक के बेरोजगार स्नातकों और डिप्लोमा धारकों को मासिक वित्तीय सहायता प्रदान करने वाली योजना।",
-                    "category": "Employment",
-                    "eligibility": "Must have studied in Karnataka for at least 6 years; Passed Bachelor's degree or Polytechnic Diploma; Unemployed for at least 6 months after passing exam; Must not be enrolled in higher full-time studies or receiving salary.",
-                    "eligibility_kn": "ಕರ್ನಾಟಕದಲ್ಲಿ ಕನಿಷ್ಠ 6 ವರ್ಷ ವ್ಯಾಸಂಗ ಮಾಡಿರಬೇಕು; ಪದವಿ ಅಥವಾ ಡಿಪ್ಲೊಮಾ ಉತ್ತೀರ್ಣರಾಗಿರಬೇಕು; ಪರೀಕ್ಷಾ ಫಲಿತಾಂಶದ ನಂತರ ಕನಿಷ್ಠ 6 ತಿಂಗಳು ನಿರುದ್ಯೋಗಿಯಾಗಿರಬೇಕು.",
-                    "eligibility_hi": "कर्नाटक में कम से कम 6 साल पढ़ाई की हो; डिग्री या डिप्लोमा पास हो; परिणाम के 6 महीने बाद तक बेरोजगार हो।",
-                    "benefits": "Rs. 3,000 per month for degree graduates; Rs. 1,500 per month for diploma holders for up to 2 years (24 months).",
-                    "benefits_kn": "ಪದವೀಧರರಿಗೆ ತಿಂಗಳಿಗೆ ರೂ. 3,000 ಹಾಗೂ ಡಿಪ್ಲೊಮಾ ಹೊಂದಿದವರಿಗೆ ತಿಂಗಳಿಗೆ ರೂ. 1,500 ಗರಿಷ್ಠ 2 ವರ್ಷಗಳವರೆಗೆ.",
-                    "benefits_hi": "स्नातकों को 3,000 रुपये/माह और डिप्लोमा धारकों को 1,500 रुपये/माह अधिकतम 2 साल के लिए।",
-                    "required_documents": "Degree/Diploma Certificate, All semesters marks cards, Domicile/Study Certificate, Aadhaar card, Bank passbook, Unemployment declaration",
-                    "application_process": "Register on the official Seva Sindhu portal or via Grama One centers in your taluk. Monthly self-declaration is required.",
-                    "official_url": "https://sevasindhugs.karnataka.gov.in",
-                    "government_level": "Karnataka State",
-                    "source_date": "2024-2026",
-                    "verified": True
-                },
-                {
-                    "name": "Gruha Jyothi Scheme",
-                    "name_kn": "ಗೃಹ ಜ್ಯೋತಿ ಯೋಜನೆ",
-                    "name_hi": "गृह ज्योति योजना",
-                    "description": "Karnataka government scheme providing up to 200 units of free electricity per month to all domestic consumers.",
-                    "description_kn": "ಕರ್ನಾಟಕದ ಎಲ್ಲಾ ಗೃಹಬಳಕೆ ವಿದ್ಯುತ್ ಗ್ರಾಹಕರಿಗೆ ತಿಂಗಳಿಗೆ ಗರಿಷ್ಠ 200 ಯೂನಿಟ್‌ವರೆಗೆ ಉಚಿತ ವಿದ್ಯುತ್ ನೀಡುವ ಜನಪ್ರಿಯ ಯೋಜನೆ.",
-                    "description_hi": "कर्नाटक के सभी घरेलू उपभोक्ताओं को प्रति माह 200 यूनिट तक मुफ्त बिजली प्रदान करने की योजना।",
-                    "category": "Financial assistance",
-                    "eligibility": "All domestic household connections in Karnataka whose monthly average electricity consumption is within 200 units. Commercial connections are excluded.",
-                    "eligibility_kn": "ಕರ್ನಾಟಕದ ಎಲ್ಲಾ ಗೃಹಬಳಕೆಯ ವಿದ್ಯುತ್ ಸಂಪರ್ಕ ಹೊಂದಿರುವ ಗ್ರಾಹಕರು. ಸರಾಸರಿ ಬಳಕೆ 200 ಯೂನಿಟ್‌ಗಳ ಮಿತಿಯೊಳಗಿರಬೇಕು.",
-                    "eligibility_hi": "कर्नाटक के सभी घरेलू बिजली कनेक्शन। मासिक औसत खपत 200 यूनिट के भीतर होनी चाहिए।",
-                    "benefits": "Zero electricity bill for usage within eligible monthly entitlement (up to 200 units).",
-                    "benefits_kn": "ಅರ್ಹ ಬಳಕೆಯ ಮಿತಿಯೊಳಗೆ (ಗರಿಷ್ಠ 200 ಯೂನಿಟ್) ವಿದ್ಯುತ್ ಬಿಲ್ ಸಂಪೂರ್ಣ ಮನ್ನಾ (ಶೂನ್ಯ ಬಿಲ್).",
-                    "benefits_hi": "पात्र मासिक खपत पर शून्य बिजली बिल।",
-                    "required_documents": "Electricity Account ID (DISCOM Consumer ID), Aadhaar Card of tenant or owner, Mobile number",
-                    "application_process": "Apply on Seva Sindhu (sevasindhugs.karnataka.gov.in) with electricity account number and Aadhaar.",
-                    "official_url": "https://sevasindhugs.karnataka.gov.in",
-                    "government_level": "Karnataka State",
-                    "source_date": "2024-2026",
-                    "verified": True
-                },
-                {
-                    "name": "Shakti Scheme",
-                    "name_kn": "ಶಕ್ತಿ ಯೋಜನೆ",
-                    "name_hi": "शक्ति योजना",
-                    "description": "Free bus travel scheme for all women residents of Karnataka across state-run RTC transport corporations.",
-                    "description_kn": "ಕರ್ನಾಟಕದ ಎಲ್ಲಾ ಮಹಿಳೆಯರಿಗೆ ರಾಜ್ಯ ರಸ್ತೆ ಸಾರಿಗೆ ಸಂಸ್ಥೆಗಳ ಬಸ್‌ಗಳಲ್ಲಿ ಉಚಿತ ಪ್ರಯಾಣದ ಸೌಲಭ್ಯ ಕಲ್ಪಿಸುವ ಯೋಜನೆ.",
-                    "description_hi": "कर्नाटक की सभी महिलाओं के लिए सरकारी बसों में निःशुल्क यात्रा की योजना।",
-                    "category": "Women and child welfare",
-                    "eligibility": "All women and girl students who are domicile residents of Karnataka (including transgender persons).",
-                    "eligibility_kn": "ಕರ್ನಾಟಕದ ಖಾಯಂ ನಿವಾಸಿಗಳಾದ ಎಲ್ಲಾ ಮಹಿಳೆಯರು, ವಿದ್ಯಾರ್ಥಿನಿಯರು ಮತ್ತು ಲಿಂಗತ್ವ ಅಲ್ಪಸಂಖ್ಯಾತರು.",
-                    "eligibility_hi": "कर्नाटक की सभी महिलाएं और छात्राएं।",
-                    "benefits": "100% free travel in ordinary and express city/suburban buses operated by KSRTC, NWKRTC, KKRTC, and BMTC.",
-                    "benefits_kn": "ಕಲ್ಯಾಣ ಕರ್ನಾಟಕ (KKRTC), ಕೆಎಸ್‌ಆರ್‌ಟಿಸಿ ಮತ್ತು ವಾಯುವ್ಯ ಸಾರಿಗೆಯ ಸಾಮಾನ್ಯ ಬಸ್‌ಗಳಲ್ಲಿ ಶೇ. 100 ಉಚಿತ ಪ್ರಯಾಣ.",
-                    "benefits_hi": "केएसआरटीसी और कल्याण कर्नाटक की साधारण बसों में 100% मुफ्त यात्रा।",
-                    "required_documents": "Government ID proving Karnataka domicile (Aadhaar, Voter ID, Driving License, or Shakti Smart Card)",
-                    "application_process": "Show valid Karnataka government photo identity card to the bus conductor to receive zero-fare ticket.",
-                    "official_url": "https://ksrtc.karnataka.gov.in",
-                    "government_level": "Karnataka State",
-                    "source_date": "2024-2026",
-                    "verified": True
-                },
-                {
-                    "name": "SSP Post-Matric & Vidyasiri Scholarship",
-                    "name_kn": "ಎಸ್.ಎಸ್.ಪಿ ಪೋಸ್ಟ್-ಮೆಟ್ರಿಕ್ ಹಾಗೂ ವಿದ್ಯಾಸಿರಿ ವಿದ್ಯಾರ್ಥಿವೇತನ",
-                    "name_hi": "एसएसपी पोस्ट-मैट्रिक एवं विद्यासिरी छात्रवृत्ति",
-                    "description": "Unified Karnataka scholarship portal providing fee reimbursement, maintenance allowances, and food & accommodation assistance to post-matric students.",
-                    "description_kn": "ಪಿಯುಸಿ, ಪದವಿ ಹಾಗೂ ಸ್ನಾತಕೋತ್ತರ ವಿದ್ಯಾರ್ಥಿಗಳಿಗೆ ಶುಲ್ಕ ವಿನಾಯಿತಿ ಮತ್ತು ಊಟ-ವಸತಿ ನೆರವು (ವಿದ್ಯಾಸಿರಿ) ಒದಗಿಸುವ ಕರ್ನಾಟಕ ಸರ್ಕಾರದ ವಿದ್ಯಾರ್ಥಿವೇತನ.",
-                    "description_hi": "कर्नाटक के उच्च शिक्षा प्राप्त कर रहे छात्रों हेतु शुल्क प्रतिपूर्ति और छात्रावास/आवास सहायता छात्रवृत्ति।",
-                    "category": "Education",
-                    "eligibility": "Karnataka domicile student enrolled in recognized PUC, ITI, Diploma, Degree, or PG course; SC/ST annual income <= Rs 2.5 Lakhs; Cat-1 <= Rs 2.5 Lakhs; 2A/2B/3A/3B <= Rs 1 Lakh; Minimum 75% attendance.",
-                    "eligibility_kn": "ಕರ್ನಾಟಕದ ನಿವಾಸಿ ವಿದ್ಯಾರ್ಥಿ; ಪಿಯುಸಿ, ಐಟಿಐ, ಡಿಪ್ಲೊಮಾ, ಪದವಿ ವ್ಯಾಸಂಗ; ಎಸ್‌ಸಿ/ಎಸ್‌ಟಿ ಆದಾಯ ಮಿತಿ ರೂ. 2.5 ಲಕ್ಷ; ಹಿಂದುಳಿದ ವರ್ಗಗಳಿಗೆ ನಿಯಮಾನುಸಾರ ಆದಾಯ ಮಿತಿ.",
-                    "eligibility_hi": "कर्नाटक का मूल निवासी छात्र; मान्यता प्राप्त कॉलेज में अध्ययनरत; निर्धारित पारिवारिक आय सीमा के अंतर्गत।",
-                    "benefits": "Full or partial tuition fee waiver, examination fees, and monthly maintenance allowance / Rs. 1,500 monthly Vidyasiri food allowance.",
-                    "benefits_kn": "ಸಂಪೂರ್ಣ ಬೋಧನಾ ಶುಲ್ಕ ಮರುಪಾವತಿ ಹಾಗೂ ವಿದ್ಯಾರ್ಥಿ ನಿಲಯ ಸಿಗದವರಿಗೆ ತಿಂಗಳಿಗೆ ರೂ. 1,500 ವಿದ್ಯಾಸಿರಿ ಭತ್ಯೆ.",
-                    "benefits_hi": "पूर्ण शिक्षण शुल्क प्रतिपूर्ति एवं छात्रावास न मिलने पर 1,500 रुपये प्रति माह भोजन/आवास भत्ता।",
-                    "required_documents": "Student Aadhaar, Caste and Income Certificate (RD number), SATS/Registration ID, College Fee Receipt, Aadhaar-seeded Bank Passbook",
-                    "application_process": "Apply online at ssp.postmatric.karnataka.gov.in using Student Aadhaar and Caste-Income RD numbers.",
-                    "official_url": "https://ssp.postmatric.karnataka.gov.in",
-                    "government_level": "Karnataka State",
-                    "source_date": "2024-2026",
-                    "verified": True
-                },
-
-                # --- OTHER PROMINENT STATE SCHEMES ---
-                {
-                    "name": "Mukhyamantri Majhi Ladki Bahin Yojana",
-                    "name_kn": "ಮುಖ್ಯಮಂತ್ರಿ ಮಾಝಿ ಲಡ್ಕಿ ಬಹಿನ್ ಯೋಜನೆ (ಮಹಾರಾಷ್ಟ್ರ)",
-                    "name_hi": "मुख्यमंत्री माझी लाड़की बहिन योजना (महाराष्ट्र)",
-                    "description": "Maharashtra state direct cash transfer scheme providing Rs. 1,500 monthly financial assistance to married, widowed, divorced, or destitute women aged 21 to 65 years.",
-                    "description_kn": "ಮಹಾರಾಷ್ಟ್ರದ 21 ರಿಂದ 65 ವರ್ಷ ವಯಸ್ಸಿನ ಮಹಿಳೆಯರಿಗೆ ಪ್ರತಿ ತಿಂಗಳು ರೂ. 1,500 ಆರ್ಥಿಕ ನೆರವು ನೀಡುವ ಪ್ರಮುಖ ಯೋಜನೆ.",
-                    "description_hi": "महाराष्ट्र राज्य द्वारा 21 से 65 वर्ष आयु वर्ग की पात्र महिलाओं को 1,500 रुपये प्रति माह की प्रत्यक्ष वित्तीय सहायता।",
-                    "category": "Women and child welfare",
-                    "eligibility": "Resident of Maharashtra; Women aged 21-65 years; Family annual income not exceeding Rs. 2.5 Lakhs; Neither applicant nor family member is a regular government employee or taxpayer.",
-                    "eligibility_kn": "ಮಹಾರಾಷ್ಟ್ರದ ನಿವಾಸಿ ಮಹಿಳೆಯರು (21-65 ವರ್ಷ); ಕುಟುಂಬದ ವಾರ್ಷಿಕ ಆದಾಯ ರೂ. 2.5 ಲಕ್ಷಕ್ಕಿಂತ ಕಡಿಮೆ.",
-                    "eligibility_hi": "महाराष्ट्र की निवासी महिला (आयु 21-65); पारिवारिक वार्षिक आय 2.5 लाख से कम।",
-                    "benefits": "Rs. 1,500 per month directly deposited into the beneficiary's Aadhaar-linked bank account.",
-                    "benefits_kn": "ಪ್ರತಿ ತಿಂಗಳು ರೂ. 1,500 ನೇರ ಬ್ಯಾಂಕ್ ವರ್ಗಾವಣೆ (ಡಿಬಿಟಿ).",
-                    "benefits_hi": "1,500 रुपये प्रतिमाह सीधे आधार से जुड़े बैंक खाते में।",
-                    "required_documents": "Aadhaar Card, Maharashtra Domicile/Ration Card, Income Certificate (< 2.5 Lakh), Bank Passbook",
-                    "application_process": "Apply via Nari Shakti Doot App or through local Setu Suvidha Kendra / Anganwadi centres across Maharashtra.",
-                    "official_url": "https://ladakibahin.maharashtra.gov.in",
-                    "government_level": "State Government",
-                    "source_date": "2024-2026",
-                    "verified": True
-                },
-                {
-                    "name": "Delhi Lifeline Free Electricity & Water Scheme",
-                    "name_kn": "ದೆಹಲಿ ಉಚಿತ ವಿದ್ಯುತ್ ಹಾಗೂ ಕುಡಿಯುವ ನೀರು ಯೋಜನೆ",
-                    "name_hi": "दिल्ली मुफ्त बिजली एवं जल योजना",
-                    "description": "NCT of Delhi government subsidy providing 100% free electricity for consumption up to 200 units/month (and 50% subsidy up to 400 units) and 20,000 litres of free metered water per month.",
-                    "description_kn": "ದೆಹಲಿಯ ಮನೆಗಳಿಗೆ ತಿಂಗಳಿಗೆ 200 ಯೂನಿಟ್‌ವರೆಗೆ ಶೇ. 100 ಉಚಿತ ವಿದ್ಯುತ್ ಹಾಗೂ 20,000 ಲೀಟರ್ ವರೆಗೆ ಉಚಿತ ಕುಡಿಯುವ ನೀರು ನೀಡುವ ಯೋಜನೆ.",
-                    "description_hi": "दिल्ली के घरेलू उपभोक्ताओं को 200 यूनिट तक पूर्णतः मुफ्त बिजली एवं 20,000 लीटर तक मुफ्त पेयजल की योजना।",
-                    "category": "Financial assistance",
-                    "eligibility": "All domestic metered electricity connections (opt-in subsidy required) and functional DJB water metered households in Delhi NCT.",
-                    "eligibility_kn": "ದೆಹಲಿ ಎನ್‌ಸಿಟಿಯ ಎಲ್ಲಾ ಗೃಹಬಳಕೆಯ ವಿದ್ಯುತ್ ಹಾಗೂ ನೀರು ಸಂಪರ್ಕ ಹೊಂದಿರುವ ನಾಗರಿಕರು.",
-                    "eligibility_hi": "दिल्ली एनसीटी के सभी घरेलू मीटर वाले बिजली व जल उपभोक्ता।",
-                    "benefits": "Zero electricity bills up to 200 units, 50% discount between 201-400 units, and zero water charges up to 20,000 litres per month.",
-                    "benefits_kn": "200 ಯೂನಿಟ್‌ವರೆಗೆ ವಿದ್ಯುತ್ ಬಿಲ್ ಶೂನ್ಯ, 20,000 ಲೀಟರ್ ವರೆಗೆ ನೀರು ಶುಲ್ಕ ಸಂಪೂರ್ಣ ಮನ್ನಾ.",
-                    "benefits_hi": "200 यूनिट तक शून्य बिजली बिल एवं 20,000 लीटर प्रति माह तक मुफ्त पानी।",
-                    "required_documents": "Electricity CA Number (BSES/TPDDL), DJB Water K-Number, Aadhaar Card, Registered Mobile Number",
-                    "application_process": "Opt-in through DISCOM WhatsApp numbers, mobile app, or Delhi Government citizen service portal.",
-                    "official_url": "https://delhi.gov.in",
-                    "government_level": "State Government",
-                    "source_date": "2024-2026",
-                    "verified": True
-                }
-            ]
-
-            for s_data in schemes_data:
+        # Seed or Update All-India Central and State Government Schemes
+        added_count = 0
+        updated_count = 0
+        for s_data in ALL_INDIA_SCHEMES:
+            existing = Scheme.query.filter_by(name=s_data['name']).first()
+            if not existing:
                 scheme_obj = Scheme(**s_data)
                 db.session.add(scheme_obj)
-            print(f"[Seed] Added {len(schemes_data)} verified All-India Central & State Government schemes.")
+                added_count += 1
+            else:
+                if 'state' in s_data:
+                    existing.state = s_data['state']
+                if 'government_level' in s_data:
+                    existing.government_level = s_data['government_level']
+                updated_count += 1
+        db.session.commit()
+        if added_count > 0 or updated_count > 0:
+            print(f"[Seed] All-India Schemes synced: {added_count} added, {updated_count} verified/updated (Total: {Scheme.query.count()}).")
 
         # 3. Seed Verified Public Services Across All India (Central Government & Major States/Taluks)
         if PublicService.query.count() == 0:
