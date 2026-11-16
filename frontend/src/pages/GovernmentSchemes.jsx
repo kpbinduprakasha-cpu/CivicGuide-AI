@@ -229,7 +229,7 @@ const GovernmentSchemes = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+    <div className="w-full px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 2xl:px-16 py-8 space-y-6">
       
       {/* Page Header */}
       <div className="space-y-2">
@@ -240,7 +240,7 @@ const GovernmentSchemes = () => {
         <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
           {t('schemes')}
         </h1>
-        <p className="text-sm text-slate-600 max-w-2xl leading-relaxed">
+        <p className="text-sm text-slate-600 max-w-4xl leading-relaxed">
           Explore verified Central Government schemes and state welfare schemes across India. Select Central or your State below to browse targeted benefits.
         </p>
       </div>
@@ -499,7 +499,7 @@ const GovernmentSchemes = () => {
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
           {schemes.map((scheme) => {
             const Icon = categoryIcons[scheme.category] || Landmark;
             const badgeClass = getStateBadgeStyle(scheme);
