@@ -1,0 +1,40 @@
+# PM Surya Ghar: Muft Bijli Yojana (Central Government Scheme)
+# Ministry of New and Renewable Energy (MNRE), Government of India
+# Official Portal: https://pmsuryaghar.gov.in | Launch Year: 2024 | Jurisdiction: All India (Central Government)
+
+1. SCHEME OBJECTIVE AND OVERVIEW
+PM Surya Ghar: Muft Bijli Yojana is a flagship national initiative by the Central Government aimed at providing free electricity up to 300 units per month to 1 crore (10 million) households across all States and Union Territories in India by installing rooftop solar systems.
+
+2. FINANCIAL ASSISTANCE AND SUBSIDY STRUCTURE
+Under the PM Surya Ghar scheme, the Central Government provides direct financial subsidy (Direct Benefit Transfer) into the beneficiary's bank account:
+- 1 kW Rooftop Solar System: Central Financial Assistance (CFA) / Subsidy of Rs. 30,000.
+- 2 kW Rooftop Solar System: Central Financial Assistance (CFA) / Subsidy of Rs. 60,000.
+- 3 kW or above Rooftop Solar System: Central Financial Assistance (CFA) / Subsidy of Rs. 78,000 (Maximum cap).
+- Special Category States/UTs (North-Eastern States, Uttarakhand, Himachal Pradesh, Jammu & Kashmir, Ladakh, Andaman & Nicobar, Lakshadweep): Higher subsidy rates apply up to Rs. 85,800 for 3 kW systems.
+
+3. ELIGIBILITY CRITERIA
+- Must be an Indian citizen and resident of any State or Union Territory in India.
+- The applicant household must own a residential house with a suitable roof space that is structurally sound and unshaded for solar panel installation.
+- The household must have a valid domestic (residential) grid electricity connection in their name from the local DISCOM (Electricity Distribution Company, e.g., GESCOM, BESCOM, BSES, Tata Power, Mahavitaran, UPPCL, WBSEDCL).
+- The household must not have availed any previous solar rooftop subsidy from central or state government for the same premises.
+
+4. REQUIRED DOCUMENTS
+- Aadhaar Card of the electricity consumer/applicant.
+- Latest domestic electricity bill (showing Consumer Account Number / CA Number / Account ID).
+- Bank account passbook or cancelled cheque (Aadhaar linked for DBT transfer).
+- Electricity Connection proof / Property ownership proof / Land certificate.
+- Mobile number linked with Aadhaar.
+
+5. APPLICATION PROCEDURE
+Step 1: Register on the National Portal at https://pmsuryaghar.gov.in by selecting your State, Electricity Distribution Utility (DISCOM), and entering your Consumer Account Number.
+Step 2: Submit the application for Rooftop Solar with your electricity bill details.
+Step 3: Receive technical feasibility approval from your local DISCOM.
+Step 4: Install the rooftop solar plant through any registered/empanelled solar vendor in your state.
+Step 5: Vendor submits installation report and applies for net-metering with the DISCOM.
+Step 6: DISCOM inspects the site, installs the bidirectional net meter, and issues a commissioning certificate.
+Step 7: Submit bank account details on the national portal to receive the subsidy directly via DBT within 30 days.
+
+6. CITIZEN BENEFITS
+- Generates 300 to 360 units of clean electricity per month for an average 3 kW plant, saving approximately Rs. 15,000 to Rs. 24,000 annually on electricity bills.
+- Surplus electricity generated can be sold back to the local DISCOM through net-metering.
+- Low-interest collateral-free loans (around 7% interest rate) available through public and private sector banks for the non-subsidized portion.

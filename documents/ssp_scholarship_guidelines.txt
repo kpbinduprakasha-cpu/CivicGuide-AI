@@ -1,0 +1,33 @@
+GOVERNMENT OF KARNATAKA
+Center for e-Governance & Social Welfare Department
+GUIDELINES: STATE SCHOLARSHIP PORTAL (SSP) POST-MATRIC & VIDYASIRI SCHOLARSHIPS
+
+1. Objective:
+The State Scholarship Portal (SSP) Karnataka is a unified electronic application platform for all post-matric scholarship schemes provided by the Social Welfare, Backward Classes Welfare, Tribal Welfare, Minorities Welfare, and Technical Education departments.
+
+2. Schemes Integrated on SSP:
+- Post-Matric Scholarship for SC/ST Students (Full Fee Waiver & Maintenance).
+- Vidyasiri (Food and Accommodation Scheme / Oota & Vasathi Nilaya Sahayadhana): Rs. 1,500 per month for students not admitted to government hostels.
+- Fee Concession Scheme for Backward Classes (Cat-1, 2A, 2B, 3A, 3B).
+- Chief Minister's Higher Education Scholarship.
+
+3. Eligibility Norms:
+- Student must be a permanent resident of Karnataka.
+- Must have completed SSLC / 10th standard and be enrolled in recognized PUC, ITI, Diploma, Undergraduate, or Postgraduate courses in Karnataka.
+- Income Limits:
+  * SC / ST Students: Annual family income up to Rs. 2,50,000 for full fee reimbursement.
+  * Backward Classes (Cat-1): Annual family income up to Rs. 2,50,000.
+  * Backward Classes (Cat-2A, 2B, 3A, 3B): Annual family income up to Rs. 1,00,000.
+- Minimum Attendance: At least 75% attendance in the enrolled educational institution.
+
+4. Required Documents:
+- Student Aadhaar Number and Aadhaar Consent Form.
+- SATS (Student Achievement Tracking System) ID or College Registration Number.
+- Caste and Income Certificate RD Number (issued by Revenue Dept via Nadakacheri).
+- E-Authentication of Fee Receipt from the college.
+- Bank Account linked with Aadhaar (NPCI active status).
+
+5. Application Portal:
+- Official URL: https://ssp.postmatric.karnataka.gov.in
+- Common application window opens annually between August and November.
+- District Social Welfare Officer, Vijayanagara District: Mini Vidhana Soudha, Hosapete.

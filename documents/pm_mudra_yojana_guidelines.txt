@@ -1,0 +1,52 @@
+# Pradhan Mantri Mudra Yojana (PMMY) (Central Government Scheme)
+# Department of Financial Services, Ministry of Finance, Government of India
+# Official Portal: https://www.mudra.org.in & https://udyamimitra.in | Jurisdiction: All India (Central Government)
+
+1. SCHEME OBJECTIVE AND OVERVIEW
+Pradhan Mantri Mudra Yojana (PMMY) is a flagship Central Government initiative launched to provide collateral-free institutional micro-credit to non-corporate, non-farm small and micro enterprises across India. The scheme promotes self-employment, entrepreneurship, and financial inclusion.
+
+2. LOAN CATEGORIES AND CEILINGS
+MUDRA loans are divided into three distinct categories reflecting the stage of growth and funding needs of the micro-unit or entrepreneur:
+
+1. Shishu (Seed / Start-up stage):
+   - Covers loans up to Rs. 50,000.
+   - Designed for micro entrepreneurs starting a new small business or hawkers, shopkeepers, fruit/vegetable vendors.
+   - Zero processing fee and no margin money requirement.
+
+2. Kishor (Growing Business stage):
+   - Covers loans above Rs. 50,000 and up to Rs. 5,00,000.
+   - Designed for business owners looking to purchase machinery, inventory, equipment, or working capital.
+   - Margin requirement usually up to 15%.
+
+3. Tarun (Expansion stage) & Tarun Plus:
+   - Tarun covers loans above Rs. 5,00,000 and up to Rs. 10,00,000.
+   - Tarun Plus covers loans up to Rs. 20,00,000 for entrepreneurs who have previously availed and successfully repaid Tarun loans.
+   - Suitable for established small manufacturing units, processing facilities, transport vehicles, service companies.
+
+3. KEY FEATURES AND ADVANTAGES
+- No Collateral Security: Loans under PMMY are 100% collateral-free. No mortgage or third-party guarantee is required.
+- Credit Guarantee: Supported by the Credit Guarantee Fund for Micro Units (CGFMU) managed by NCGTC.
+- MUDRA Card: Borrowers receive a RuPay debit card associated with their cash credit/overdraft account for convenient ATM withdrawals and digital POS transactions.
+- Flexible Repayment: Repayment periods typically range from 3 to 5 years (up to 7 years in specific capital cases) with moratorium periods based on cash flows.
+- Nominal Interest Rates: Interest rates are linked to bank Marginal Cost of Funds Based Lending Rate (MCLR) / Repo-linked benchmarks, making borrowing affordable.
+
+4. ELIGIBLE ACTIVITIES
+- Small manufacturing enterprises (textiles, garments, auto parts, food processing, packaging, handicrafts).
+- Shopkeepers, traders, retailers, wholesalers, merchants, service providers.
+- Transport vehicles (autos, taxis, e-rickshaws, small goods vehicles, tractors).
+- Agri-allied activities (dairy, poultry, fisheries, beekeeping, agri-clinics, nursery).
+- Artisans, repairing workshops, saloons, beauty parlours, photocopiers, internet cafes.
+
+5. ELIGIBILITY CRITERIA
+- Any Indian citizen who has a viable business plan for a non-farm sector income generating activity.
+- The applicant must not be a defaulter to any bank or financial institution and should have a clean credit record.
+- Age requirement: 18 years and above.
+
+6. APPLICATION PROCEDURE
+Option A (Online):
+- Apply through the national portal at https://udyamimitra.in or https://www.janSamarth.in.
+- Fill out digital loan application, upload business plan, KYC documents, and select preferred lending bank.
+
+Option B (Offline):
+- Visit any nearest branch of Public Sector Commercial Banks, Private Sector Banks, Regional Rural Banks (RRBs), Small Finance Banks (SFBs), or registered NBFCs/Microfinance Institutions (MFIs).
+- Submit the prescribed MUDRA application form along with identity proof, address proof, passport photos, and quotation for machinery/goods.

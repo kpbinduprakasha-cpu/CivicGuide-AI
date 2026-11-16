@@ -1,0 +1,33 @@
+GOVERNMENT OF INDIA
+Ministry of Agriculture & Farmers Welfare
+OPERATIONAL GUIDELINES: PRADHAN MANTRI KISAN SAMMAN NIDHI (PM-KISAN)
+
+1. Scope and Scheme Benefits:
+PM-KISAN is a central sector scheme to supplement financial requirements of landholding farmers for procuring various inputs related to agriculture and allied activities as well as domestic needs.
+- Annual Income Support: Rs. 6,000 per family per year.
+- Mode of Payment: Direct Benefit Transfer (DBT) directly into the verified Aadhaar-linked bank accounts of beneficiaries in three equal quarterly installments of Rs. 2,000 each (April-July, August-November, December-March).
+
+2. Beneficiary Definition and Eligibility:
+- Eligible Beneficiary: All landholding farmers' families having cultivable landholding in their names are eligible.
+- A landholding farmer's family is defined as consisting of husband, wife, and minor children who own cultivable land as per land records of the concerned State/UT.
+
+3. Exclusions and Ineligibility:
+- Institutional landholders.
+- Farmer families wherein one or more members belong to the following categories:
+  a) Former and present holders of constitutional posts.
+  b) Former and present Ministers, MPs, MLAs, MLCs, Mayors, Chairpersons of District Panchayats.
+  c) Serving or retired officers and employees of Central/State Government Ministries, Departments, and PSUs.
+  d) All superannuated/retired pensioners whose monthly pension is Rs. 10,000 or more.
+  e) All persons who paid Income Tax in the last assessment year.
+  f) Professionals like Doctors, Engineers, Lawyers, Chartered Accountants, and Architects registered with professional bodies.
+
+4. Essential Documents & Requirements:
+- Land ownership records: Record of Rights, Tenancy and Crops (RTC / Pahani in Karnataka Bhoomi portal).
+- Aadhaar Card (mandatory e-KYC via OTP or biometric authentication).
+- Bank Account linked to Aadhaar (NPCI mapped).
+- Active mobile number registered with Aadhaar.
+
+5. Application Procedure in Karnataka & Vijayanagara District:
+- Portal: https://pmkisan.gov.in (Farmers Corner > New Farmer Registration).
+- Karnataka Bhoomi Portal link verifies land records automatically via FID (Farmer Identification number / FRUITS database).
+- Help centers: Raitha Samparka Kendras (RSK) located in Hosapete, Harapanahalli, Kudligi, Huvina Hadagali, Hagaribommanahalli, and Kottur.
