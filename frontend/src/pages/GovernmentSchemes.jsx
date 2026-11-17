@@ -176,7 +176,7 @@ const GovernmentSchemes = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-8">
+    <div className="w-full px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 2xl:px-14 py-8 sm:py-10 space-y-8">
       
       {/* Page Header */}
       <div className="space-y-2">
@@ -354,7 +354,7 @@ const GovernmentSchemes = () => {
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3 gap-6 sm:gap-7 lg:gap-8">
           {schemes.map((scheme) => {
             const Icon = categoryIcons[scheme.category] || Landmark;
             const badgeClass = getStateBadgeStyle(scheme);
@@ -362,7 +362,7 @@ const GovernmentSchemes = () => {
             return (
               <div
                 key={scheme.id}
-                className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs hover:shadow-lg transition-all flex flex-col justify-between"
+                className="bg-white rounded-3xl p-6 sm:p-7 lg:p-8 border border-slate-200/80 shadow-xs hover:shadow-lg transition-all flex flex-col justify-between"
               >
                 <div className="space-y-4">
                   

@@ -225,7 +225,7 @@ const GovernmentServiceMapPage = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    <div className="w-full px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 2xl:px-14 py-8 space-y-6">
       
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -364,7 +364,7 @@ const GovernmentServiceMapPage = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Map Panel (2 cols) */}
-        <div className="lg:col-span-2 h-[580px] rounded-3xl overflow-hidden border border-slate-200 shadow-md relative z-0">
+        <div className="lg:col-span-2 h-[580px] lg:h-[640px] rounded-3xl overflow-hidden border border-slate-200 shadow-md relative z-0">
           <MapContainer
             center={mapCenter}
             zoom={mapZoom}
@@ -464,7 +464,7 @@ const GovernmentServiceMapPage = () => {
         </div>
 
         {/* Directory Sidebar List (1 col) */}
-        <div className="h-[580px] bg-white rounded-3xl border border-slate-200/80 shadow-md p-4 flex flex-col justify-between overflow-hidden">
+        <div className="h-[580px] lg:h-[640px] bg-white rounded-3xl border border-slate-200/80 shadow-md p-4 flex flex-col justify-between overflow-hidden">
           
           <div className="border-b border-slate-100 pb-3 flex items-center justify-between">
             <span className="font-bold text-sm text-slate-900">
