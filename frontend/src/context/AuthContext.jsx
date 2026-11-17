@@ -4,7 +4,14 @@ import api from '../services/api';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      const saved = localStorage.getItem('civicguide_user');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
   const [token, setToken] = useState(() => localStorage.getItem('civicguide_token') || null);
   const [loading, setLoading] = useState(true);
 
@@ -17,7 +24,10 @@ export const AuthProvider = ({ children }) => {
       }
       try {
         const res = await api.get('/auth/me');
-        setCurrentUser(res.data.user);
+        if (res.data?.user) {
+          localStorage.setItem('civicguide_user', JSON.stringify(res.data.user));
+          setCurrentUser(res.data.user);
+        }
       } catch (err) {
         console.warn('Session expired or invalid token:', err);
         logout();
@@ -32,6 +42,7 @@ export const AuthProvider = ({ children }) => {
     const res = await api.post('/auth/login', { user_id: userId, password });
     const { token: receivedToken, user } = res.data;
     localStorage.setItem('civicguide_token', receivedToken);
+    localStorage.setItem('civicguide_user', JSON.stringify(user));
     setToken(receivedToken);
     setCurrentUser(user);
     return res.data;
@@ -47,6 +58,7 @@ export const AuthProvider = ({ children }) => {
     const { token: receivedToken, user } = res.data;
     if (receivedToken && user) {
       localStorage.setItem('civicguide_token', receivedToken);
+      localStorage.setItem('civicguide_user', JSON.stringify(user));
       setToken(receivedToken);
       setCurrentUser(user);
     }
@@ -75,6 +87,7 @@ export const AuthProvider = ({ children }) => {
 
   const setAuthSession = (receivedToken, user) => {
     localStorage.setItem('civicguide_token', receivedToken);
+    localStorage.setItem('civicguide_user', JSON.stringify(user));
     setToken(receivedToken);
     setCurrentUser(user);
   };
@@ -84,14 +97,17 @@ export const AuthProvider = ({ children }) => {
       api.post('/auth/logout').catch(() => {});
     } catch (_) {}
     localStorage.removeItem('civicguide_token');
+    localStorage.removeItem('civicguide_user');
     setToken(null);
     setCurrentUser(null);
   };
 
   const updateProfile = async (data) => {
     const res = await api.put('/auth/profile', data);
-    setCurrentUser(res.data.user);
-    return res.data.user;
+    const updatedUser = res.data.user;
+    localStorage.setItem('civicguide_user', JSON.stringify(updatedUser));
+    setCurrentUser(updatedUser);
+    return updatedUser;
   };
 
   const isAuthenticated = Boolean(currentUser && token);
@@ -101,6 +117,7 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider
       value={{
         currentUser,
+        user: currentUser,
         token,
         loading,
         isAuthenticated,
