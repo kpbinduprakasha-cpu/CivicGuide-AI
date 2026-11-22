@@ -982,6 +982,12 @@ if not st.session_state.get("is_authenticated", False) and not st.session_state.
         render_register_view(_tr, ALL_INDIAN_LANGUAGES, ALL_INDIAN_STATES, LANG_CODE_MAP)
     st.stop()
 
+def navigate_to(target_page: str):
+    """Safely queues navigation to a target page and re-runs the script without triggering StreamlitWidgetAlreadyInstantiatedError."""
+    st.session_state["pending_nav_target"] = target_page
+    st.session_state["current_page"] = target_page
+    st.rerun()
+
 # ---------------------------------------------------------------------------
 # CITIZEN DASHBOARD ROUTE (When active page is "dashboard")
 # ---------------------------------------------------------------------------
@@ -992,8 +998,12 @@ if st.session_state.get("current_page") == "dashboard":
 # ---------------------------------------------------------------------------
 # TOP NAVBAR: Matches User Image Exactly (Single Line Layout & Multilingual)
 # ---------------------------------------------------------------------------
+# Handle pending navigation requests safely before top_navbar_tab_key widget is instantiated
+if "pending_nav_target" in st.session_state:
+    st.session_state["top_navbar_tab_key"] = st.session_state.pop("pending_nav_target")
+
 if "top_navbar_tab_key" not in st.session_state:
-    st.session_state.top_navbar_tab_key = "home"
+    st.session_state["top_navbar_tab_key"] = "home"
 
 nav_col_logo, nav_col_tabs, nav_col_right = st.columns([1.8, 6.2, 4.0], vertical_alignment="center")
 
@@ -1025,6 +1035,7 @@ with nav_col_tabs:
         label_visibility="collapsed",
         key="top_navbar_tab_key"
     )
+    st.session_state["current_page"] = active_nav_key
 
 with nav_col_right:
     if st.session_state.get("is_authenticated", False):
@@ -1086,14 +1097,12 @@ if active_nav_key == "schemes":
         b1, b2, b3 = st.columns(3)
         with b1:
             if st.button(f"📍 {_tr('serviceMap')}", key="h_btn1", use_container_width=True):
-                st.session_state.top_navbar_tab_key = "serviceMap"
-                st.rerun()
+                navigate_to("serviceMap")
         with b2:
             st.button("🔖 Saved (0)", key="h_btn2", use_container_width=True)
         with b3:
             if st.button("✨ AI Matched (40)", key="h_btn3", use_container_width=True):
-                st.session_state.top_navbar_tab_key = "chatbot"
-                st.rerun()
+                navigate_to("chatbot")
 
     # -----------------------------------------------------------------------
     # Main White Filter Card (Matches Image 2)
@@ -1395,8 +1404,7 @@ elif active_nav_key == "home":
         hero_search = st.text_input("Home Search", placeholder=_tr("searchSchemesPlaceholder"), label_visibility="collapsed", key="home_search_inp")
     with h_s_col2:
         if st.button(_tr("searchBtn"), key="home_search_btn", use_container_width=True):
-            st.session_state.top_navbar_tab_key = "schemes"
-            st.rerun()
+            navigate_to("schemes")
 
     st.markdown("<div style='height: 1rem;'></div>", unsafe_allow_html=True)
 
@@ -1462,8 +1470,7 @@ elif active_nav_key == "home":
         </div>
         """, unsafe_allow_html=True)
         if st.button(_tr('feature1Btn'), key="btn_f1", use_container_width=True):
-            st.session_state.top_navbar_tab_key = "chatbot"
-            st.rerun()
+            navigate_to("chatbot")
     with f_col2:
         st.markdown(f"""
         <div class="filter-card" style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
@@ -1479,8 +1486,7 @@ elif active_nav_key == "home":
         </div>
         """, unsafe_allow_html=True)
         if st.button(_tr('feature2Btn'), key="btn_f2", use_container_width=True):
-            st.session_state.top_navbar_tab_key = "eligibility"
-            st.rerun()
+            navigate_to("eligibility")
     with f_col3:
         st.markdown(f"""
         <div class="filter-card" style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
@@ -1496,8 +1502,7 @@ elif active_nav_key == "home":
         </div>
         """, unsafe_allow_html=True)
         if st.button(_tr('feature3Btn'), key="btn_f3", use_container_width=True):
-            st.session_state.top_navbar_tab_key = "serviceMap"
-            st.rerun()
+            navigate_to("serviceMap")
 
     st.markdown("<div style='height: 1.5rem;'></div>", unsafe_allow_html=True)
 
@@ -1513,8 +1518,7 @@ elif active_nav_key == "home":
         """, unsafe_allow_html=True)
     with col_pop_btn:
         if st.button(_tr('viewAllSchemes'), key="btn_view_all_pop", use_container_width=True):
-            st.session_state.top_navbar_tab_key = "schemes"
-            st.rerun()
+            navigate_to("schemes")
 
     pop_schemes = [
         {
@@ -1590,8 +1594,7 @@ elif active_nav_key == "home":
         </div>
         """, unsafe_allow_html=True)
         if st.button(_tr('howStep1Btn'), key="btn_w1", use_container_width=True):
-            st.session_state.top_navbar_tab_key = "chatbot"
-            st.rerun()
+            navigate_to("chatbot")
     with w2:
         st.markdown(f"""
         <div class="filter-card" style="height: 100%; position: relative;">
@@ -1602,8 +1605,7 @@ elif active_nav_key == "home":
         </div>
         """, unsafe_allow_html=True)
         if st.button(_tr('howStep2Btn'), key="btn_w2", use_container_width=True):
-            st.session_state.top_navbar_tab_key = "eligibility"
-            st.rerun()
+            navigate_to("eligibility")
     with w3:
         st.markdown(f"""
         <div class="filter-card" style="height: 100%; position: relative;">
@@ -1614,8 +1616,7 @@ elif active_nav_key == "home":
         </div>
         """, unsafe_allow_html=True)
         if st.button(_tr('howStep3Btn'), key="btn_w3", use_container_width=True):
-            st.session_state.top_navbar_tab_key = "schemes"
-            st.rerun()
+            navigate_to("schemes")
     with w4:
         st.markdown(f"""
         <div class="filter-card" style="height: 100%; position: relative;">
@@ -1626,8 +1627,7 @@ elif active_nav_key == "home":
         </div>
         """, unsafe_allow_html=True)
         if st.button(_tr('howStep4Btn'), key="btn_w4", use_container_width=True):
-            st.session_state.top_navbar_tab_key = "serviceMap"
-            st.rerun()
+            navigate_to("serviceMap")
 
     st.markdown("<div style='height: 2rem;'></div>", unsafe_allow_html=True)
 

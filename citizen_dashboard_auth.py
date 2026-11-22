@@ -223,7 +223,7 @@ def render_login_view(_tr, all_languages, lang_code_map):
                 st.session_state["is_authenticated"] = True
                 st.session_state["guest_mode"] = False
                 st.session_state["current_page"] = "home"
-                st.session_state["top_navbar_tab_key"] = "home"
+                st.session_state["pending_nav_target"] = "home"
                 st.rerun()
 
             # Divider
@@ -241,7 +241,7 @@ def render_login_view(_tr, all_languages, lang_code_map):
                 st.session_state["guest_mode"] = True
                 st.session_state["is_authenticated"] = False
                 st.session_state["current_page"] = "home"
-                st.session_state["top_navbar_tab_key"] = "home"
+                st.session_state["pending_nav_target"] = "home"
                 st.rerun()
 
             st.markdown("<div style='height: 0.75rem;'></div>", unsafe_allow_html=True)
@@ -569,7 +569,7 @@ def render_register_view(_tr, all_languages, all_states, lang_code_map):
                 st.session_state["is_authenticated"] = True
                 st.session_state["guest_mode"] = False
                 st.session_state["current_page"] = "home"
-                st.session_state["top_navbar_tab_key"] = "home"
+                st.session_state["pending_nav_target"] = "home"
                 st.rerun()
 
             render_html("""
@@ -607,7 +607,7 @@ def render_citizen_dashboard(_tr, all_languages, all_states, lang_code_map):
         with btn_home_col:
             if st.button(f"🏠 {_tr('goToHome')}", key="dash_top_btn_home", use_container_width=True):
                 st.session_state["current_page"] = "home"
-                st.session_state["top_navbar_tab_key"] = "home"
+                st.session_state["pending_nav_target"] = "home"
                 st.rerun()
         with lang_col:
             selected_lang_name = st.session_state.get("top_navbar_language", "English (English)")
@@ -781,28 +781,28 @@ def render_citizen_dashboard(_tr, all_languages, all_states, lang_code_map):
         """)
 
         if st.button("🏛️ Government Schemes\nBrowse verified national & state welfare", key="tool_btn_schemes", use_container_width=True):
-            st.session_state["top_navbar_tab_key"] = "schemes"
+            st.session_state["pending_nav_target"] = "schemes"
             st.session_state["current_page"] = "schemes"
             st.rerun()
 
         st.markdown("<div style='height: 0.4rem;'></div>", unsafe_allow_html=True)
 
         if st.button("🤖 AI Policy Chatbot\nAsk questions in regional languages", key="tool_btn_chat", use_container_width=True):
-            st.session_state["top_navbar_tab_key"] = "chatbot"
+            st.session_state["pending_nav_target"] = "chatbot"
             st.session_state["current_page"] = "chatbot"
             st.rerun()
 
         st.markdown("<div style='height: 0.4rem;'></div>", unsafe_allow_html=True)
 
         if st.button("📋 Eligibility Checker\nFind matching welfare programs", key="tool_btn_elig", use_container_width=True):
-            st.session_state["top_navbar_tab_key"] = "eligibility"
+            st.session_state["pending_nav_target"] = "eligibility"
             st.session_state["current_page"] = "eligibility"
             st.rerun()
 
         st.markdown("<div style='height: 0.4rem;'></div>", unsafe_allow_html=True)
 
         if st.button("📍 Government Service Map\nLocate CSCs, hospitals & offices", key="tool_btn_map", use_container_width=True):
-            st.session_state["top_navbar_tab_key"] = "serviceMap"
+            st.session_state["pending_nav_target"] = "serviceMap"
             st.session_state["current_page"] = "serviceMap"
             st.rerun()
 
@@ -826,7 +826,7 @@ def render_citizen_dashboard(_tr, all_languages, all_states, lang_code_map):
         """)
     with tr_h2:
         if st.button(f"➕ {_tr('applySchemeBtn')}", key="dash_btn_apply_scheme", type="primary", use_container_width=True):
-            st.session_state["top_navbar_tab_key"] = "schemes"
+            st.session_state["pending_nav_target"] = "schemes"
             st.session_state["current_page"] = "schemes"
             st.rerun()
 
