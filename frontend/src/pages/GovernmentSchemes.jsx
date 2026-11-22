@@ -518,51 +518,6 @@ const GovernmentSchemes = () => {
         </div>
       </div>
 
-      {/* Citizen Profile AI Matching Banner */}
-      {citizen && (
-        <div className="rounded-3xl bg-linear-to-r from-emerald-50 via-teal-50 to-blue-50 border border-emerald-200/80 p-5 sm:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex items-start sm:items-center gap-3.5">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-emerald-600/30">
-              <UserCheck className="w-6 h-6" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-xs font-bold uppercase tracking-wider text-emerald-800">
-                  Citizen Profile Screening Active
-                </span>
-                <span className="text-[10px] bg-white text-emerald-900 font-semibold px-2 py-0.5 rounded-full border border-emerald-200">
-                  {citizen.state || 'Karnataka'} • Age {citizen.age || 24} • {citizen.sex || 'Male'}
-                </span>
-              </div>
-              <p className="text-xs sm:text-sm font-semibold text-slate-800 mt-0.5">
-                Screening for <strong>{citizen.full_name || 'K P BINDUPRAKASHA'}</strong>. Our AI has evaluated your demographic qualifications against all 47 schemes.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 shrink-0">
-            <button
-              type="button"
-              onClick={() => {
-                setAiMode(true);
-                setShowSavedOnly(false);
-                setSelectedCategory('All');
-                setSelectedBeneficiary('All');
-              }}
-              className="px-4 py-2 rounded-xl text-xs font-bold text-white bg-emerald-700 hover:bg-emerald-800 transition-colors shadow-xs"
-            >
-              Filter Matched Schemes ({aiRecommendedCount || 8})
-            </button>
-            <Link
-              to="/dashboard"
-              className="px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-700 bg-white hover:bg-slate-100 border border-slate-200 transition-colors"
-            >
-              My Dashboard
-            </Link>
-          </div>
-        </div>
-      )}
-
       {/* Main Filter & Control Panel */}
       <div className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-5">
         
