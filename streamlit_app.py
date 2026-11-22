@@ -1039,7 +1039,7 @@ with nav_col_tabs:
 
 with nav_col_right:
     if st.session_state.get("is_authenticated", False):
-        c_lang, c_gh, c_dash, c_logout = st.columns([3.8, 1.8, 1.3, 1.1], vertical_alignment="center")
+        c_lang, c_dash, c_logout = st.columns([5.2, 1.5, 1.3], vertical_alignment="center")
         with c_lang:
             selected_lang = st.selectbox(
                 "Language",
@@ -1048,8 +1048,6 @@ with nav_col_right:
                 key="top_navbar_language",
                 label_visibility="collapsed"
             )
-        with c_gh:
-            st.link_button("GitHub", "https://github.com/kpbinduprakasha-cpu/CivicGuide-AI")
         with c_dash:
             if st.button("▦ K", key="top_navbar_dash_btn", help="Citizen Dashboard: K P BINDUPRAKASHA", use_container_width=True):
                 st.session_state["current_page"] = "dashboard"
@@ -1062,7 +1060,7 @@ with nav_col_right:
                 st.session_state["current_page"] = "home"
                 st.rerun()
     else:
-        c_lang, c_gh, c_login = st.columns([4.2, 2.0, 2.0], vertical_alignment="center")
+        c_lang, c_login = st.columns([5.8, 2.2], vertical_alignment="center")
         with c_lang:
             selected_lang = st.selectbox(
                 "Language",
@@ -1071,8 +1069,6 @@ with nav_col_right:
                 key="top_navbar_language",
                 label_visibility="collapsed"
             )
-        with c_gh:
-            st.link_button("GitHub", "https://github.com/kpbinduprakasha-cpu/CivicGuide-AI")
         with c_login:
             if st.button("🔑 Sign In", key="top_navbar_signin_btn", use_container_width=True):
                 st.session_state["guest_mode"] = False
@@ -1347,36 +1343,37 @@ if active_nav_key == "schemes":
                 }
             )
         else:
-            # Cards View (Strict 3 columns matching Image 2)
-            cols = st.columns(3)
-            for idx, scheme in enumerate(filtered):
-                col = cols[idx % 3]
-                with col:
-                    is_central = "central" in (scheme.get("government_level") or "").lower()
-                    badge_html = '<span class="badge-central">🏛️ CENTRAL GOVERNMENT</span>' if is_central else f'<span class="badge-state">📍 STATE GOVERNMENT • {scheme.get("state")}</span>'
-                    
-                    st.markdown(f"""
-                    <div class="scheme-card">
-                        <div>
-                            <div>{badge_html}</div>
-                            <h4 style="margin: 0.5rem 0 0.25rem 0; font-weight: 800; font-size: 1.1rem; color: #0f172a;">{scheme.get('name')}</h4>
-                            <span class="badge-sector">{scheme.get('category')}</span>
-                            <p style="font-size: 0.85rem; color: #475569; margin: 0.5rem 0; line-height: 1.4;">{scheme.get('description')[:140]}...</p>
-                            <div class="benefit-box">
-                                💰 <strong>Benefit:</strong> {scheme.get('benefits')}
-                            </div>
-                            <div style="font-size: 0.8rem; color: #334155; margin-top: 0.4rem;">
-                                <strong>Eligibility:</strong> {scheme.get('eligibility')[:110]}...
+            # Cards View (Strict row-by-row 3 columns to prevent staggered top-bottom misalignment)
+            for r_start in range(0, len(filtered), 3):
+                row_schemes = filtered[r_start : r_start + 3]
+                row_cols = st.columns(3)
+                for c_idx, scheme in enumerate(row_schemes):
+                    with row_cols[c_idx]:
+                        is_central = "central" in (scheme.get("government_level") or "").lower()
+                        badge_html = '<span class="badge-central">🏛️ CENTRAL GOVERNMENT</span>' if is_central else f'<span class="badge-state">📍 STATE GOVERNMENT • {scheme.get("state")}</span>'
+                        
+                        st.markdown(f"""
+                        <div class="scheme-card" style="height: 380px; min-height: 380px; max-height: 380px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; margin-bottom: 0.5rem; box-sizing: border-box;">
+                            <div>
+                                <div style="height: 24px; margin-bottom: 0.25rem;">{badge_html}</div>
+                                <h4 style="margin: 0.35rem 0 0.2rem 0; font-weight: 800; font-size: 1.05rem; color: #0f172a; height: 2.6rem; min-height: 2.6rem; max-height: 2.6rem; overflow: hidden; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">{scheme.get('name')}</h4>
+                                <div style="height: 24px; margin-bottom: 0.35rem;"><span class="badge-sector">{scheme.get('category')}</span></div>
+                                <p style="font-size: 0.82rem; color: #475569; margin: 0 0 0.4rem 0; line-height: 1.4; height: 3.5rem; min-height: 3.5rem; max-height: 3.5rem; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">{scheme.get('description')}</p>
+                                <div class="benefit-box" style="height: 4.2rem; min-height: 4.2rem; max-height: 4.2rem; overflow: hidden; margin: 0.35rem 0; font-size: 0.8rem; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">
+                                    💰 <strong>Benefit:</strong> {scheme.get('benefits')}
+                                </div>
+                                <div style="font-size: 0.78rem; color: #334155; margin-top: 0.25rem; height: 2.4rem; min-height: 2.4rem; max-height: 2.4rem; overflow: hidden; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
+                                    <strong>Eligibility:</strong> {scheme.get('eligibility')}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    """, unsafe_allow_html=True)
-                    
-                    with st.expander(f"📋 Document Checklist & Apply for {scheme.get('name')}"):
-                        st.markdown(f"**Mandatory Documents:** {scheme.get('required_documents')}")
-                        st.markdown(f"**How to Apply:** {scheme.get('application_process')}")
-                        if scheme.get('official_url'):
-                            st.link_button("Visit Official Application Portal ↗", scheme.get('official_url'))
+                        """, unsafe_allow_html=True)
+                        
+                        with st.expander(f"📋 Document Checklist & Apply for {scheme.get('name')}"):
+                            st.markdown(f"**Mandatory Documents:** {scheme.get('required_documents')}")
+                            st.markdown(f"**How to Apply:** {scheme.get('application_process')}")
+                            if scheme.get('official_url'):
+                                st.link_button("Visit Official Application Portal ↗", scheme.get('official_url'), use_container_width=True)
 
 # ---------------------------------------------------------------------------
 # VIEW: 2. HOME & OVERVIEW (Matches Images 5, 6, 7, 8, 9 Exactly)
@@ -1422,83 +1419,77 @@ elif active_nav_key == "home":
     </div>
     """, unsafe_allow_html=True)
 
-    # 4 Stat Counters (Matches Image 5)
+    # 4 Stat Counters (Matches Image 5 - Uniform Height)
     m1, m2, m3, m4 = st.columns(4)
     with m1:
         st.markdown(f"""
-        <div class="filter-card" style="text-align: center; border-radius: 1.25rem;">
-            <div style="font-size: 2.2rem; font-weight: 900; color: #0f172a;">{_tr('stat1Num')}</div>
-            <div style="font-size: 0.85rem; font-weight: 700; color: #64748b;">{_tr('stat1Label')}</div>
+        <div class="filter-card" style="text-align: center; border-radius: 1.25rem; height: 110px; min-height: 110px; max-height: 110px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-sizing: border-box; margin-bottom: 1rem;">
+            <div style="font-size: 2.2rem; font-weight: 900; color: #0f172a; line-height: 1;">{_tr('stat1Num')}</div>
+            <div style="font-size: 0.82rem; font-weight: 700; color: #64748b; margin-top: 0.35rem;">{_tr('stat1Label')}</div>
         </div>
         """, unsafe_allow_html=True)
     with m2:
         st.markdown(f"""
-        <div class="filter-card" style="text-align: center; border-radius: 1.25rem;">
-            <div style="font-size: 2.2rem; font-weight: 900; color: #047857;">{_tr('stat2Num')}</div>
-            <div style="font-size: 0.85rem; font-weight: 700; color: #64748b;">{_tr('stat2Label')}</div>
+        <div class="filter-card" style="text-align: center; border-radius: 1.25rem; height: 110px; min-height: 110px; max-height: 110px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-sizing: border-box; margin-bottom: 1rem;">
+            <div style="font-size: 2.2rem; font-weight: 900; color: #047857; line-height: 1;">{_tr('stat2Num')}</div>
+            <div style="font-size: 0.82rem; font-weight: 700; color: #64748b; margin-top: 0.35rem;">{_tr('stat2Label')}</div>
         </div>
         """, unsafe_allow_html=True)
     with m3:
         st.markdown(f"""
-        <div class="filter-card" style="text-align: center; border-radius: 1.25rem;">
-            <div style="font-size: 2.2rem; font-weight: 900; color: #d97706;">{_tr('stat3Num')}</div>
-            <div style="font-size: 0.85rem; font-weight: 700; color: #64748b;">{_tr('stat3Label')}</div>
+        <div class="filter-card" style="text-align: center; border-radius: 1.25rem; height: 110px; min-height: 110px; max-height: 110px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-sizing: border-box; margin-bottom: 1rem;">
+            <div style="font-size: 2.2rem; font-weight: 900; color: #d97706; line-height: 1;">{_tr('stat3Num')}</div>
+            <div style="font-size: 0.82rem; font-weight: 700; color: #64748b; margin-top: 0.35rem;">{_tr('stat3Label')}</div>
         </div>
         """, unsafe_allow_html=True)
     with m4:
         st.markdown(f"""
-        <div class="filter-card" style="text-align: center; border-radius: 1.25rem;">
-            <div style="font-size: 2.2rem; font-weight: 900; color: #0284c7;">{_tr('stat4Num')}</div>
-            <div style="font-size: 0.85rem; font-weight: 700; color: #64748b;">{_tr('stat4Label')}</div>
+        <div class="filter-card" style="text-align: center; border-radius: 1.25rem; height: 110px; min-height: 110px; max-height: 110px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-sizing: border-box; margin-bottom: 1rem;">
+            <div style="font-size: 2.2rem; font-weight: 900; color: #0284c7; line-height: 1;">{_tr('stat4Num')}</div>
+            <div style="font-size: 0.82rem; font-weight: 700; color: #64748b; margin-top: 0.35rem;">{_tr('stat4Label')}</div>
         </div>
         """, unsafe_allow_html=True)
 
-    # 3. FEATURE LAUNCH CARDS (Matches Image 5)
+    # 3. FEATURE LAUNCH CARDS (Matches Image 5 Exactly - Uniform height & level buttons)
     f_col1, f_col2, f_col3 = st.columns(3)
     with f_col1:
         st.markdown(f"""
-        <div class="filter-card" style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
-            <div>
-                <div style="width: 40px; height: 40px; border-radius: 0.75rem; background-color: #ecfdf5; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 0.75rem;">
-                    🤖
-                </div>
-                <h3 style="font-size: 1.15rem; font-weight: 900; color: #0f172a; margin: 0 0 0.5rem 0;">{_tr('feature1Title')}</h3>
-                <p style="font-size: 0.85rem; color: #475569; line-height: 1.5; margin: 0 0 1rem 0;">
-                    {_tr('feature1Desc')}
-                </p>
+        <div class="filter-card" style="height: 215px; min-height: 215px; max-height: 215px; display: flex; flex-direction: column; justify-content: flex-start; margin-bottom: 0.75rem; box-sizing: border-box; overflow: hidden;">
+            <div style="width: 40px; height: 40px; min-height: 40px; border-radius: 0.75rem; background-color: #ecfdf5; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 0.65rem;">
+                🤖
             </div>
+            <h3 style="font-size: 1.15rem; font-weight: 900; color: #0f172a; margin: 0 0 0.4rem 0; height: 1.8rem; min-height: 1.8rem; max-height: 1.8rem; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{_tr('feature1Title')}</h3>
+            <p style="font-size: 0.85rem; color: #475569; line-height: 1.5; margin: 0; height: 4.8rem; min-height: 4.8rem; max-height: 4.8rem; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical;">
+                {_tr('feature1Desc')}
+            </p>
         </div>
         """, unsafe_allow_html=True)
         if st.button(_tr('feature1Btn'), key="btn_f1", use_container_width=True):
             navigate_to("chatbot")
     with f_col2:
         st.markdown(f"""
-        <div class="filter-card" style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
-            <div>
-                <div style="width: 40px; height: 40px; border-radius: 0.75rem; background-color: #fef3c7; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 0.75rem;">
-                    📋
-                </div>
-                <h3 style="font-size: 1.15rem; font-weight: 900; color: #0f172a; margin: 0 0 0.5rem 0;">{_tr('feature2Title')}</h3>
-                <p style="font-size: 0.85rem; color: #475569; line-height: 1.5; margin: 0 0 1rem 0;">
-                    {_tr('feature2Desc')}
-                </p>
+        <div class="filter-card" style="height: 215px; min-height: 215px; max-height: 215px; display: flex; flex-direction: column; justify-content: flex-start; margin-bottom: 0.75rem; box-sizing: border-box; overflow: hidden;">
+            <div style="width: 40px; height: 40px; min-height: 40px; border-radius: 0.75rem; background-color: #fef3c7; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 0.65rem;">
+                📋
             </div>
+            <h3 style="font-size: 1.15rem; font-weight: 900; color: #0f172a; margin: 0 0 0.4rem 0; height: 1.8rem; min-height: 1.8rem; max-height: 1.8rem; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{_tr('feature2Title')}</h3>
+            <p style="font-size: 0.85rem; color: #475569; line-height: 1.5; margin: 0; height: 4.8rem; min-height: 4.8rem; max-height: 4.8rem; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical;">
+                {_tr('feature2Desc')}
+            </p>
         </div>
         """, unsafe_allow_html=True)
         if st.button(_tr('feature2Btn'), key="btn_f2", use_container_width=True):
             navigate_to("eligibility")
     with f_col3:
         st.markdown(f"""
-        <div class="filter-card" style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
-            <div>
-                <div style="width: 40px; height: 40px; border-radius: 0.75rem; background-color: #eff6ff; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 0.75rem;">
-                    📍
-                </div>
-                <h3 style="font-size: 1.15rem; font-weight: 900; color: #0f172a; margin: 0 0 0.5rem 0;">{_tr('feature3Title')}</h3>
-                <p style="font-size: 0.85rem; color: #475569; line-height: 1.5; margin: 0 0 1rem 0;">
-                    {_tr('feature3Desc')}
-                </p>
+        <div class="filter-card" style="height: 215px; min-height: 215px; max-height: 215px; display: flex; flex-direction: column; justify-content: flex-start; margin-bottom: 0.75rem; box-sizing: border-box; overflow: hidden;">
+            <div style="width: 40px; height: 40px; min-height: 40px; border-radius: 0.75rem; background-color: #eff6ff; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 0.65rem;">
+                📍
             </div>
+            <h3 style="font-size: 1.15rem; font-weight: 900; color: #0f172a; margin: 0 0 0.4rem 0; height: 1.8rem; min-height: 1.8rem; max-height: 1.8rem; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{_tr('feature3Title')}</h3>
+            <p style="font-size: 0.85rem; color: #475569; line-height: 1.5; margin: 0; height: 4.8rem; min-height: 4.8rem; max-height: 4.8rem; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical;">
+                {_tr('feature3Desc')}
+            </p>
         </div>
         """, unsafe_allow_html=True)
         if st.button(_tr('feature3Btn'), key="btn_f3", use_container_width=True):
@@ -1551,20 +1542,20 @@ elif active_nav_key == "home":
     for idx, p in enumerate(pop_schemes):
         with p_cols[idx]:
             st.markdown(f"""
-            <div class="scheme-card" style="height: 100%;">
+            <div class="scheme-card" style="height: 380px; min-height: 380px; max-height: 380px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; margin-bottom: 0.5rem; box-sizing: border-box;">
                 <div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem; height: 24px;">
                         <span class="badge-central">{_tr('centralGovBadge')}</span>
                         <span style="font-size: 0.7rem; font-weight: 800; color: #047857; background-color: #ecfdf5; padding: 0.1rem 0.4rem; border-radius: 9999px;">{_tr('verifiedBadge')}</span>
                     </div>
-                    <h4 style="font-size: 1rem; font-weight: 900; color: #0f172a; margin: 0.35rem 0;">{p['name']}</h4>
-                    <p style="font-size: 0.8rem; color: #475569; line-height: 1.4; height: 3.8rem; overflow: hidden; margin-bottom: 0.5rem;">{p['desc']}</p>
-                    <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.6rem; padding: 0.5rem; margin-bottom: 0.75rem;">
-                        <span style="font-size: 0.7rem; font-weight: 800; color: #065f46; display: block;">{_tr('keyBenefitLabel')}</span>
+                    <h4 style="font-size: 0.98rem; font-weight: 900; color: #0f172a; margin: 0.25rem 0; height: 2.6rem; min-height: 2.6rem; max-height: 2.6rem; overflow: hidden; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">{p['name']}</h4>
+                    <p style="font-size: 0.8rem; color: #475569; line-height: 1.4; height: 3.8rem; min-height: 3.8rem; max-height: 3.8rem; overflow: hidden; margin-bottom: 0.4rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">{p['desc']}</p>
+                    <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.6rem; padding: 0.5rem; height: 4.8rem; min-height: 4.8rem; max-height: 4.8rem; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">
+                        <span style="font-size: 0.7rem; font-weight: 800; color: #065f46; display: block; margin-bottom: 0.15rem;">{_tr('keyBenefitLabel')}</span>
                         <span style="font-size: 0.75rem; color: #334155; line-height: 1.3;">{p['benefit'][:110]}...</span>
                     </div>
                 </div>
-                <div style="border-top: 1px solid #e2e8f0; padding-top: 0.65rem;">
+                <div style="border-top: 1px solid #e2e8f0; padding-top: 0.65rem; margin-top: auto;">
                     <a href="{p['url']}" target="_blank" style="background-color: #047857; color: white; padding: 0.45rem 0.85rem; border-radius: 0.6rem; font-size: 0.8rem; font-weight: 800; text-decoration: none; display: block; text-align: center;">
                         {_tr('visitOfficialWebsite')}
                     </a>
@@ -1574,7 +1565,7 @@ elif active_nav_key == "home":
 
     st.markdown("<div style='height: 2rem;'></div>", unsafe_allow_html=True)
 
-    # 5. HOW CIVICGUIDE AI WORKS (Matches Image 6 / 4-Step Process)
+    # 5. HOW CIVICGUIDE AI WORKS (Matches Image 6 / 4-Step Process - Uniform Height & Aligned Buttons)
     st.markdown(f"""
     <div style="text-align: center; margin-bottom: 1.5rem;">
         <span style="font-size: 0.75rem; font-weight: 800; color: #047857; text-transform: uppercase; letter-spacing: 0.05em;">{_tr('howItWorksTag')}</span>
@@ -1586,44 +1577,44 @@ elif active_nav_key == "home":
     w1, w2, w3, w4 = st.columns(4)
     with w1:
         st.markdown(f"""
-        <div class="filter-card" style="height: 100%; position: relative;">
+        <div class="filter-card" style="height: 195px; min-height: 195px; max-height: 195px; position: relative; display: flex; flex-direction: column; justify-content: flex-start; margin-bottom: 0.75rem; box-sizing: border-box; overflow: hidden;">
             <span style="position: absolute; top: 1rem; right: 1.25rem; font-size: 1.5rem; font-weight: 900; color: #d1fae5;">01</span>
-            <div style="width: 34px; height: 34px; border-radius: 0.5rem; background-color: #ecfdf5; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; margin-bottom: 0.5rem;">🤖</div>
-            <h4 style="font-size: 0.95rem; font-weight: 900; color: #0f172a; margin: 0 0 0.35rem 0;">{_tr('howStep1Title')}</h4>
-            <p style="font-size: 0.8rem; color: #475569; line-height: 1.4; margin: 0;">{_tr('howStep1Desc')}</p>
+            <div style="width: 34px; height: 34px; min-height: 34px; border-radius: 0.5rem; background-color: #ecfdf5; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; margin-bottom: 0.5rem;">🤖</div>
+            <h4 style="font-size: 0.95rem; font-weight: 900; color: #0f172a; margin: 0 0 0.35rem 0; height: 2.2rem; min-height: 2.2rem; max-height: 2.2rem; overflow: hidden; line-height: 1.3;">{_tr('howStep1Title')}</h4>
+            <p style="font-size: 0.8rem; color: #475569; line-height: 1.4; margin: 0; height: 4.5rem; min-height: 4.5rem; max-height: 4.5rem; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">{_tr('howStep1Desc')}</p>
         </div>
         """, unsafe_allow_html=True)
         if st.button(_tr('howStep1Btn'), key="btn_w1", use_container_width=True):
             navigate_to("chatbot")
     with w2:
         st.markdown(f"""
-        <div class="filter-card" style="height: 100%; position: relative;">
+        <div class="filter-card" style="height: 195px; min-height: 195px; max-height: 195px; position: relative; display: flex; flex-direction: column; justify-content: flex-start; margin-bottom: 0.75rem; box-sizing: border-box; overflow: hidden;">
             <span style="position: absolute; top: 1rem; right: 1.25rem; font-size: 1.5rem; font-weight: 900; color: #fef3c7;">02</span>
-            <div style="width: 34px; height: 34px; border-radius: 0.5rem; background-color: #fef3c7; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; margin-bottom: 0.5rem;">📋</div>
-            <h4 style="font-size: 0.95rem; font-weight: 900; color: #0f172a; margin: 0 0 0.35rem 0;">{_tr('howStep2Title')}</h4>
-            <p style="font-size: 0.8rem; color: #475569; line-height: 1.4; margin: 0;">{_tr('howStep2Desc')}</p>
+            <div style="width: 34px; height: 34px; min-height: 34px; border-radius: 0.5rem; background-color: #fef3c7; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; margin-bottom: 0.5rem;">📋</div>
+            <h4 style="font-size: 0.95rem; font-weight: 900; color: #0f172a; margin: 0 0 0.35rem 0; height: 2.2rem; min-height: 2.2rem; max-height: 2.2rem; overflow: hidden; line-height: 1.3;">{_tr('howStep2Title')}</h4>
+            <p style="font-size: 0.8rem; color: #475569; line-height: 1.4; margin: 0; height: 4.5rem; min-height: 4.5rem; max-height: 4.5rem; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">{_tr('howStep2Desc')}</p>
         </div>
         """, unsafe_allow_html=True)
         if st.button(_tr('howStep2Btn'), key="btn_w2", use_container_width=True):
             navigate_to("eligibility")
     with w3:
         st.markdown(f"""
-        <div class="filter-card" style="height: 100%; position: relative;">
+        <div class="filter-card" style="height: 195px; min-height: 195px; max-height: 195px; position: relative; display: flex; flex-direction: column; justify-content: flex-start; margin-bottom: 0.75rem; box-sizing: border-box; overflow: hidden;">
             <span style="position: absolute; top: 1rem; right: 1.25rem; font-size: 1.5rem; font-weight: 900; color: #dbeafe;">03</span>
-            <div style="width: 34px; height: 34px; border-radius: 0.5rem; background-color: #eff6ff; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; margin-bottom: 0.5rem;">🏛️</div>
-            <h4 style="font-size: 0.95rem; font-weight: 900; color: #0f172a; margin: 0 0 0.35rem 0;">{_tr('howStep3Title')}</h4>
-            <p style="font-size: 0.8rem; color: #475569; line-height: 1.4; margin: 0;">{_tr('howStep3Desc')}</p>
+            <div style="width: 34px; height: 34px; min-height: 34px; border-radius: 0.5rem; background-color: #eff6ff; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; margin-bottom: 0.5rem;">🏛️</div>
+            <h4 style="font-size: 0.95rem; font-weight: 900; color: #0f172a; margin: 0 0 0.35rem 0; height: 2.2rem; min-height: 2.2rem; max-height: 2.2rem; overflow: hidden; line-height: 1.3;">{_tr('howStep3Title')}</h4>
+            <p style="font-size: 0.8rem; color: #475569; line-height: 1.4; margin: 0; height: 4.5rem; min-height: 4.5rem; max-height: 4.5rem; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">{_tr('howStep3Desc')}</p>
         </div>
         """, unsafe_allow_html=True)
         if st.button(_tr('howStep3Btn'), key="btn_w3", use_container_width=True):
             navigate_to("schemes")
     with w4:
         st.markdown(f"""
-        <div class="filter-card" style="height: 100%; position: relative;">
+        <div class="filter-card" style="height: 195px; min-height: 195px; max-height: 195px; position: relative; display: flex; flex-direction: column; justify-content: flex-start; margin-bottom: 0.75rem; box-sizing: border-box; overflow: hidden;">
             <span style="position: absolute; top: 1rem; right: 1.25rem; font-size: 1.5rem; font-weight: 900; color: #d1fae5;">04</span>
-            <div style="width: 34px; height: 34px; border-radius: 0.5rem; background-color: #ecfdf5; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; margin-bottom: 0.5rem;">🌐</div>
-            <h4 style="font-size: 0.95rem; font-weight: 900; color: #0f172a; margin: 0 0 0.35rem 0;">{_tr('howStep4Title')}</h4>
-            <p style="font-size: 0.8rem; color: #475569; line-height: 1.4; margin: 0;">{_tr('howStep4Desc')}</p>
+            <div style="width: 34px; height: 34px; min-height: 34px; border-radius: 0.5rem; background-color: #ecfdf5; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; margin-bottom: 0.5rem;">🌐</div>
+            <h4 style="font-size: 0.95rem; font-weight: 900; color: #0f172a; margin: 0 0 0.35rem 0; height: 2.2rem; min-height: 2.2rem; max-height: 2.2rem; overflow: hidden; line-height: 1.3;">{_tr('howStep4Title')}</h4>
+            <p style="font-size: 0.8rem; color: #475569; line-height: 1.4; margin: 0; height: 4.5rem; min-height: 4.5rem; max-height: 4.5rem; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">{_tr('howStep4Desc')}</p>
         </div>
         """, unsafe_allow_html=True)
         if st.button(_tr('howStep4Btn'), key="btn_w4", use_container_width=True):
