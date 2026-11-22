@@ -6,6 +6,11 @@ matching official screenshots and React Tailwind components.
 
 import streamlit as st
 
+def render_html(html_str: str):
+    """Safely renders HTML in Streamlit without triggering Markdown 4-space code block formatting."""
+    clean_lines = [line.strip() for line in html_str.strip().splitlines() if line.strip()]
+    st.markdown("\n".join(clean_lines), unsafe_allow_html=True)
+
 DEFAULT_CITIZEN_USER = {
     "full_name": "K P BINDUPRAKASHA",
     "user_id": "@kpb1ndup625",
@@ -14,8 +19,7 @@ DEFAULT_CITIZEN_USER = {
     "age": 24,
     "sex": "Male",
     "state": "Karnataka",
-    "languages": ["English", "Kannada"],
-    "github": "@kpbinduprakasha-cpu"
+    "languages": ["English", "Kannada"]
 }
 
 DEFAULT_APPLICATIONS = [
@@ -134,7 +138,7 @@ def render_login_view(_tr, all_languages, lang_code_map):
         # Top Brand & Language Bar
         top_c1, top_c2 = st.columns([2.8, 1.2], vertical_alignment="center")
         with top_c1:
-            st.markdown(f"""
+            render_html(f"""
             <div class="brand-wrap">
                 <div class="brand-logo" style="width: 42px; height: 42px; border-radius: 0.85rem; font-size: 1.25rem;">🏛️</div>
                 <div>
@@ -142,7 +146,7 @@ def render_login_view(_tr, all_languages, lang_code_map):
                     <div class="brand-subtitle" style="font-size: 0.72rem;">{_tr('tagline')}</div>
                 </div>
             </div>
-            """, unsafe_allow_html=True)
+            """)
         with top_c2:
             selected_lang_name = st.session_state.get("top_navbar_language", "English (English)")
             st.selectbox(
@@ -159,7 +163,7 @@ def render_login_view(_tr, all_languages, lang_code_map):
         st.markdown("<div style='height: 1.25rem;'></div>", unsafe_allow_html=True)
 
         # Main White Card (Exact match to screenshot 1)
-        st.markdown(f"""
+        render_html(f"""
         <div style="background-color: #ffffff; border: 1px solid rgba(226, 232, 240, 0.9); border-radius: 2rem; padding: 2.25rem 2.25rem 1.75rem 2.25rem; box-shadow: 0 20px 25px -5px rgba(226, 232, 240, 0.7), 0 8px 10px -6px rgba(226, 232, 240, 0.4);">
             <div style="text-align: center; margin-bottom: 1.75rem;">
                 <div style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.28rem 0.95rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 800; background-color: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; margin-bottom: 0.75rem;">
@@ -170,18 +174,18 @@ def render_login_view(_tr, all_languages, lang_code_map):
                 </h1>
             </div>
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
         with st.container():
             # Field 1: USER ID
-            st.markdown("""
+            render_html("""
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: -0.85rem; margin-bottom: 0.35rem;">
                 <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #1e293b;">
                     USER ID <span style="color: #ef4444;">*</span>
                 </span>
                 <span style="font-size: 0.72rem; color: #94a3b8;">e.g. rahul123 or citizen</span>
             </div>
-            """, unsafe_allow_html=True)
+            """)
 
             user_id_val = st.text_input(
                 "USER ID",
@@ -191,14 +195,14 @@ def render_login_view(_tr, all_languages, lang_code_map):
             )
 
             # Field 2: PASSWORD
-            st.markdown("""
+            render_html("""
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.85rem; margin-bottom: 0.35rem;">
                 <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #1e293b;">
                     PASSWORD <span style="color: #ef4444;">*</span>
                 </span>
                 <span style="font-size: 0.72rem; font-weight: 700; color: #059669; cursor: pointer;">Forgot Password?</span>
             </div>
-            """, unsafe_allow_html=True)
+            """)
 
             pwd_val = st.text_input(
                 "PASSWORD",
@@ -223,14 +227,14 @@ def render_login_view(_tr, all_languages, lang_code_map):
                 st.rerun()
 
             # Divider
-            st.markdown("""
+            render_html("""
             <div style="position: relative; margin: 1.25rem 0; text-align: center;">
                 <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 0;">
                 <span style="position: absolute; top: -9px; left: 50%; transform: translateX(-50%); background-color: #ffffff; padding: 0 0.85rem; font-size: 0.72rem; font-weight: 800; color: #94a3b8; letter-spacing: 0.05em;">
                     OR
                 </span>
             </div>
-            """, unsafe_allow_html=True)
+            """)
 
             # Guest CTA Button
             if st.button("🧭 Browse Public Schemes as Guest", key="btn_guest_browse", use_container_width=True):
@@ -243,21 +247,21 @@ def render_login_view(_tr, all_languages, lang_code_map):
             st.markdown("<div style='height: 0.75rem;'></div>", unsafe_allow_html=True)
 
             # Create Account Link
-            st.markdown("""
+            render_html("""
             <div style="border-top: 1px solid #f1f5f9; padding-top: 1.25rem; text-align: center; font-size: 0.82rem; color: #64748b;">
                 Don't have an account yet?
             </div>
-            """, unsafe_allow_html=True)
+            """)
 
             if st.button("Create Free Account", key="btn_goto_register_link", use_container_width=True):
                 st.session_state["auth_page"] = "register"
                 st.rerun()
 
-        st.markdown("""
+        render_html("""
         <div style="text-align: center; margin-top: 1.75rem; font-size: 0.75rem; font-weight: 600; color: #94a3b8;">
             CivicGuide AI • Central & State Government Welfare Directory
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
 
 def render_register_view(_tr, all_languages, all_states, lang_code_map):
@@ -272,12 +276,12 @@ def render_register_view(_tr, all_languages, all_states, lang_code_map):
                 st.session_state["auth_page"] = "login"
                 st.rerun()
         with top_c2:
-            st.markdown(f"""
+            render_html(f"""
             <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
                 <div class="brand-logo" style="width: 34px; height: 34px; border-radius: 0.65rem; font-size: 1.05rem;">🏛️</div>
                 <span style="font-weight: 800; font-size: 1.15rem; color: #0f172a; tracking-tight">{_tr('appName')}</span>
             </div>
-            """, unsafe_allow_html=True)
+            """)
         with top_c3:
             selected_lang_name = st.session_state.get("top_navbar_language", "English (English)")
             st.selectbox(
@@ -294,7 +298,7 @@ def render_register_view(_tr, all_languages, all_states, lang_code_map):
         st.markdown("<div style='height: 1.25rem;'></div>", unsafe_allow_html=True)
 
         # Main White Card (Exact match to screenshot 2)
-        st.markdown("""
+        render_html("""
         <div style="background-color: #ffffff; border: 1px solid rgba(226, 232, 240, 0.9); border-radius: 2rem; padding: 2.25rem 2.5rem 1.75rem 2.5rem; box-shadow: 0 20px 25px -5px rgba(226, 232, 240, 0.7);">
             <div style="text-align: center; margin-bottom: 1.75rem;">
                 <div style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.28rem 0.95rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 800; background-color: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; margin-bottom: 0.65rem;">
@@ -308,17 +312,17 @@ def render_register_view(_tr, all_languages, all_states, lang_code_map):
                 </p>
             </div>
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
         with st.container():
             # Field 1: FULL NAME
-            st.markdown("""
+            render_html("""
             <div style="margin-top: -0.85rem; margin-bottom: 0.35rem;">
                 <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #1e293b;">
                     1. FULL NAME <span style="color: #ef4444;">*</span>
                 </span>
             </div>
-            """, unsafe_allow_html=True)
+            """)
 
             r_name = st.text_input(
                 "1. FULL NAME",
@@ -328,22 +332,22 @@ def render_register_view(_tr, all_languages, all_states, lang_code_map):
                 label_visibility="collapsed"
             )
 
-            st.markdown("""
+            render_html("""
             <p style="font-size: 0.72rem; color: #94a3b8; margin: 0.25rem 0 1rem 0;">
                 A unique User ID (e.g. @rahul123) will be auto-generated from your name.
             </p>
-            """, unsafe_allow_html=True)
+            """)
 
             # Grid Row 1: AGE & MOBILE NUMBER
             c_age, c_mob = st.columns(2)
             with c_age:
-                st.markdown("""
+                render_html("""
                 <div style="margin-bottom: 0.35rem;">
                     <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #1e293b;">
                         2. AGE <span style="color: #ef4444;">*</span>
                     </span>
                 </div>
-                """, unsafe_allow_html=True)
+                """)
                 r_age = st.number_input(
                     "2. AGE",
                     min_value=1,
@@ -354,13 +358,13 @@ def render_register_view(_tr, all_languages, all_states, lang_code_map):
                 )
 
             with c_mob:
-                st.markdown("""
+                render_html("""
                 <div style="margin-bottom: 0.35rem;">
                     <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #1e293b;">
                         3. MOBILE NUMBER <span style="color: #ef4444;">*</span>
                     </span>
                 </div>
-                """, unsafe_allow_html=True)
+                """)
                 r_mob = st.text_input(
                     "3. MOBILE NUMBER",
                     value=st.session_state.get("reg_mob_val", "9876543210"),
@@ -374,13 +378,13 @@ def render_register_view(_tr, all_languages, all_states, lang_code_map):
             # Grid Row 2: STATE / UT & SEX
             c_state, c_sex = st.columns(2)
             with c_state:
-                st.markdown("""
+                render_html("""
                 <div style="margin-bottom: 0.35rem;">
                     <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #1e293b;">
                         4. STATE / UT <span style="color: #ef4444;">*</span>
                     </span>
                 </div>
-                """, unsafe_allow_html=True)
+                """)
                 states_clean = [s for s in all_states if s != "All India"]
                 def_state_idx = states_clean.index("Karnataka") if "Karnataka" in states_clean else 0
                 r_state = st.selectbox(
@@ -392,13 +396,13 @@ def render_register_view(_tr, all_languages, all_states, lang_code_map):
                 )
 
             with c_sex:
-                st.markdown("""
+                render_html("""
                 <div style="margin-bottom: 0.35rem;">
                     <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #1e293b;">
                         5. SEX <span style="color: #ef4444;">*</span>
                     </span>
                 </div>
-                """, unsafe_allow_html=True)
+                """)
 
                 if "reg_sex_selected" not in st.session_state:
                     st.session_state["reg_sex_selected"] = "Male"
@@ -429,7 +433,7 @@ def render_register_view(_tr, all_languages, all_states, lang_code_map):
                 st.session_state["reg_selected_langs"] = ["English", "Kannada"]
             sel_langs = st.session_state["reg_selected_langs"]
 
-            st.markdown(f"""
+            render_html(f"""
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.45rem;">
                 <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #1e293b;">
                     6. LANGUAGES KNOWN (SELECT MULTIPLE) <span style="color: #ef4444;">*</span>
@@ -438,7 +442,7 @@ def render_register_view(_tr, all_languages, all_states, lang_code_map):
                     {len(sel_langs)} selected
                 </span>
             </div>
-            """, unsafe_allow_html=True)
+            """)
 
             def toggle_lang(lang_name):
                 if lang_name in st.session_state["reg_selected_langs"]:
@@ -490,13 +494,13 @@ def render_register_view(_tr, all_languages, all_states, lang_code_map):
                 st.markdown("</div>", unsafe_allow_html=True)
 
             # Field 7: EMAIL ADDRESS
-            st.markdown("""
+            render_html("""
             <div style="margin-bottom: 0.35rem;">
                 <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #1e293b;">
                     7. EMAIL ADDRESS (FOR OTP VERIFICATION) <span style="color: #ef4444;">*</span>
                 </span>
             </div>
-            """, unsafe_allow_html=True)
+            """)
 
             r_email = st.text_input(
                 "7. EMAIL ADDRESS",
@@ -506,22 +510,22 @@ def render_register_view(_tr, all_languages, all_states, lang_code_map):
                 label_visibility="collapsed"
             )
 
-            st.markdown("""
+            render_html("""
             <p style="font-size: 0.72rem; color: #94a3b8; margin: 0.25rem 0 1rem 0;">
                 A 6-digit OTP will be sent to this email upon submission.
             </p>
-            """, unsafe_allow_html=True)
+            """)
 
             # Grid Row 3: PASSWORD & CONFIRM PASSWORD
             c_p1, c_p2 = st.columns(2)
             with c_p1:
-                st.markdown("""
+                render_html("""
                 <div style="margin-bottom: 0.35rem;">
                     <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #1e293b;">
                         8. PASSWORD <span style="color: #ef4444;">*</span>
                     </span>
                 </div>
-                """, unsafe_allow_html=True)
+                """)
                 r_pwd = st.text_input(
                     "8. PASSWORD",
                     value=st.session_state.get("reg_p1_val", "password123"),
@@ -532,13 +536,13 @@ def render_register_view(_tr, all_languages, all_states, lang_code_map):
                 )
 
             with c_p2:
-                st.markdown("""
+                render_html("""
                 <div style="margin-bottom: 0.35rem;">
                     <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #1e293b;">
                         9. CONFIRM PASSWORD <span style="color: #ef4444;">*</span>
                     </span>
                 </div>
-                """, unsafe_allow_html=True)
+                """)
                 r_cpwd = st.text_input(
                     "9. CONFIRM PASSWORD",
                     value=st.session_state.get("reg_p2_val", "password123"),
@@ -560,8 +564,7 @@ def render_register_view(_tr, all_languages, all_states, lang_code_map):
                     "age": int(r_age),
                     "sex": cur_sex,
                     "state": r_state,
-                    "languages": sel_langs if sel_langs else ["English", "Kannada"],
-                    "github": "@kpbinduprakasha-cpu"
+                    "languages": sel_langs if sel_langs else ["English", "Kannada"]
                 }
                 st.session_state["is_authenticated"] = True
                 st.session_state["guest_mode"] = False
@@ -569,11 +572,11 @@ def render_register_view(_tr, all_languages, all_states, lang_code_map):
                 st.session_state["top_navbar_tab_key"] = "home"
                 st.rerun()
 
-            st.markdown("""
+            render_html("""
             <div style="border-top: 1px solid #f1f5f9; padding-top: 1.25rem; margin-top: 1rem; text-align: center; font-size: 0.82rem; color: #64748b;">
                 Already have an account?
             </div>
-            """, unsafe_allow_html=True)
+            """)
 
             if st.button("Sign In with User ID", key="btn_nav_to_login_link", use_container_width=True):
                 st.session_state["auth_page"] = "login"
@@ -590,7 +593,7 @@ def render_citizen_dashboard(_tr, all_languages, all_states, lang_code_map):
     # -----------------------------------------------------------------------
     top_c1, top_c2 = st.columns([3.5, 3.5], vertical_alignment="center")
     with top_c1:
-        st.markdown(f"""
+        render_html(f"""
         <div class="brand-wrap">
             <div class="brand-logo" style="width: 40px; height: 40px; border-radius: 0.85rem; font-size: 1.25rem;">🏛️</div>
             <div>
@@ -598,7 +601,7 @@ def render_citizen_dashboard(_tr, all_languages, all_states, lang_code_map):
                 <div class="brand-subtitle">{_tr('citizenDashboard')}</div>
             </div>
         </div>
-        """, unsafe_allow_html=True)
+        """)
     with top_c2:
         btn_home_col, lang_col, logout_col = st.columns([2.4, 2.6, 1.8], vertical_alignment="center")
         with btn_home_col:
@@ -637,7 +640,7 @@ def render_citizen_dashboard(_tr, all_languages, all_states, lang_code_map):
         # Profile Card
         hdr_c1, hdr_c2 = st.columns([3, 2], vertical_alignment="center")
         with hdr_c1:
-            st.markdown(f"""
+            render_html(f"""
             <div style="display: flex; align-items: center; gap: 0.5rem;">
                 <span style="font-size: 1.25rem;">👤</span>
                 <span style="font-size: 1.35rem; font-weight: 900; color: #0f172a;">{_tr('citizenProfile')}</span>
@@ -645,7 +648,7 @@ def render_citizen_dashboard(_tr, all_languages, all_states, lang_code_map):
             <p style="font-size: 0.8rem; color: #64748b; margin: 0.2rem 0 1rem 0;">
                 {_tr('citizenProfileSub')}
             </p>
-            """, unsafe_allow_html=True)
+            """)
         with hdr_c2:
             e_col1, e_col2 = st.columns(2)
             with e_col1:
@@ -723,8 +726,13 @@ def render_citizen_dashboard(_tr, all_languages, all_states, lang_code_map):
                         st.success("Password updated successfully!")
                         st.rerun()
 
-        # Details Grid (Matches Image 1)
-        st.markdown(f"""
+        # Details Grid (Matches Image 1) - Without GitHub button & rendered cleanly via render_html
+        lang_pills = " ".join([
+            f'<span style="background-color: #ffffff; border: 1px solid #cbd5e1; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; color: #047857; padding: 0.2rem 0.75rem; display: inline-block;">{l}</span>'
+            for l in user.get('languages', ['English', 'Kannada'])
+        ])
+
+        render_html(f"""
         <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 1.5rem; padding: 1.75rem; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
                 <div style="background-color: #f8fafc; border: 1px solid #f1f5f9; border-radius: 1rem; padding: 0.85rem 1.15rem;">
@@ -755,36 +763,22 @@ def render_citizen_dashboard(_tr, all_languages, all_states, lang_code_map):
                     <div style="font-size: 1.05rem; font-weight: 800; color: #0f172a;">📍 {user.get('state')}</div>
                 </div>
             </div>
-
             <div style="background-color: #f8fafc; border: 1px solid #f1f5f9; border-radius: 1rem; padding: 0.85rem 1.15rem; margin-top: 1rem;">
                 <div style="font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 0.35rem;">LANGUAGES KNOWN</div>
                 <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                    {' '.join([f'<span style="background-color: #ffffff; border: 1px solid #cbd5e1; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; color: #047857; padding: 0.2rem 0.75rem;">{l}</span>' for l in user.get('languages', ['English', 'Kannada'])])}
+                    {lang_pills}
                 </div>
-            </div>
-
-            <div style="margin-top: 1rem; padding: 0.85rem 1.15rem; background-color: #0f172a; border-radius: 1rem; display: flex; align-items: center; justify-content: space-between; color: white;">
-                <div style="display: flex; align-items: center; gap: 0.65rem;">
-                    <span style="font-size: 1.25rem;">🐙</span>
-                    <div>
-                        <div style="font-size: 0.65rem; font-weight: 700; color: #94a3b8; text-transform: uppercase;">DEVELOPER & CITIZEN GITHUB</div>
-                        <div style="font-size: 0.95rem; font-weight: 800; color: #ffffff;">{user.get('github')}</div>
-                    </div>
-                </div>
-                <a href="https://github.com/kpbinduprakasha-cpu/CivicGuide-AI" target="_blank" style="background-color: #ffffff; color: #0f172a !important; font-size: 0.75rem; font-weight: 800; text-decoration: none; padding: 0.4rem 0.85rem; border-radius: 0.75rem;">
-                    CivicGuide-AI Repo ↗
-                </a>
             </div>
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
     with p_right:
         # Direct Application Tools (Matches Image 1)
-        st.markdown(f"""
+        render_html(f"""
         <div style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 0.65rem;">
             {_tr('directTools')}
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
         if st.button("🏛️ Government Schemes\nBrowse verified national & state welfare", key="tool_btn_schemes", use_container_width=True):
             st.session_state["top_navbar_tab_key"] = "schemes"
@@ -819,7 +813,7 @@ def render_citizen_dashboard(_tr, all_languages, all_states, lang_code_map):
     # -----------------------------------------------------------------------
     tr_h1, tr_h2 = st.columns([4, 1.2], vertical_alignment="center")
     with tr_h1:
-        st.markdown(f"""
+        render_html(f"""
         <div style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.2rem 0.65rem; border-radius: 9999px; font-size: 0.72rem; font-weight: 800; background-color: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; margin-bottom: 0.35rem;">
             🕒 Central & State Government Applications Overview
         </div>
@@ -829,7 +823,7 @@ def render_citizen_dashboard(_tr, all_languages, all_states, lang_code_map):
         <p style="font-size: 0.8rem; color: #64748b; margin: 0;">
             {_tr('trackerSub')}
         </p>
-        """, unsafe_allow_html=True)
+        """)
     with tr_h2:
         if st.button(f"➕ {_tr('applySchemeBtn')}", key="dash_btn_apply_scheme", type="primary", use_container_width=True):
             st.session_state["top_navbar_tab_key"] = "schemes"
@@ -841,7 +835,7 @@ def render_citizen_dashboard(_tr, all_languages, all_states, lang_code_map):
     # 4 Metric Cards (Image 2)
     m1, m2, m3, m4 = st.columns(4)
     with m1:
-        st.markdown("""
+        render_html("""
         <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 1.25rem; padding: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.02); height: 100%;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
                 <span style="font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: #1d4ed8; letter-spacing: 0.05em;">TOTAL APPLIED</span>
@@ -857,10 +851,10 @@ def render_citizen_dashboard(_tr, all_languages, all_states, lang_code_map):
                 <span style="font-weight: 800; color: #1d4ed8; background-color: #eff6ff; padding: 0.15rem 0.5rem; border-radius: 0.35rem;">100% Active</span>
             </div>
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
     with m2:
-        st.markdown("""
+        render_html("""
         <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 1.25rem; padding: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.02); height: 100%;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
                 <span style="font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: #047857; letter-spacing: 0.05em;">TOTAL APPROVED</span>
@@ -876,10 +870,10 @@ def render_citizen_dashboard(_tr, all_languages, all_states, lang_code_map):
                 <span style="font-weight: 800; color: #047857; background-color: #ecfdf5; padding: 0.15rem 0.5rem; border-radius: 0.35rem;">Active</span>
             </div>
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
     with m3:
-        st.markdown("""
+        render_html("""
         <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 1.25rem; padding: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.02); height: 100%;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
                 <span style="font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: #b45309; letter-spacing: 0.05em;">IN VERIFICATION</span>
@@ -895,10 +889,10 @@ def render_citizen_dashboard(_tr, all_languages, all_states, lang_code_map):
                 <span style="font-weight: 800; color: #b45309; background-color: #fffbeb; padding: 0.15rem 0.5rem; border-radius: 0.35rem;">Pending Signoff</span>
             </div>
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
     with m4:
-        st.markdown("""
+        render_html("""
         <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 1.25rem; padding: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.02); height: 100%;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
                 <span style="font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: #7e22ce; letter-spacing: 0.05em;">ANNUAL SUPPORT</span>
@@ -913,12 +907,12 @@ def render_citizen_dashboard(_tr, all_languages, all_states, lang_code_map):
                 <span style="font-weight: 800; color: #7e22ce; background-color: #faf5ff; padding: 0.15rem 0.5rem; border-radius: 0.35rem;">Aadhaar Linked</span>
             </div>
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
     st.markdown("<div style='height: 1.5rem;'></div>", unsafe_allow_html=True)
 
     # Circle Graphs (Matches Image 2)
-    st.markdown(f"""
+    render_html(f"""
     <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 1.5rem; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
             <div>
@@ -991,7 +985,7 @@ def render_citizen_dashboard(_tr, all_languages, all_states, lang_code_map):
             </div>
         </div>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
     st.markdown("<div style='height: 2rem;'></div>", unsafe_allow_html=True)
 
@@ -1000,14 +994,14 @@ def render_citizen_dashboard(_tr, all_languages, all_states, lang_code_map):
     # -----------------------------------------------------------------------
     dos_h1, dos_h2 = st.columns([3.5, 2.5], vertical_alignment="center")
     with dos_h1:
-        st.markdown(f"""
+        render_html(f"""
         <h2 style="font-size: 1.45rem; font-weight: 900; color: #0f172a; margin: 0 0 0.2rem 0;">
             {_tr('dossierTitle')}
         </h2>
         <p style="font-size: 0.8rem; color: #64748b; margin: 0;">
             {_tr('dossierSub')}
         </p>
-        """, unsafe_allow_html=True)
+        """)
     with dos_h2:
         search_dossier = st.text_input(
             "Filter ledger",
@@ -1066,7 +1060,7 @@ def render_citizen_dashboard(_tr, all_languages, all_states, lang_code_map):
         approval_date = app.get("approval_date", "")
         portal_url = app.get("portal_url", "https://www.myscheme.gov.in")
 
-        st.markdown(f"""
+        render_html(f"""
         <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 1.25rem; padding: 1.2rem 1.6rem; margin-bottom: 0.85rem; box-shadow: 0 1px 2px rgba(0,0,0,0.02); display: flex; justify-content: space-between; align-items: center;">
             <div style="flex: 1;">
                 <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem; font-size: 0.72rem; color: #64748b; font-weight: 700;">
@@ -1099,4 +1093,4 @@ def render_citizen_dashboard(_tr, all_languages, all_states, lang_code_map):
                 </a>
             </div>
         </div>
-        """, unsafe_allow_html=True)
+        """)
