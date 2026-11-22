@@ -1,6 +1,12 @@
 @import "tailwindcss";
 @import "leaflet/dist/leaflet.css";
 
+/* Global large font scaling for all pages across the website */
+html {
+  font-size: 18px;
+  scroll-behavior: smooth;
+}
+
 /* Leaflet map layers z-index containment */
 .leaflet-pane {
   z-index: 10 !important;
@@ -17,6 +23,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: #f8fafc;
   color: #0f172a;
+  font-size: 1.05rem;
+  line-height: 1.6;
 }
 
 #root {
