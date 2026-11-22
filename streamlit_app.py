@@ -398,6 +398,141 @@ st.markdown("""
         color: #b91c1c !important;
         border-color: #fecaca !important;
     }
+
+    /* =========================================================================
+       PIXEL-PERFECT LOGIN & REGISTRATION STYLES (Matches User Screenshots Exactly)
+       ========================================================================= */
+    /* Icon adorned text inputs */
+    div[data-testid="stTextInput"]:has(input[aria-label="USER ID"]) div[data-baseweb="input"],
+    div[data-testid="stTextInput"]:has(input[aria-label="PASSWORD"]) div[data-baseweb="input"],
+    div[data-testid="stTextInput"]:has(input[aria-label="1. FULL NAME"]) div[data-baseweb="input"],
+    div[data-testid="stNumberInput"]:has(input[aria-label="2. AGE"]) div[data-baseweb="input"],
+    div[data-testid="stTextInput"]:has(input[aria-label="3. MOBILE NUMBER"]) div[data-baseweb="input"],
+    div[data-testid="stTextInput"]:has(input[aria-label="7. EMAIL ADDRESS"]) div[data-baseweb="input"],
+    div[data-testid="stTextInput"]:has(input[aria-label="8. PASSWORD"]) div[data-baseweb="input"],
+    div[data-testid="stTextInput"]:has(input[aria-label="9. CONFIRM PASSWORD"]) div[data-baseweb="input"] {
+        background-color: rgba(241, 245, 249, 0.6) !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 0.85rem !important;
+        height: 48px !important;
+        padding-left: 2.6rem !important;
+        position: relative !important;
+    }
+
+    div[data-testid="stTextInput"]:has(input[aria-label="USER ID"]) div[data-baseweb="input"]::before {
+        content: "👤"; position: absolute; left: 0.95rem; top: 50%; transform: translateY(-50%); font-size: 0.95rem; color: #059669; opacity: 0.9; pointer-events: none;
+    }
+    div[data-testid="stTextInput"]:has(input[aria-label="PASSWORD"]) div[data-baseweb="input"]::before {
+        content: "🔒"; position: absolute; left: 0.95rem; top: 50%; transform: translateY(-50%); font-size: 0.95rem; color: #059669; opacity: 0.9; pointer-events: none;
+    }
+    div[data-testid="stTextInput"]:has(input[aria-label="1. FULL NAME"]) div[data-baseweb="input"]::before {
+        content: "👤"; position: absolute; left: 0.95rem; top: 50%; transform: translateY(-50%); font-size: 0.95rem; color: #059669; opacity: 0.9; pointer-events: none;
+    }
+    div[data-testid="stNumberInput"]:has(input[aria-label="2. AGE"]) div[data-baseweb="input"]::before {
+        content: "📅"; position: absolute; left: 0.95rem; top: 50%; transform: translateY(-50%); font-size: 0.95rem; color: #059669; opacity: 0.9; pointer-events: none;
+    }
+    div[data-testid="stTextInput"]:has(input[aria-label="3. MOBILE NUMBER"]) div[data-baseweb="input"]::before {
+        content: "📞 +91"; position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%); font-size: 0.82rem; font-weight: 700; color: #059669; opacity: 0.9; pointer-events: none;
+    }
+    div[data-testid="stTextInput"]:has(input[aria-label="7. EMAIL ADDRESS"]) div[data-baseweb="input"]::before {
+        content: "✉️"; position: absolute; left: 0.95rem; top: 50%; transform: translateY(-50%); font-size: 0.95rem; color: #059669; opacity: 0.9; pointer-events: none;
+    }
+    div[data-testid="stTextInput"]:has(input[aria-label="8. PASSWORD"]) div[data-baseweb="input"]::before {
+        content: "🔒"; position: absolute; left: 0.95rem; top: 50%; transform: translateY(-50%); font-size: 0.95rem; color: #059669; opacity: 0.9; pointer-events: none;
+    }
+    div[data-testid="stTextInput"]:has(input[aria-label="9. CONFIRM PASSWORD"]) div[data-baseweb="input"]::before {
+        content: "🔒"; position: absolute; left: 0.95rem; top: 50%; transform: translateY(-50%); font-size: 0.95rem; color: #059669; opacity: 0.9; pointer-events: none;
+    }
+
+    /* Primary Emerald CTA Button */
+    button:has(p:contains("Login & Go to Home")),
+    button:has(p:contains("Create Account & Send OTP")) {
+        background-color: #059669 !important;
+        color: #ffffff !important;
+        border-radius: 0.85rem !important;
+        font-size: 0.95rem !important;
+        font-weight: 800 !important;
+        padding: 0.75rem 1rem !important;
+        box-shadow: 0 4px 6px -1px rgba(5, 150, 105, 0.25) !important;
+        border: none !important;
+        transition: all 0.2s ease !important;
+    }
+    button:has(p:contains("Login & Go to Home")):hover,
+    button:has(p:contains("Create Account & Send OTP")):hover {
+        background-color: #047857 !important;
+        transform: translateY(-1px);
+    }
+
+    /* Secondary Guest Button */
+    button:has(p:contains("Browse Public Schemes as Guest")) {
+        background-color: #f1f5f9 !important;
+        color: #1e293b !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 0.85rem !important;
+        font-size: 0.85rem !important;
+        font-weight: 700 !important;
+        padding: 0.65rem 1rem !important;
+        transition: all 0.2s ease !important;
+    }
+    button:has(p:contains("Browse Public Schemes as Guest")):hover {
+        background-color: #e2e8f0 !important;
+        color: #059669 !important;
+    }
+
+    /* Tertiary Link Buttons */
+    button:has(p:contains("Create Free Account")),
+    button:has(p:contains("Sign In with User ID")),
+    button:has(p:contains("Back to Sign In")) {
+        color: #059669 !important;
+        font-weight: 800 !important;
+        font-size: 0.85rem !important;
+        text-decoration: underline !important;
+        border: none !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        padding: 0.2rem 0 !important;
+    }
+    button:has(p:contains("Create Free Account")):hover,
+    button:has(p:contains("Sign In with User ID")):hover,
+    button:has(p:contains("Back to Sign In")):hover {
+        color: #047857 !important;
+        background: transparent !important;
+    }
+
+    /* Sex Pill Buttons */
+    div[data-testid="stColumn"]:has(button[key*="btn_sex_"]) button {
+        border-radius: 0.75rem !important;
+        font-weight: 600 !important;
+        font-size: 0.8rem !important;
+        padding: 0.5rem 0.25rem !important;
+    }
+    div[data-testid="stColumn"]:has(button[key="btn_sex_male"]) button {
+        background-color: #059669 !important;
+        color: #ffffff !important;
+        border: 1px solid #059669 !important;
+        font-weight: 700 !important;
+    }
+
+    /* Language Pill Buttons */
+    div[data-testid="stColumn"]:has(button[key*="btn_lang_"]) button {
+        border-radius: 9999px !important;
+        font-weight: 600 !important;
+        font-size: 0.75rem !important;
+        padding: 0.35rem 0.5rem !important;
+        margin-bottom: 0.25rem !important;
+        white-space: nowrap !important;
+    }
+    div[data-testid="stColumn"]:has(button[key*="btn_lang_"]) button:has(p:contains("✓")) {
+        background-color: #059669 !important;
+        color: #ffffff !important;
+        border: 1px solid #059669 !important;
+        font-weight: 700 !important;
+    }
+    div[data-testid="stColumn"]:has(button[key*="btn_lang_"]) button:not(:has(p:contains("✓"))) {
+        background-color: #ffffff !important;
+        color: #334155 !important;
+        border: 1px solid #e2e8f0 !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 

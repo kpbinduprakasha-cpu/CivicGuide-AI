@@ -117,208 +117,450 @@ DEFAULT_APPLICATIONS = [
     }
 ]
 
+REGISTER_LANGUAGES_LIST = [
+    'English', 'Hindi', 'Kannada', 'Telugu', 'Tamil', 
+    'Marathi', 'Bengali', 'Gujarati', 'Malayalam', 'Punjabi', 
+    'Odia', 'Assamese', 'Urdu', 'Sanskrit', 'Konkani', 
+    'Nepali', 'Maithili', 'Santali', 'Kashmiri', 'Sindhi', 
+    'Dogri', 'Manipuri', 'Bodo'
+]
+
+
 def render_login_view(_tr, all_languages, lang_code_map):
-    """Renders Citizen Sign In Page matching Image 5 & Login.jsx exactly."""
-    # Top brand bar
-    top_c1, top_c2 = st.columns([3, 1], vertical_alignment="center")
-    with top_c1:
-        st.markdown(f"""
-        <div class="brand-wrap">
-            <div class="brand-logo">🏛️</div>
-            <div>
-                <div class="brand-title">{_tr('appName')} <span class="brand-pill">{_tr('allIndiaPill')}</span></div>
-                <div class="brand-subtitle">{_tr('tagline')}</div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-    with top_c2:
-        selected_lang_name = st.session_state.get("top_navbar_language", "English (English)")
-        st.selectbox(
-            "Language",
-            all_languages,
-            index=all_languages.index(selected_lang_name) if selected_lang_name in all_languages else 0,
-            key="login_page_language",
-            label_visibility="collapsed"
-        )
-        # sync language
-        if st.session_state.get("login_page_language"):
-            st.session_state["top_navbar_language"] = st.session_state["login_page_language"]
-            st.session_state["current_lang_code"] = lang_code_map.get(st.session_state["login_page_language"], "en")
-
-    st.markdown("<div style='height: 1.5rem;'></div>", unsafe_allow_html=True)
-
-    # Centered Login Card
-    _, card_col, _ = st.columns([1, 1.4, 1])
-    with card_col:
-        st.markdown(f"""
-        <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 1.5rem; padding: 2.25rem 2.25rem 1.5rem 2.25rem; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05), 0 8px 10px -6px rgba(0,0,0,0.02);">
-            <div style="text-align: center; margin-bottom: 1.5rem;">
-                <div style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.25rem 0.85rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 800; background-color: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; margin-bottom: 0.75rem;">
-                    🛡️ {_tr('citizenSignIn')}
+    """Renders Citizen Sign In Page matching media_1795365221491_d814aff9.png exactly."""
+    _, center_col, _ = st.columns([1, 1.35, 1])
+    
+    with center_col:
+        # Top Brand & Language Bar
+        top_c1, top_c2 = st.columns([2.8, 1.2], vertical_alignment="center")
+        with top_c1:
+            st.markdown(f"""
+            <div class="brand-wrap">
+                <div class="brand-logo" style="width: 42px; height: 42px; border-radius: 0.85rem; font-size: 1.25rem;">🏛️</div>
+                <div>
+                    <div class="brand-title" style="font-size: 1.25rem; font-weight: 900;">{_tr('appName')} <span class="brand-pill" style="font-size: 0.65rem;">{_tr('allIndiaPill')}</span></div>
+                    <div class="brand-subtitle" style="font-size: 0.72rem;">{_tr('tagline')}</div>
                 </div>
-                <h1 style="font-size: 1.65rem; font-weight: 900; color: #0f172a; margin: 0 0 0.4rem 0; letter-spacing: -0.02em;">
-                    {_tr('loginTitle')}
+            </div>
+            """, unsafe_allow_html=True)
+        with top_c2:
+            selected_lang_name = st.session_state.get("top_navbar_language", "English (English)")
+            st.selectbox(
+                "Language",
+                all_languages,
+                index=all_languages.index(selected_lang_name) if selected_lang_name in all_languages else 0,
+                key="login_page_language",
+                label_visibility="collapsed"
+            )
+            if st.session_state.get("login_page_language"):
+                st.session_state["top_navbar_language"] = st.session_state["login_page_language"]
+                st.session_state["current_lang_code"] = lang_code_map.get(st.session_state["login_page_language"], "en")
+
+        st.markdown("<div style='height: 1.25rem;'></div>", unsafe_allow_html=True)
+
+        # Main White Card (Exact match to screenshot 1)
+        st.markdown(f"""
+        <div style="background-color: #ffffff; border: 1px solid rgba(226, 232, 240, 0.9); border-radius: 2rem; padding: 2.25rem 2.25rem 1.75rem 2.25rem; box-shadow: 0 20px 25px -5px rgba(226, 232, 240, 0.7), 0 8px 10px -6px rgba(226, 232, 240, 0.4);">
+            <div style="text-align: center; margin-bottom: 1.75rem;">
+                <div style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.28rem 0.95rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 800; background-color: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; margin-bottom: 0.75rem;">
+                    <span>🛡️</span> Citizen Sign In
+                </div>
+                <h1 style="font-size: 1.85rem; font-weight: 900; color: #0f172a; margin: 0; letter-spacing: -0.03em;">
+                    Welcome to CivicGuide AI
                 </h1>
-                <p style="font-size: 0.82rem; color: #64748b; margin: 0; line-height: 1.4;">
-                    {_tr('loginSub')}
-                </p>
             </div>
         </div>
         """, unsafe_allow_html=True)
 
         with st.container():
-            st.markdown("<div style='height: 0.5rem;'></div>", unsafe_allow_html=True)
+            # Field 1: USER ID
+            st.markdown("""
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: -0.85rem; margin-bottom: 0.35rem;">
+                <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #1e293b;">
+                    USER ID <span style="color: #ef4444;">*</span>
+                </span>
+                <span style="font-size: 0.72rem; color: #94a3b8;">e.g. rahul123 or citizen</span>
+            </div>
+            """, unsafe_allow_html=True)
+
             user_id_val = st.text_input(
-                f"{_tr('userIdLabel')} *",
-                value="@kpb1ndup625",
-                placeholder="e.g. @kpb1ndup625",
-                key="login_inp_user_id"
+                "USER ID",
+                value=st.session_state.get("login_uid_val", "@kpb1ndup625"),
+                key="login_uid_val",
+                label_visibility="collapsed"
             )
+
+            # Field 2: PASSWORD
+            st.markdown("""
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.85rem; margin-bottom: 0.35rem;">
+                <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #1e293b;">
+                    PASSWORD <span style="color: #ef4444;">*</span>
+                </span>
+                <span style="font-size: 0.72rem; font-weight: 700; color: #059669; cursor: pointer;">Forgot Password?</span>
+            </div>
+            """, unsafe_allow_html=True)
+
             pwd_val = st.text_input(
-                f"{_tr('passwordLabel')} *",
-                value="password123",
+                "PASSWORD",
+                value=st.session_state.get("login_pwd_val", "password123"),
                 type="password",
-                placeholder="Enter your password",
-                key="login_inp_password"
+                key="login_pwd_val",
+                label_visibility="collapsed"
             )
-            rem_me = st.checkbox(_tr('rememberMe'), value=True, key="login_chk_remember")
+
+            # Checkbox: Remember me
+            st.markdown("<div style='height: 0.35rem;'></div>", unsafe_allow_html=True)
+            rem_me = st.checkbox("Remember me on this browser", value=True, key="login_chk_remember")
 
             st.markdown("<div style='height: 0.35rem;'></div>", unsafe_allow_html=True)
 
-            if st.button(f"🔑 {_tr('loginBtn')}", key="btn_submit_login", use_container_width=True, type="primary"):
+            # Primary CTA Button
+            if st.button("→] Login & Go to Home →", key="btn_login_home", type="primary", use_container_width=True):
                 st.session_state["is_authenticated"] = True
                 st.session_state["guest_mode"] = False
                 st.session_state["current_page"] = "home"
                 st.session_state["top_navbar_tab_key"] = "home"
                 st.rerun()
 
+            # Divider
             st.markdown("""
             <div style="position: relative; margin: 1.25rem 0; text-align: center;">
-                <hr style="border-color: #e2e8f0; margin: 0;">
-                <span style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background-color: #ffffff; padding: 0 0.75rem; font-size: 0.72rem; font-weight: 800; color: #94a3b8; text-transform: uppercase;">
-                    or
+                <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 0;">
+                <span style="position: absolute; top: -9px; left: 50%; transform: translateX(-50%); background-color: #ffffff; padding: 0 0.85rem; font-size: 0.72rem; font-weight: 800; color: #94a3b8; letter-spacing: 0.05em;">
+                    OR
                 </span>
             </div>
             """, unsafe_allow_html=True)
 
-            if st.button(f"🧭 {_tr('guestBtn')}", key="btn_submit_guest", use_container_width=True):
+            # Guest CTA Button
+            if st.button("🧭 Browse Public Schemes as Guest", key="btn_guest_browse", use_container_width=True):
                 st.session_state["guest_mode"] = True
                 st.session_state["is_authenticated"] = False
                 st.session_state["current_page"] = "home"
                 st.session_state["top_navbar_tab_key"] = "home"
                 st.rerun()
 
-            st.markdown("<div style='height: 0.5rem;'></div>", unsafe_allow_html=True)
+            st.markdown("<div style='height: 0.75rem;'></div>", unsafe_allow_html=True)
 
-            st.markdown(f"""
-            <div style="border-top: 1px solid #f1f5f9; padding-top: 1rem; text-align: center; font-size: 0.8rem; color: #64748b;">
-                {_tr('noAccount')}
+            # Create Account Link
+            st.markdown("""
+            <div style="border-top: 1px solid #f1f5f9; padding-top: 1.25rem; text-align: center; font-size: 0.82rem; color: #64748b;">
+                Don't have an account yet?
             </div>
             """, unsafe_allow_html=True)
 
-            if st.button(f"✨ {_tr('createAccountLink')}", key="btn_nav_to_register", use_container_width=True):
+            if st.button("Create Free Account", key="btn_goto_register_link", use_container_width=True):
                 st.session_state["auth_page"] = "register"
                 st.rerun()
 
-        st.markdown(f"""
-        <div style="text-align: center; margin-top: 1.5rem; font-size: 0.72rem; font-weight: 700; color: #94a3b8;">
+        st.markdown("""
+        <div style="text-align: center; margin-top: 1.75rem; font-size: 0.75rem; font-weight: 600; color: #94a3b8;">
             CivicGuide AI • Central & State Government Welfare Directory
         </div>
         """, unsafe_allow_html=True)
 
 
 def render_register_view(_tr, all_languages, all_states, lang_code_map):
-    """Renders Citizen Account Registration Page matching Image 6 & Register.jsx exactly."""
-    top_c1, top_c2 = st.columns([3, 1], vertical_alignment="center")
-    with top_c1:
-        st.markdown(f"""
-        <div class="brand-wrap">
-            <div class="brand-logo">🏛️</div>
-            <div>
-                <div class="brand-title">{_tr('appName')} <span class="brand-pill">{_tr('allIndiaPill')}</span></div>
-                <div class="brand-subtitle">{_tr('tagline')}</div>
+    """Renders Citizen Account Registration Page matching media_1795365258023_54a6e44b.png exactly."""
+    _, center_col, _ = st.columns([1, 2.4, 1])
+
+    with center_col:
+        # Top Bar: Back link, Center Logo, Right Language
+        top_c1, top_c2, top_c3 = st.columns([1.6, 2.8, 1.4], vertical_alignment="center")
+        with top_c1:
+            if st.button("❮ Back to Sign In", key="btn_back_to_login", use_container_width=True):
+                st.session_state["auth_page"] = "login"
+                st.rerun()
+        with top_c2:
+            st.markdown(f"""
+            <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                <div class="brand-logo" style="width: 34px; height: 34px; border-radius: 0.65rem; font-size: 1.05rem;">🏛️</div>
+                <span style="font-weight: 800; font-size: 1.15rem; color: #0f172a; tracking-tight">{_tr('appName')}</span>
             </div>
-        </div>
-        """, unsafe_allow_html=True)
-    with top_c2:
-        selected_lang_name = st.session_state.get("top_navbar_language", "English (English)")
-        st.selectbox(
-            "Language",
-            all_languages,
-            index=all_languages.index(selected_lang_name) if selected_lang_name in all_languages else 0,
-            key="reg_page_language",
-            label_visibility="collapsed"
-        )
-        if st.session_state.get("reg_page_language"):
-            st.session_state["top_navbar_language"] = st.session_state["reg_page_language"]
-            st.session_state["current_lang_code"] = lang_code_map.get(st.session_state["reg_page_language"], "en")
+            """, unsafe_allow_html=True)
+        with top_c3:
+            selected_lang_name = st.session_state.get("top_navbar_language", "English (English)")
+            st.selectbox(
+                "Language",
+                all_languages,
+                index=all_languages.index(selected_lang_name) if selected_lang_name in all_languages else 0,
+                key="reg_page_language",
+                label_visibility="collapsed"
+            )
+            if st.session_state.get("reg_page_language"):
+                st.session_state["top_navbar_language"] = st.session_state["reg_page_language"]
+                st.session_state["current_lang_code"] = lang_code_map.get(st.session_state["reg_page_language"], "en")
 
-    st.markdown("<div style='height: 1.25rem;'></div>", unsafe_allow_html=True)
+        st.markdown("<div style='height: 1.25rem;'></div>", unsafe_allow_html=True)
 
-    _, card_col, _ = st.columns([1, 2.2, 1])
-    with card_col:
-        st.markdown(f"""
-        <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 1.5rem; padding: 2rem 2.25rem 1.25rem 2.25rem; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);">
-            <div style="text-align: center; margin-bottom: 1.25rem;">
-                <div style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.25rem 0.85rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 800; background-color: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; margin-bottom: 0.5rem;">
-                    ✨ New Citizen Enrollment
+        # Main White Card (Exact match to screenshot 2)
+        st.markdown("""
+        <div style="background-color: #ffffff; border: 1px solid rgba(226, 232, 240, 0.9); border-radius: 2rem; padding: 2.25rem 2.5rem 1.75rem 2.5rem; box-shadow: 0 20px 25px -5px rgba(226, 232, 240, 0.7);">
+            <div style="text-align: center; margin-bottom: 1.75rem;">
+                <div style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.28rem 0.95rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 800; background-color: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; margin-bottom: 0.65rem;">
+                    <span>👤⁺</span> One-Time Citizen Registration
                 </div>
-                <h1 style="font-size: 1.65rem; font-weight: 900; color: #0f172a; margin: 0 0 0.35rem 0;">
-                    {_tr('registerTitle')}
+                <h1 style="font-size: 1.95rem; font-weight: 900; color: #0f172a; margin: 0 0 0.35rem 0; letter-spacing: -0.025em;">
+                    Create Your Account
                 </h1>
-                <p style="font-size: 0.82rem; color: #64748b; margin: 0; line-height: 1.4;">
-                    {_tr('registerSub')}
+                <p style="font-size: 0.8rem; color: #64748b; margin: 0 auto; max-width: 480px; line-height: 1.45;">
+                    Fill in your citizen details. A unique User ID will be generated and a 6-digit OTP will be sent to your email.
                 </p>
             </div>
         </div>
         """, unsafe_allow_html=True)
 
         with st.container():
-            st.markdown("<div style='height: 0.5rem;'></div>", unsafe_allow_html=True)
-            r_name = st.text_input("1. Full Legal Name *", value="K P BINDUPRAKASHA", key="reg_name_inp")
-            
-            c_age, c_mob = st.columns(2)
-            with c_age:
-                r_age = st.number_input("2. Age (Years) *", min_value=1, max_value=120, value=24, key="reg_age_inp")
-            with c_mob:
-                r_mob = st.text_input("3. Mobile Number (10 Digits) *", value="9740397354", key="reg_mob_inp")
+            # Field 1: FULL NAME
+            st.markdown("""
+            <div style="margin-top: -0.85rem; margin-bottom: 0.35rem;">
+                <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #1e293b;">
+                    1. FULL NAME <span style="color: #ef4444;">*</span>
+                </span>
+            </div>
+            """, unsafe_allow_html=True)
 
-            c_state, c_sex = st.columns(2)
-            with c_state:
-                states_clean = [s for s in all_states if s != "All India"]
-                def_state_idx = states_clean.index("Karnataka") if "Karnataka" in states_clean else 0
-                r_state = st.selectbox("4. State / Union Territory *", states_clean, index=def_state_idx, key="reg_state_inp")
-            with c_sex:
-                r_sex = st.selectbox("5. Sex / Gender *", ["Male", "Female", "Other"], index=0, key="reg_sex_inp")
-
-            available_langs = [l.split(" ")[0] for l in all_languages]
-            r_langs = st.multiselect(
-                "6. Languages Known *",
-                available_langs,
-                default=["English", "Kannada"] if "Kannada" in available_langs else ["English"],
-                key="reg_langs_inp"
+            r_name = st.text_input(
+                "1. FULL NAME",
+                value=st.session_state.get("reg_name_val", "Rahul Kumar"),
+                placeholder="e.g. Rahul Kumar",
+                key="reg_name_val",
+                label_visibility="collapsed"
             )
 
-            r_email = st.text_input("7. Email Address *", value="kpbinduprakasha@gmail.com", key="reg_email_inp")
+            st.markdown("""
+            <p style="font-size: 0.72rem; color: #94a3b8; margin: 0.25rem 0 1rem 0;">
+                A unique User ID (e.g. @rahul123) will be auto-generated from your name.
+            </p>
+            """, unsafe_allow_html=True)
 
+            # Grid Row 1: AGE & MOBILE NUMBER
+            c_age, c_mob = st.columns(2)
+            with c_age:
+                st.markdown("""
+                <div style="margin-bottom: 0.35rem;">
+                    <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #1e293b;">
+                        2. AGE <span style="color: #ef4444;">*</span>
+                    </span>
+                </div>
+                """, unsafe_allow_html=True)
+                r_age = st.number_input(
+                    "2. AGE",
+                    min_value=1,
+                    max_value=120,
+                    value=int(st.session_state.get("reg_age_val", 24)),
+                    key="reg_age_val",
+                    label_visibility="collapsed"
+                )
+
+            with c_mob:
+                st.markdown("""
+                <div style="margin-bottom: 0.35rem;">
+                    <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #1e293b;">
+                        3. MOBILE NUMBER <span style="color: #ef4444;">*</span>
+                    </span>
+                </div>
+                """, unsafe_allow_html=True)
+                r_mob = st.text_input(
+                    "3. MOBILE NUMBER",
+                    value=st.session_state.get("reg_mob_val", "9876543210"),
+                    placeholder="9876543210",
+                    key="reg_mob_val",
+                    label_visibility="collapsed"
+                )
+
+            st.markdown("<div style='height: 0.75rem;'></div>", unsafe_allow_html=True)
+
+            # Grid Row 2: STATE / UT & SEX
+            c_state, c_sex = st.columns(2)
+            with c_state:
+                st.markdown("""
+                <div style="margin-bottom: 0.35rem;">
+                    <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #1e293b;">
+                        4. STATE / UT <span style="color: #ef4444;">*</span>
+                    </span>
+                </div>
+                """, unsafe_allow_html=True)
+                states_clean = [s for s in all_states if s != "All India"]
+                def_state_idx = states_clean.index("Karnataka") if "Karnataka" in states_clean else 0
+                r_state = st.selectbox(
+                    "4. STATE / UT",
+                    states_clean,
+                    index=def_state_idx,
+                    key="reg_state_val",
+                    label_visibility="collapsed"
+                )
+
+            with c_sex:
+                st.markdown("""
+                <div style="margin-bottom: 0.35rem;">
+                    <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #1e293b;">
+                        5. SEX <span style="color: #ef4444;">*</span>
+                    </span>
+                </div>
+                """, unsafe_allow_html=True)
+
+                if "reg_sex_selected" not in st.session_state:
+                    st.session_state["reg_sex_selected"] = "Male"
+                cur_sex = st.session_state["reg_sex_selected"]
+
+                s1, s2, s3, s4 = st.columns(4)
+                with s1:
+                    if st.button("Male", key="btn_sex_male", use_container_width=True):
+                        st.session_state["reg_sex_selected"] = "Male"
+                        st.rerun()
+                with s2:
+                    if st.button("Female", key="btn_sex_female", use_container_width=True):
+                        st.session_state["reg_sex_selected"] = "Female"
+                        st.rerun()
+                with s3:
+                    if st.button("Other", key="btn_sex_other1", use_container_width=True):
+                        st.session_state["reg_sex_selected"] = "Other"
+                        st.rerun()
+                with s4:
+                    if st.button("Other", key="btn_sex_other2", use_container_width=True):
+                        st.session_state["reg_sex_selected"] = "Prefer not to say"
+                        st.rerun()
+
+            st.markdown("<div style='height: 0.75rem;'></div>", unsafe_allow_html=True)
+
+            # Field 6: LANGUAGES KNOWN (SELECT MULTIPLE)
+            if "reg_selected_langs" not in st.session_state:
+                st.session_state["reg_selected_langs"] = ["English", "Kannada"]
+            sel_langs = st.session_state["reg_selected_langs"]
+
+            st.markdown(f"""
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.45rem;">
+                <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #1e293b;">
+                    6. LANGUAGES KNOWN (SELECT MULTIPLE) <span style="color: #ef4444;">*</span>
+                </span>
+                <span style="font-size: 0.72rem; color: #64748b; font-weight: 600;">
+                    {len(sel_langs)} selected
+                </span>
+            </div>
+            """, unsafe_allow_html=True)
+
+            def toggle_lang(lang_name):
+                if lang_name in st.session_state["reg_selected_langs"]:
+                    if len(st.session_state["reg_selected_langs"]) > 1:
+                        st.session_state["reg_selected_langs"].remove(lang_name)
+                else:
+                    st.session_state["reg_selected_langs"].append(lang_name)
+                st.rerun()
+
+            # Render 23 language pills matching Screenshot 2
+            with st.container():
+                st.markdown("""
+                <div style="background-color: rgba(248, 250, 252, 0.7); border: 1px solid #e2e8f0; border-radius: 1.25rem; padding: 0.75rem 0.65rem; margin-bottom: 0.85rem;">
+                """, unsafe_allow_html=True)
+                
+                # 3 rows of 7, 7, 7, 2
+                l_cols1 = st.columns(7)
+                for i, lang in enumerate(REGISTER_LANGUAGES_LIST[:7]):
+                    with l_cols1[i]:
+                        is_sel = lang in sel_langs
+                        lbl = f"✓ {lang}" if is_sel else lang
+                        if st.button(lbl, key=f"btn_lang_{lang}", use_container_width=True):
+                            toggle_lang(lang)
+
+                l_cols2 = st.columns(7)
+                for i, lang in enumerate(REGISTER_LANGUAGES_LIST[7:14]):
+                    with l_cols2[i]:
+                        is_sel = lang in sel_langs
+                        lbl = f"✓ {lang}" if is_sel else lang
+                        if st.button(lbl, key=f"btn_lang_{lang}", use_container_width=True):
+                            toggle_lang(lang)
+
+                l_cols3 = st.columns(7)
+                for i, lang in enumerate(REGISTER_LANGUAGES_LIST[14:21]):
+                    with l_cols3[i]:
+                        is_sel = lang in sel_langs
+                        lbl = f"✓ {lang}" if is_sel else lang
+                        if st.button(lbl, key=f"btn_lang_{lang}", use_container_width=True):
+                            toggle_lang(lang)
+
+                l_cols4 = st.columns(7)
+                for i, lang in enumerate(REGISTER_LANGUAGES_LIST[21:23]):
+                    with l_cols4[i]:
+                        is_sel = lang in sel_langs
+                        lbl = f"✓ {lang}" if is_sel else lang
+                        if st.button(lbl, key=f"btn_lang_{lang}", use_container_width=True):
+                            toggle_lang(lang)
+
+                st.markdown("</div>", unsafe_allow_html=True)
+
+            # Field 7: EMAIL ADDRESS
+            st.markdown("""
+            <div style="margin-bottom: 0.35rem;">
+                <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #1e293b;">
+                    7. EMAIL ADDRESS (FOR OTP VERIFICATION) <span style="color: #ef4444;">*</span>
+                </span>
+            </div>
+            """, unsafe_allow_html=True)
+
+            r_email = st.text_input(
+                "7. EMAIL ADDRESS",
+                value=st.session_state.get("reg_email_val", "citizen@example.com"),
+                placeholder="citizen@example.com",
+                key="reg_email_val",
+                label_visibility="collapsed"
+            )
+
+            st.markdown("""
+            <p style="font-size: 0.72rem; color: #94a3b8; margin: 0.25rem 0 1rem 0;">
+                A 6-digit OTP will be sent to this email upon submission.
+            </p>
+            """, unsafe_allow_html=True)
+
+            # Grid Row 3: PASSWORD & CONFIRM PASSWORD
             c_p1, c_p2 = st.columns(2)
             with c_p1:
-                r_pwd = st.text_input("8. Password *", value="password123", type="password", key="reg_p1_inp")
+                st.markdown("""
+                <div style="margin-bottom: 0.35rem;">
+                    <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #1e293b;">
+                        8. PASSWORD <span style="color: #ef4444;">*</span>
+                    </span>
+                </div>
+                """, unsafe_allow_html=True)
+                r_pwd = st.text_input(
+                    "8. PASSWORD",
+                    value=st.session_state.get("reg_p1_val", "password123"),
+                    type="password",
+                    placeholder="Min 8 characters",
+                    key="reg_p1_val",
+                    label_visibility="collapsed"
+                )
+
             with c_p2:
-                r_cpwd = st.text_input("9. Confirm Password *", value="password123", type="password", key="reg_p2_inp")
+                st.markdown("""
+                <div style="margin-bottom: 0.35rem;">
+                    <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #1e293b;">
+                        9. CONFIRM PASSWORD <span style="color: #ef4444;">*</span>
+                    </span>
+                </div>
+                """, unsafe_allow_html=True)
+                r_cpwd = st.text_input(
+                    "9. CONFIRM PASSWORD",
+                    value=st.session_state.get("reg_p2_val", "password123"),
+                    type="password",
+                    placeholder="Repeat your password",
+                    key="reg_p2_val",
+                    label_visibility="collapsed"
+                )
 
-            st.markdown("<div style='height: 0.5rem;'></div>", unsafe_allow_html=True)
+            st.markdown("<div style='height: 1rem;'></div>", unsafe_allow_html=True)
 
-            if st.button("Create Account & Sign In →", key="btn_submit_reg", use_container_width=True, type="primary"):
+            # Submit CTA
+            if st.button("Create Account & Send OTP →", key="btn_submit_reg", use_container_width=True, type="primary"):
                 st.session_state["citizen_user"] = {
-                    "full_name": r_name.strip() or "K P BINDUPRAKASHA",
-                    "user_id": f"@{r_name.lower().replace(' ', '')[:10]}625" if r_name else "@kpb1ndup625",
-                    "email": r_email.strip().lower() or "kpbinduprakasha@gmail.com",
-                    "mobile": f"+91 {r_mob.strip()}" if r_mob else "+91 9740397354",
+                    "full_name": r_name.strip() or "Rahul Kumar",
+                    "user_id": f"@{r_name.lower().replace(' ', '')[:10]}123" if r_name else "@rahul123",
+                    "email": r_email.strip().lower() or "citizen@example.com",
+                    "mobile": f"+91 {r_mob.strip()}" if r_mob else "+91 9876543210",
                     "age": int(r_age),
-                    "sex": r_sex,
+                    "sex": cur_sex,
                     "state": r_state,
-                    "languages": r_langs if r_langs else ["English", "Kannada"],
+                    "languages": sel_langs if sel_langs else ["English", "Kannada"],
                     "github": "@kpbinduprakasha-cpu"
                 }
                 st.session_state["is_authenticated"] = True
@@ -327,13 +569,13 @@ def render_register_view(_tr, all_languages, all_states, lang_code_map):
                 st.session_state["top_navbar_tab_key"] = "home"
                 st.rerun()
 
-            st.markdown(f"""
-            <div style="border-top: 1px solid #f1f5f9; padding-top: 1rem; text-align: center; font-size: 0.8rem; color: #64748b;">
-                {_tr('alreadyAccount')}
+            st.markdown("""
+            <div style="border-top: 1px solid #f1f5f9; padding-top: 1.25rem; margin-top: 1rem; text-align: center; font-size: 0.82rem; color: #64748b;">
+                Already have an account?
             </div>
             """, unsafe_allow_html=True)
 
-            if st.button(f"🔑 {_tr('signInLink')}", key="btn_nav_to_login", use_container_width=True):
+            if st.button("Sign In with User ID", key="btn_nav_to_login_link", use_container_width=True):
                 st.session_state["auth_page"] = "login"
                 st.rerun()
 
@@ -350,7 +592,7 @@ def render_citizen_dashboard(_tr, all_languages, all_states, lang_code_map):
     with top_c1:
         st.markdown(f"""
         <div class="brand-wrap">
-            <div class="brand-logo">🏛️</div>
+            <div class="brand-logo" style="width: 40px; height: 40px; border-radius: 0.85rem; font-size: 1.25rem;">🏛️</div>
             <div>
                 <div class="brand-title">{_tr('appName')} <span class="brand-pill">{_tr('allIndiaPill')}</span></div>
                 <div class="brand-subtitle">{_tr('citizenDashboard')}</div>
