@@ -540,7 +540,7 @@ st.markdown("""
 # Constants & Official State Portals Dictionary & Multilingual Engine
 # ---------------------------------------------------------------------------
 from translations import ALL_INDIAN_LANGUAGES, LANG_CODE_MAP, t, TRANSLATIONS
-from state_districts_data import ALL_STATES_DISTRICTS_TALUKS, DISTRICT_COORDINATES
+from state_districts_data import ALL_STATES_DISTRICTS_TALUKS, DISTRICT_COORDINATES, STATE_COORDINATES
 from citizen_dashboard_auth import (
     DEFAULT_CITIZEN_USER,
     DEFAULT_APPLICATIONS,
@@ -1763,52 +1763,33 @@ elif active_nav_key == "serviceMap":
     st.markdown("<hr style='margin: 0.75rem 0; border-color: #f1f5f9;'>", unsafe_allow_html=True)
 
     # Row 1: State Dropdown, District Dropdown, Jurisdiction Level
+    # Comprehensive list of all 36 States & UTs from ALL_STATES_DISTRICTS_TALUKS
+    sorted_states = sorted([s for s in ALL_STATES_DISTRICTS_TALUKS.keys() if s != "Karnataka"])
+    all_states_list = ["Karnataka"] + sorted_states
+
     state_options = [
-        "Karnataka (31 Districts)",
-        "Maharashtra (10 Districts)",
-        "Delhi (11 Districts)",
-        "Tamil Nadu (9 Districts)",
-        "Uttar Pradesh (10 Districts)",
-        "West Bengal (5 Districts)",
-        "Rajasthan (5 Districts)",
-        "Telangana (4 Districts)",
-        "Andhra Pradesh (4 Districts)",
-        "Kerala (4 Districts)",
-        "Bihar (3 Districts)",
-        "Madhya Pradesh (3 Districts)",
-        "Gujarat (4 Districts)",
-        "Uttarakhand (2 Districts)",
-        "Chandigarh",
-        "All India"
-    ]
+        f"{s} ({len(ALL_STATES_DISTRICTS_TALUKS[s])} Districts)"
+        for s in all_states_list
+    ] + ["All India"]
 
     STATE_DISPLAY_MAP = {
-        "Karnataka (31 Districts)": "Karnataka",
-        "Maharashtra (10 Districts)": "Maharashtra",
-        "Delhi (11 Districts)": "Delhi",
-        "Tamil Nadu (9 Districts)": "Tamil Nadu",
-        "Uttar Pradesh (10 Districts)": "Uttar Pradesh",
-        "West Bengal (5 Districts)": "West Bengal",
-        "Rajasthan (5 Districts)": "Rajasthan",
-        "Telangana (4 Districts)": "Telangana",
-        "Andhra Pradesh (4 Districts)": "Andhra Pradesh",
-        "Kerala (4 Districts)": "Kerala",
-        "Bihar (3 Districts)": "Bihar",
-        "Madhya Pradesh (3 Districts)": "Madhya Pradesh",
-        "Gujarat (4 Districts)": "Gujarat",
-        "Uttarakhand (2 Districts)": "Uttarakhand",
-        "Chandigarh": "Chandigarh",
-        "All India": "All India"
+        f"{s} ({len(ALL_STATES_DISTRICTS_TALUKS[s])} Districts)": s
+        for s in all_states_list
     }
+    STATE_DISPLAY_MAP["All India"] = "All India"
 
     f_col1, f_col2, f_col3 = st.columns([1.5, 1.5, 1.2])
 
     with f_col1:
         st.markdown(f"<span style='font-size: 0.75rem; font-weight: 800; color: #334155; text-transform: uppercase;'>{_tr('selectStateLabel')}</span>", unsafe_allow_html=True)
+        # Verify and sync session state for svc_map_state
+        if "svc_map_state" not in st.session_state or st.session_state["svc_map_state"] not in state_options:
+            st.session_state["svc_map_state"] = state_options[0]
+
         selected_state_display = st.selectbox(
             "State",
             state_options,
-            index=0,
+            index=state_options.index(st.session_state["svc_map_state"]) if st.session_state["svc_map_state"] in state_options else 0,
             label_visibility="collapsed",
             key="svc_map_state"
         )
@@ -1826,7 +1807,7 @@ elif active_nav_key == "serviceMap":
     else:
         district_options = [f"All Districts ({len(district_names)})"] + [f"📍 {d} District" for d in district_names]
 
-    # Default index for district: Vijayanagara if in Karnataka
+    # Default index for district: Vijayanagara if in Karnataka, else All Districts
     default_dist_idx = 0
     if selected_state_clean == "Karnataka":
         for i, opt in enumerate(district_options):
@@ -1834,12 +1815,19 @@ elif active_nav_key == "serviceMap":
                 default_dist_idx = i
                 break
 
+    # State Change Detection & Automatic Sync
+    prev_state = st.session_state.get("prev_svc_map_state")
+    if prev_state != selected_state_clean or st.session_state.get("svc_map_district") not in district_options:
+        st.session_state["prev_svc_map_state"] = selected_state_clean
+        st.session_state["svc_map_district"] = district_options[default_dist_idx]
+        st.session_state["svc_map_taluk"] = "All Taluks"
+
     with f_col2:
         st.markdown(f"<span style='font-size: 0.75rem; font-weight: 800; color: #334155; text-transform: uppercase;'>{_tr('selectDistrictLabel')} ({len(district_names)} Districts in {selected_state_clean}):</span>", unsafe_allow_html=True)
         selected_dist_display = st.selectbox(
             "District",
             district_options,
-            index=default_dist_idx if default_dist_idx < len(district_options) else 0,
+            index=district_options.index(st.session_state["svc_map_district"]) if st.session_state["svc_map_district"] in district_options else 0,
             label_visibility="collapsed",
             key="svc_map_district"
         )
@@ -1871,6 +1859,18 @@ elif active_nav_key == "serviceMap":
 
     taluk_options = ["All Taluks"] + available_taluks
 
+    # District Change Detection & Automatic Taluk Sync
+    prev_dist = st.session_state.get("prev_svc_map_dist")
+    if prev_dist != selected_dist_clean or st.session_state.get("svc_map_taluk") not in taluk_options:
+        st.session_state["prev_svc_map_dist"] = selected_dist_clean
+        st.session_state["svc_map_taluk"] = "All Taluks"
+
+    # For a specific district, display all its taluks; for All Districts, display top 25
+    if selected_dist_clean != "All":
+        display_taluks = taluk_options
+    else:
+        display_taluks = taluk_options[:25]
+
     st.markdown(f"""
     <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.75rem; margin-bottom: 0.35rem;">
         <span style="font-size: 0.75rem; font-weight: 800; color: #334155; text-transform: uppercase; letter-spacing: 0.05em;">
@@ -1884,8 +1884,8 @@ elif active_nav_key == "serviceMap":
 
     selected_taluk = st.radio(
         "Taluks",
-        taluk_options[:15],
-        index=0,
+        display_taluks,
+        index=display_taluks.index(st.session_state["svc_map_taluk"]) if st.session_state["svc_map_taluk"] in display_taluks else 0,
         horizontal=True,
         label_visibility="collapsed",
         key="svc_map_taluk"
@@ -1970,79 +1970,141 @@ elif active_nav_key == "serviceMap":
                q in (s.get("taluk") or "").lower()
         ]
 
-    # 7. Fallback generation if no specific DB services exist for this district
-    if len(filtered_services) == 0 and selected_dist_clean != "All" and selected_state_clean != "All India":
-        coords_info = DISTRICT_COORDINATES.get(selected_dist_clean, {"center": [15.2689, 76.3909], "zoom": 11})
-        c_lat, c_lon = coords_info["center"]
-        pri_taluk = selected_taluk if selected_taluk != "All Taluks" else (available_taluks[0] if available_taluks else selected_dist_clean)
+    STATE_PORTAL_MAP = {
+        "Karnataka": ("Seva Sindhu & Grama One Portal", "https://sevasindhu.karnataka.gov.in"),
+        "Maharashtra": ("Aaple Sarkar MahaOnline", "https://aaplesarkar.mahaonline.gov.in"),
+        "Tamil Nadu": ("TNeGA e-Sevai Portal", "https://www.tnesevai.tn.gov.in"),
+        "Uttar Pradesh": ("eDistrict Uttar Pradesh", "https://edistrict.up.gov.in"),
+        "Delhi": ("eDistrict Delhi Services", "https://edistrict.delhigovt.nic.in"),
+        "Andhra Pradesh": ("MeeSeva Andhra Pradesh", "https://meeseva.ap.gov.in"),
+        "Telangana": ("MeeSeva Telangana", "https://ts.meeseva.telangana.gov.in"),
+        "Kerala": ("eDistrict Kerala Portal", "https://edistrict.kerala.gov.in"),
+        "Gujarat": ("Digital Gujarat Citizen Portal", "https://digitalgujarat.gov.in"),
+        "West Bengal": ("eDistrict West Bengal", "https://edistrict.wb.gov.in"),
+        "Rajasthan": ("Jan Soochna / SSO Rajasthan", "https://sso.rajasthan.gov.in"),
+        "Bihar": ("ServicePlus Bihar Online", "https://serviceonline.bihar.gov.in"),
+        "Madhya Pradesh": ("MP eDistrict Citizen Portal", "https://mpedistrict.gov.in"),
+        "Odisha": ("Odisha One Public Portal", "https://odishaone.gov.in"),
+        "Punjab": ("Sewa Kendra Punjab", "https://connect.punjab.gov.in"),
+        "Haryana": ("Antyodaya Saral Haryana", "https://saralharyana.gov.in"),
+        "Jharkhand": ("JharSewa Citizen Portal", "https://jharsewa.jharkhand.gov.in"),
+        "Chhattisgarh": ("eDistrict Chhattisgarh", "https://edistrict.cgstate.gov.in"),
+        "Uttarakhand": ("eDistrict Uttarakhand", "https://edistrict.uk.gov.in"),
+        "Himachal Pradesh": ("eDistrict Himachal Pradesh", "https://edistrict.hp.gov.in"),
+        "Assam": ("Sewasetu Assam Citizen Portal", "https://sewasetu.assam.gov.in"),
+        "Goa": ("Goa Online Public Services", "https://goaonline.gov.in")
+    }
+
+    # 7. Fallback generation if no specific DB services exist for this district / state
+    if len(filtered_services) == 0:
+        if selected_dist_clean != "All" and selected_dist_clean in DISTRICT_COORDINATES:
+            c_lat, c_lon = DISTRICT_COORDINATES[selected_dist_clean]["center"]
+        elif selected_state_clean in STATE_COORDINATES:
+            c_lat, c_lon = STATE_COORDINATES[selected_state_clean]["center"]
+        else:
+            c_lat, c_lon = 20.5937, 78.9629
+
+        loc_label = selected_dist_clean if selected_dist_clean != "All" else selected_state_clean
+        pri_taluk = selected_taluk if selected_taluk != "All Taluks" else (available_taluks[0] if available_taluks else loc_label)
+        portal_name, portal_link = STATE_PORTAL_MAP.get(selected_state_clean, ("National Citizen Services Portal", "https://services.india.gov.in"))
+
         filtered_services = [
             {
-                "id": f"gen-1-{selected_dist_clean}",
-                "name": f"District Collectorate & Mini Vidhana Soudha ({selected_dist_clean})",
+                "id": f"gen-1-{loc_label}",
+                "name": f"District Collectorate & Revenue Administrative Complex ({loc_label})",
                 "category": "State Secretariat & Collectorates",
                 "government_level": "State Government",
-                "state": selected_state_clean,
-                "district_city": selected_dist_clean,
+                "state": selected_state_clean if selected_state_clean != "All India" else "Karnataka",
+                "district_city": loc_label,
                 "taluk": pri_taluk,
-                "address": f"DC Office Complex, Main Revenue Road, {selected_dist_clean}, {selected_state_clean}",
-                "phone": "+91 80-2200-1122",
+                "address": f"Collectorate & District Magistrate Office, Court Road, {loc_label}",
+                "phone": "+91 1800-180-1912",
                 "latitude": c_lat + 0.003,
                 "longitude": c_lon + 0.002,
-                "official_url": "https://karnataka.gov.in"
+                "official_url": portal_link
             },
             {
-                "id": f"gen-2-{selected_dist_clean}",
-                "name": f"Common Service Centre (CSC) & Grama One ({pri_taluk})",
+                "id": f"gen-2-{loc_label}",
+                "name": f"Common Service Centre (CSC) & Citizen Seva Kendra ({pri_taluk})",
                 "category": "Common Service Centres (CSC)",
-                "government_level": "State Government",
-                "state": selected_state_clean,
-                "district_city": selected_dist_clean,
+                "government_level": "Central Government",
+                "state": selected_state_clean if selected_state_clean != "All India" else "Karnataka",
+                "district_city": loc_label,
                 "taluk": pri_taluk,
-                "address": f"Citizen Seva Kendra, Near Taluk Office, {pri_taluk}, {selected_dist_clean}",
-                "phone": "+91 94480-12345",
+                "address": f"Near Tahsildar Office & Bus Stand, Main Market, {pri_taluk}, {loc_label}",
+                "phone": "+91 14599 (CSC Helpline)",
                 "latitude": c_lat - 0.004,
                 "longitude": c_lon + 0.005,
-                "official_url": "https://sevasindhu.karnataka.gov.in"
+                "official_url": "https://digitalseva.csc.gov.in"
             },
             {
-                "id": f"gen-3-{selected_dist_clean}",
-                "name": f"District General Hospital & Ayushman Arogya Mandir ({selected_dist_clean})",
+                "id": f"gen-3-{loc_label}",
+                "name": f"District General Hospital & Ayushman Arogya Mandir ({loc_label})",
                 "category": "AIIMS & Central/State Hospitals",
                 "government_level": "State Government",
-                "state": selected_state_clean,
-                "district_city": selected_dist_clean,
+                "state": selected_state_clean if selected_state_clean != "All India" else "Karnataka",
+                "district_city": loc_label,
                 "taluk": pri_taluk,
-                "address": f"Civil Hospital Road, {selected_dist_clean}, {selected_state_clean}",
-                "phone": "+91 80-2345-6789",
+                "address": f"Civil Hospital Road, Near Government Medical College, {loc_label}",
+                "phone": "108 / 102 (National Ambulance)",
                 "latitude": c_lat + 0.006,
                 "longitude": c_lon - 0.003,
                 "official_url": "https://pmjay.gov.in"
             },
             {
-                "id": f"gen-4-{selected_dist_clean}",
-                "name": f"Post Office Passport & Aadhaar Seva Kendra ({selected_dist_clean})",
+                "id": f"gen-4-{loc_label}",
+                "name": f"Head Post Office Passport & Aadhaar Seva Kendra ({loc_label})",
                 "category": "Passport & Aadhaar Seva Kendras",
                 "government_level": "Central Government",
-                "state": selected_state_clean,
-                "district_city": selected_dist_clean,
+                "state": selected_state_clean if selected_state_clean != "All India" else "Karnataka",
+                "district_city": loc_label,
                 "taluk": pri_taluk,
-                "address": f"Head Post Office Building, Station Road, {selected_dist_clean}, {selected_state_clean}",
-                "phone": "+91 1800-258-1800",
+                "address": f"Head Post Office Complex, Station Road, {loc_label}",
+                "phone": "1947 (UIDAI / Aadhaar)",
                 "latitude": c_lat - 0.002,
                 "longitude": c_lon - 0.006,
                 "official_url": "https://passportindia.gov.in"
+            },
+            {
+                "id": f"gen-5-{loc_label}",
+                "name": f"Sub-Divisional Revenue & Tahsildar Taluk Office ({pri_taluk})",
+                "category": "State Secretariat & Collectorates",
+                "government_level": "State Government",
+                "state": selected_state_clean if selected_state_clean != "All India" else "Karnataka",
+                "district_city": loc_label,
+                "taluk": pri_taluk,
+                "address": f"Mini Vidhana Soudha / Taluka Kacheri, {pri_taluk}, {loc_label}",
+                "phone": "+91 1912 (Revenue Helpline)",
+                "latitude": c_lat + 0.005,
+                "longitude": c_lon + 0.004,
+                "official_url": portal_link
+            },
+            {
+                "id": f"gen-6-{loc_label}",
+                "name": f"Social Welfare, Women & Child Development Office ({loc_label})",
+                "category": "Welfare & Pension Offices",
+                "government_level": "State Government",
+                "state": selected_state_clean if selected_state_clean != "All India" else "Karnataka",
+                "district_city": loc_label,
+                "taluk": pri_taluk,
+                "address": f"Vikas Bhavan / Zilla Panchayat Complex, {loc_label}",
+                "phone": "1098 / 181 (Citizen & Women Helpline)",
+                "latitude": c_lat - 0.005,
+                "longitude": c_lon + 0.002,
+                "official_url": "https://www.myscheme.gov.in"
             }
         ]
 
     # Determine map center coordinates and zoom level
     if selected_dist_clean != "All" and selected_dist_clean in DISTRICT_COORDINATES:
         center_coords = DISTRICT_COORDINATES[selected_dist_clean]["center"]
-        zoom_level = 13 if selected_taluk != "All Taluks" else DISTRICT_COORDINATES[selected_dist_clean]["zoom"]
-    elif selected_state_clean in DISTRICT_COORDINATES:
-        center_coords = DISTRICT_COORDINATES[selected_state_clean]["center"]
-        zoom_level = DISTRICT_COORDINATES[selected_state_clean]["zoom"]
+        zoom_level = 13 if selected_taluk != "All Taluks" else DISTRICT_COORDINATES[selected_dist_clean].get("zoom", 11)
+    elif selected_state_clean in STATE_COORDINATES:
+        center_coords = STATE_COORDINATES[selected_state_clean]["center"]
+        zoom_level = 11 if selected_dist_clean != "All" else STATE_COORDINATES[selected_state_clean]["zoom"]
     else:
-        center_coords = [15.2689, 76.3909]
+        center_coords = [20.5937, 78.9629]
+        zoom_level = 5
         zoom_level = 11
 
     services_json = json.dumps([
