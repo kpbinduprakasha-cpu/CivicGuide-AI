@@ -58,51 +58,10 @@ def list_schemes():
     if category and category != 'All':
         query = query.filter(Scheme.category.ilike(f'%{category}%'))
 
-    # Jurisdiction / Mode / State filtering
+    # Jurisdiction / Mode / State filtering: All-India schemes are always available across the platform
     if mode == 'central' or level == 'Central Government' or scope == 'central_only':
-        # Show ONLY Central Government schemes
         query = query.filter(Scheme.government_level.ilike('%Central%'))
-    elif mode == 'state' or level == 'State Government':
-        # State Government schemes mode
-        if state and state not in ['All', 'All India', 'All States', '']:
-            clean_state = state.replace(' State', '').strip()
-            if include_central or scope == 'all':
-                query = query.filter(
-                    (Scheme.state.ilike(f'%{clean_state}%')) |
-                    (Scheme.government_level.ilike(f'%{clean_state}%')) |
-                    (Scheme.government_level.ilike('%Central%'))
-                )
-            else:
-                query = query.filter(
-                    (Scheme.state.ilike(f'%{clean_state}%')) |
-                    (Scheme.government_level.ilike(f'%{clean_state}%'))
-                )
-        else:
-            # All state government schemes across all states
-            query = query.filter(~Scheme.government_level.ilike('%Central%'))
-    elif state and state not in ['All', 'All India', 'All States', '']:
-        clean_state = state.replace(' State', '').strip()
-        if scope == 'central_only':
-            query = query.filter(Scheme.government_level.ilike('%Central%'))
-        elif scope == 'all' or include_central:
-            query = query.filter(
-                (Scheme.state.ilike(f'%{clean_state}%')) |
-                (Scheme.government_level.ilike(f'%{clean_state}%')) |
-                (Scheme.government_level.ilike('%Central%'))
-            )
-        else:
-            # When specific state is selected, show that state's schemes
-            query = query.filter(
-                (Scheme.state.ilike(f'%{clean_state}%')) |
-                (Scheme.government_level.ilike(f'%{clean_state}%'))
-            )
-    elif level and level not in ['All', '']:
-        if 'Central' in level:
-            query = query.filter(Scheme.government_level.ilike('%Central%'))
-        elif 'State' in level:
-            query = query.filter(~Scheme.government_level.ilike('%Central%'))
-        else:
-            query = query.filter(Scheme.government_level.ilike(f'%{level}%'))
+    # All other queries return all verified All-India schemes
 
     if q:
         search_filter = (

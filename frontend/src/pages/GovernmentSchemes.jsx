@@ -41,6 +41,7 @@ import {
 } from 'lucide-react';
 
 export const ALL_INDIAN_STATES = [
+  "All India",
   "Karnataka", "Maharashtra", "Delhi", "Tamil Nadu", "Uttar Pradesh",
   "Andhra Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat",
   "Haryana", "Himachal Pradesh", "Jharkhand", "Kerala", "Madhya Pradesh",
@@ -49,6 +50,189 @@ export const ALL_INDIAN_STATES = [
   "Andaman and Nicobar Islands", "Chandigarh", "Dadra and Nagar Haveli and Daman and Diu",
   "Jammu and Kashmir", "Ladakh", "Lakshadweep", "Puducherry"
 ];
+
+export const STATE_OFFICIAL_PORTALS = {
+  "All India": {
+    name: "National Portal of India & myScheme Portal",
+    url: "https://www.myscheme.gov.in",
+    description: "Official National Platform for All-India Central & State Government Welfare Schemes. Covers 47+ verified initiatives accessible across all States and Union Territories."
+  },
+  "Karnataka": {
+    name: "Karnataka Seva Sindhu & Nadakacheri Portal",
+    url: "https://sevasindhu.karnataka.gov.in",
+    description: "Official Government of Karnataka portal for citizen services, guarantee schemes (Gruha Lakshmi, Yuva Nidhi), and caste/income certificates."
+  },
+  "Maharashtra": {
+    name: "Aaple Sarkar / MahaOnline Portal",
+    url: "https://aaplesarkar.mahaonline.gov.in",
+    description: "Official Government of Maharashtra public services, certificates, and citizen welfare portal."
+  },
+  "Delhi": {
+    name: "e-District Delhi Citizen Services",
+    url: "https://edistrict.delhigovt.nic.in",
+    description: "Government of NCT of Delhi official portal for certificates, revenue, and welfare services."
+  },
+  "Tamil Nadu": {
+    name: "TNeGA e-Sevai Portal",
+    url: "https://www.tnesevai.tn.gov.in",
+    description: "Government of Tamil Nadu official electronic citizen services and welfare directory."
+  },
+  "Uttar Pradesh": {
+    name: "eDistrict Uttar Pradesh Portal",
+    url: "https://edistrict.up.gov.in",
+    description: "Government of Uttar Pradesh official citizen services, scholarships, and revenue portal."
+  },
+  "Gujarat": {
+    name: "Digital Gujarat Citizen Services Portal",
+    url: "https://www.digitalgujarat.gov.in",
+    description: "Official Government of Gujarat portal for scholarships, certificates, and welfare schemes."
+  },
+  "Rajasthan": {
+    name: "Jan Soochna & e-Mitra Rajasthan Portal",
+    url: "https://jansoochna.rajasthan.gov.in",
+    description: "Official Government of Rajasthan portal for public schemes, social pensions, and citizen services."
+  },
+  "Andhra Pradesh": {
+    name: "MeeSeva Andhra Pradesh Portal",
+    url: "https://meeseva.ap.gov.in",
+    description: "Official Government of Andhra Pradesh citizen services and welfare distribution portal."
+  },
+  "Telangana": {
+    name: "MeeSeva Telangana Portal",
+    url: "https://ts.meeseva.telangana.gov.in",
+    description: "Official Government of Telangana online citizen delivery and welfare schemes portal."
+  },
+  "Kerala": {
+    name: "e-District Kerala Services Portal",
+    url: "https://edistrict.kerala.gov.in",
+    description: "Government of Kerala official portal for certificates, revenue, and social welfare benefits."
+  },
+  "West Bengal": {
+    name: "Bangla Sahayata Kendra / e-District WB",
+    url: "https://edistrict.wb.gov.in",
+    description: "Government of West Bengal citizen services delivery and public welfare portal."
+  },
+  "Madhya Pradesh": {
+    name: "MP e-District Citizen Services Portal",
+    url: "https://mpedistrict.gov.in",
+    description: "Government of Madhya Pradesh public services guarantee and social welfare portal."
+  },
+  "Bihar": {
+    name: "RTPS Bihar ServicePlus Portal",
+    url: "https://serviceonline.bihar.gov.in",
+    description: "Government of Bihar official portal for Right to Public Services (RTPS) and citizen welfare."
+  },
+  "Punjab": {
+    name: "e-Sewa Punjab Citizen Portal",
+    url: "https://esewa.punjab.gov.in",
+    description: "Government of Punjab official citizen facilitation and public welfare delivery portal."
+  },
+  "Haryana": {
+    name: "Saral Haryana Citizen Portal",
+    url: "https://saralharyana.gov.in",
+    description: "Government of Haryana Antyodaya SARAL portal for government schemes and citizen services."
+  },
+  "Odisha": {
+    name: "Odisha One & e-District Portal",
+    url: "https://odishaone.gov.in",
+    description: "Government of Odisha integrated citizen service portal for social welfare and certificates."
+  },
+  "Assam": {
+    name: "Sewa Setu Assam Portal",
+    url: "https://sewasetu.assam.gov.in",
+    description: "Government of Assam official citizen-centric public service delivery platform."
+  },
+  "Jharkhand": {
+    name: "JharSewa Citizen Services Portal",
+    url: "https://jharsewa.jharkhand.gov.in",
+    description: "Government of Jharkhand official public service and social assistance portal."
+  },
+  "Chhattisgarh": {
+    name: "e-District Chhattisgarh Portal",
+    url: "https://edistrict.cgstate.gov.in",
+    description: "Government of Chhattisgarh citizen service delivery and welfare administration portal."
+  },
+  "Himachal Pradesh": {
+    name: "e-District Himachal Pradesh Portal",
+    url: "https://edistrict.hp.gov.in",
+    description: "Government of Himachal Pradesh official citizen services and public certificates portal."
+  },
+  "Uttarakhand": {
+    name: "e-District Uttarakhand Portal",
+    url: "https://edistrict.uk.gov.in",
+    description: "Government of Uttarakhand official public service and welfare certificates portal."
+  },
+  "Goa": {
+    name: "Goa Online Citizen Services Portal",
+    url: "https://goaonline.gov.in",
+    description: "Government of Goa official single window portal for citizen services and welfare."
+  },
+  "Jammu and Kashmir": {
+    name: "e-UNNAT J&K Citizen Portal",
+    url: "https://eunnat.jk.gov.in",
+    description: "Government of Jammu and Kashmir unified citizen-centric service delivery portal."
+  },
+  "Chandigarh": {
+    name: "Chandigarh Administration Official Portal",
+    url: "https://chandigarh.gov.in",
+    description: "Chandigarh UT Administration official public services and welfare portal."
+  },
+  "Puducherry": {
+    name: "e-District Puducherry Portal",
+    url: "https://edistrict.py.gov.in",
+    description: "Puducherry UT official citizen services and welfare delivery portal."
+  },
+  "Ladakh": {
+    name: "Ladakh UT Administration Portal",
+    url: "https://ladakh.gov.in",
+    description: "UT Administration of Ladakh official public services portal."
+  },
+  "Andaman and Nicobar Islands": {
+    name: "e-District Andaman & Nicobar",
+    url: "https://edistrict.andaman.gov.in",
+    description: "Andaman and Nicobar Administration official public services portal."
+  },
+  "Dadra and Nagar Haveli and Daman and Diu": {
+    name: "Daman & Diu Citizen Portal",
+    url: "https://daman.nic.in",
+    description: "Dadra & Nagar Haveli and Daman & Diu official citizen services portal."
+  },
+  "Lakshadweep": {
+    name: "Lakshadweep e-Services Portal",
+    url: "https://lakshadweep.gov.in",
+    description: "UT of Lakshadweep official online citizen services portal."
+  },
+  "Manipur": {
+    name: "Manipur State Portal",
+    url: "https://manipur.gov.in",
+    description: "Government of Manipur official state and citizen services portal."
+  },
+  "Meghalaya": {
+    name: "Meghalaya ServicePlus Portal",
+    url: "https://megedistrict.gov.in",
+    description: "Government of Meghalaya official public service delivery portal."
+  },
+  "Mizoram": {
+    name: "e-District Mizoram Portal",
+    url: "https://edistrict.mizoram.gov.in",
+    description: "Government of Mizoram official citizen service delivery portal."
+  },
+  "Nagaland": {
+    name: "Nagaland State Government Portal",
+    url: "https://nagaland.gov.in",
+    description: "Government of Nagaland official state public services portal."
+  },
+  "Sikkim": {
+    name: "Sikkim Citizen Services Portal",
+    url: "https://sikkim.gov.in",
+    description: "Government of Sikkim official single window citizen services portal."
+  },
+  "Tripura": {
+    name: "e-District Tripura Portal",
+    url: "https://edistrict.tripura.gov.in",
+    description: "Government of Tripura official citizen services and welfare portal."
+  }
+};
 
 const BENEFICIARY_AUDIENCES = [
   { id: 'All', label: 'All Citizens', icon: Users },
@@ -86,10 +270,10 @@ const GovernmentSchemes = () => {
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'All');
   const [selectedBeneficiary, setSelectedBeneficiary] = useState('All');
   const [selectedState, setSelectedState] = useState(
-    searchParams.get('state') || citizen?.state || 'Karnataka'
+    searchParams.get('state') || 'All India'
   );
   const [jurisdiction, setJurisdiction] = useState(
-    searchParams.get('level') || (searchParams.get('state') ? `${searchParams.get('state')} State` : 'All')
+    searchParams.get('level') || 'All'
   );
   const [sortBy, setSortBy] = useState('recommended');
 
@@ -172,12 +356,8 @@ const GovernmentSchemes = () => {
 
       if (jurisdiction === 'Central Government') {
         params.append('mode', 'central');
-      } else if (jurisdiction === 'State Government') {
-        params.append('mode', 'state');
-      } else if (jurisdiction.includes('State') || jurisdiction === selectedState) {
-        params.append('state', selectedState);
-        params.append('mode', 'state');
       } else {
+        // All schemes across India are returned (state selection only reveals that state's official portal website link)
         params.append('mode', 'all');
       }
 
@@ -191,7 +371,7 @@ const GovernmentSchemes = () => {
     } finally {
       setLoading(false);
     }
-  }, [searchQuery, selectedCategory, jurisdiction, selectedState, language]);
+  }, [searchQuery, selectedCategory, jurisdiction, language]);
 
   useEffect(() => {
     fetchSchemes();
@@ -260,10 +440,9 @@ const GovernmentSchemes = () => {
 
   const handleStateChange = (newSt) => {
     setSelectedState(newSt);
-    setJurisdiction(`${newSt} State`);
     setSearchParams(prev => {
-      prev.set('state', newSt);
-      prev.set('level', `${newSt} State`);
+      if (newSt !== 'All India') prev.set('state', newSt);
+      else prev.delete('state');
       return prev;
     });
   };
@@ -436,21 +615,6 @@ const GovernmentSchemes = () => {
     if (lvl.toLowerCase().includes('central')) {
       return 'bg-blue-50 text-blue-900 border-blue-200';
     }
-    if (lvl.toLowerCase().includes('karnataka')) {
-      return 'bg-amber-50 text-amber-900 border-amber-200';
-    }
-    if (lvl.toLowerCase().includes('delhi')) {
-      return 'bg-sky-50 text-sky-900 border-sky-200';
-    }
-    if (lvl.toLowerCase().includes('tamil')) {
-      return 'bg-purple-50 text-purple-900 border-purple-200';
-    }
-    if (lvl.toLowerCase().includes('uttar') || lvl.toLowerCase().includes('up')) {
-      return 'bg-orange-50 text-orange-900 border-orange-200';
-    }
-    if (lvl.toLowerCase().includes('maharashtra')) {
-      return 'bg-indigo-50 text-indigo-900 border-indigo-200';
-    }
     return 'bg-emerald-50 text-emerald-900 border-emerald-200';
   };
 
@@ -565,79 +729,110 @@ const GovernmentSchemes = () => {
           </div>
         </div>
 
-        {/* Row 2: Jurisdiction Levels & State Picker */}
+        {/* Row 2: Jurisdiction Scope & State Official Portal Website Selector */}
         <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 pt-4 border-t border-slate-100 w-full">
           
-          <div className="flex flex-wrap items-center gap-3 text-sm sm:text-base text-slate-700 font-bold flex-1">
-            <div className="flex items-center gap-2 text-slate-900 text-sm sm:text-base font-extrabold shrink-0">
-              <Filter className="w-4.5 h-4.5 text-emerald-600" />
-              <span>Jurisdiction:</span>
+          <div className="flex flex-wrap items-center gap-3 text-base sm:text-lg text-slate-800 font-bold flex-1">
+            <div className="flex items-center gap-2 text-slate-900 text-base sm:text-lg font-extrabold shrink-0">
+              <Filter className="w-5 h-5 text-emerald-600" />
+              <span>Schemes Scope:</span>
             </div>
             
-            <div className="inline-flex rounded-2xl bg-slate-100 p-1.5 flex-wrap gap-1.5 flex-1 sm:flex-initial">
+            <div className="inline-flex rounded-2xl bg-slate-100 p-1.5 flex-wrap gap-1.5">
               <button
                 type="button"
                 onClick={() => handleJurisdictionSelect('All')}
-                className={`px-4 sm:px-5 py-2.5 rounded-xl text-sm sm:text-base font-bold transition-all ${
+                className={`px-5 py-2.5 rounded-xl text-base sm:text-lg font-extrabold transition-all ${
                   jurisdiction === 'All'
                     ? 'bg-white text-emerald-800 shadow-sm'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                All India ({schemes.length})
+                🇮🇳 All Over India Schemes ({schemes.length})
               </button>
               <button
                 type="button"
                 onClick={() => handleJurisdictionSelect('Central Government')}
-                className={`px-4 sm:px-5 py-2.5 rounded-xl text-sm sm:text-base font-bold transition-all ${
+                className={`px-5 py-2.5 rounded-xl text-base sm:text-lg font-extrabold transition-all ${
                   jurisdiction === 'Central Government'
                     ? 'bg-white text-emerald-800 shadow-sm'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                Central Government
-              </button>
-              <button
-                type="button"
-                onClick={() => handleJurisdictionSelect('State Government')}
-                className={`px-4 sm:px-5 py-2.5 rounded-xl text-sm sm:text-base font-bold transition-all ${
-                  jurisdiction === 'State Government' || jurisdiction.includes('State')
-                    ? 'bg-white text-emerald-800 shadow-sm'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                State Governments
+                🏛️ Central Government
               </button>
             </div>
 
-            {/* Quick State Selector Dropdown */}
-            <div className="relative inline-flex items-center">
-              <select
-                value={selectedState}
-                onChange={(e) => handleStateChange(e.target.value)}
-                className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200/90 border border-slate-200 text-sm sm:text-base font-bold text-slate-900 cursor-pointer focus:outline-hidden focus:ring-2 focus:ring-emerald-500 shadow-2xs"
-                title="Select State for State Welfare Initiatives"
-              >
-                {ALL_INDIAN_STATES.map((st) => (
-                  <option key={st} value={st}>
-                    📍 {st}
-                  </option>
-                ))}
-              </select>
+            {/* Official State Portal Selector */}
+            <div className="flex items-center gap-2 pl-1 sm:pl-3">
+              <label className="text-sm sm:text-base font-extrabold text-slate-700 whitespace-nowrap">
+                🏛️ State Portal Link:
+              </label>
+              <div className="relative inline-flex items-center">
+                <select
+                  value={selectedState}
+                  onChange={(e) => handleStateChange(e.target.value)}
+                  className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200/90 border border-slate-300 text-base sm:text-lg font-extrabold text-slate-900 cursor-pointer focus:outline-hidden focus:ring-2 focus:ring-emerald-500 shadow-xs"
+                  title="Select State to view official government website portal"
+                >
+                  {ALL_INDIAN_STATES.map((st) => (
+                    <option key={st} value={st}>
+                      📍 {st}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
 
           {/* Scheme Counter */}
-          <div className="text-sm sm:text-base text-slate-700 font-bold shrink-0 bg-slate-50 border border-slate-200 px-4 py-2 rounded-2xl shadow-2xs">
-            Showing <strong className="text-emerald-800 text-base sm:text-lg font-black">{displayedSchemes.length}</strong> of {schemes.length} verified schemes
+          <div className="text-base sm:text-lg text-slate-700 font-extrabold shrink-0 bg-slate-50 border border-slate-200 px-5 py-2.5 rounded-2xl shadow-xs">
+            Showing <strong className="text-emerald-800 text-lg sm:text-xl font-black">{displayedSchemes.length}</strong> of {schemes.length} verified schemes
           </div>
         </div>
 
+        {/* Prominent Official State / National Government Portal Website Link Banner */}
+        {selectedState && STATE_OFFICIAL_PORTALS[selectedState] && (
+          <div className="w-full bg-gradient-to-r from-emerald-50 via-teal-50 to-sky-50 border-2 border-emerald-300 rounded-3xl p-5 sm:p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 animate-fade-in">
+            <div className="flex items-start gap-3.5">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-md">
+                <ExternalLink className="w-6 h-6" />
+              </div>
+              <div className="space-y-1">
+                <div className="inline-flex items-center gap-2">
+                  <span className="text-xs sm:text-sm font-black uppercase tracking-wider bg-emerald-200 text-emerald-950 px-3 py-0.5 rounded-full">
+                    Official {selectedState === 'All India' ? 'National Portal' : `${selectedState} State Government Portal`}
+                  </span>
+                  <span className="text-xs sm:text-sm font-bold text-slate-500">Verified Direct Link</span>
+                </div>
+                <h4 className="text-lg sm:text-xl font-black text-slate-900">
+                  {STATE_OFFICIAL_PORTALS[selectedState].name}
+                </h4>
+                <p className="text-sm sm:text-base text-slate-700 leading-relaxed max-w-3xl">
+                  {STATE_OFFICIAL_PORTALS[selectedState].description}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 shrink-0">
+              <a
+                href={STATE_OFFICIAL_PORTALS[selectedState].url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl text-base font-black text-white bg-emerald-600 hover:bg-emerald-700 shadow-md hover:shadow-lg transition-all hover:scale-102"
+              >
+                <span>Visit Official {selectedState === 'All India' ? 'myScheme' : selectedState} Website</span>
+                <ExternalLink className="w-4 h-4" />
+              </a>
+            </div>
+          </div>
+        )}
+
         {/* Row 3: Target Beneficiary Audience Filter (Full Width Occupied) */}
         <div className="pt-3 border-t border-slate-100 space-y-2.5 w-full">
-          <div className="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-slate-600 flex items-center justify-between">
+          <div className="text-sm sm:text-base font-extrabold uppercase tracking-wider text-slate-700 flex items-center justify-between">
             <span>Target Citizen Group:</span>
-            <span className="text-xs font-bold text-slate-400">Select audience to filter</span>
+            <span className="text-xs sm:text-sm font-bold text-slate-400">Select audience to filter</span>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-3 w-full">
             {BENEFICIARY_AUDIENCES.map((b) => {
@@ -648,7 +843,7 @@ const GovernmentSchemes = () => {
                   key={b.id}
                   type="button"
                   onClick={() => setSelectedBeneficiary(b.id)}
-                  className={`w-full inline-flex items-center justify-center text-center gap-2 px-3.5 py-3 rounded-2xl text-xs sm:text-sm font-bold transition-all shadow-xs ${
+                  className={`w-full inline-flex items-center justify-center text-center gap-2 px-3.5 py-3 rounded-2xl text-sm sm:text-base font-bold transition-all shadow-xs ${
                     isSelected
                       ? 'bg-slate-900 text-white shadow-md shadow-slate-900/20 scale-[1.01]'
                       : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 hover:border-slate-300'
@@ -664,9 +859,9 @@ const GovernmentSchemes = () => {
 
         {/* Row 4: Categories Chips (Full Width Occupied) */}
         <div className="pt-3 border-t border-slate-100 space-y-2.5 w-full">
-          <div className="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-slate-600 flex items-center justify-between">
+          <div className="text-sm sm:text-base font-extrabold uppercase tracking-wider text-slate-700 flex items-center justify-between">
             <span>Welfare Sector:</span>
-            <span className="text-xs font-bold text-slate-400">Select sector to filter</span>
+            <span className="text-xs sm:text-sm font-bold text-slate-400">Select sector to filter</span>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-9 gap-2 sm:gap-2.5 w-full">
             {categories.map((cat) => (
@@ -674,7 +869,7 @@ const GovernmentSchemes = () => {
                 key={cat}
                 type="button"
                 onClick={() => handleCategorySelect(cat)}
-                className={`w-full inline-flex items-center justify-center text-center px-2.5 py-2.5 rounded-2xl text-xs sm:text-sm font-bold transition-all shadow-xs ${
+                className={`w-full inline-flex items-center justify-center text-center px-2.5 py-2.5 rounded-2xl text-sm sm:text-base font-bold transition-all shadow-xs ${
                   selectedCategory === cat
                     ? 'bg-emerald-600 text-white font-black shadow-md shadow-emerald-600/20 scale-[1.01]'
                     : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200/80 hover:border-slate-300'
@@ -747,8 +942,8 @@ const GovernmentSchemes = () => {
                   {/* Top Badges & Bookmark Action */}
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className={`text-xs font-black uppercase tracking-wider px-3 py-1 rounded-full border shadow-2xs ${badgeClass}`}>
-                        {scheme.government_level}
+                      <span className={`text-xs sm:text-sm font-black uppercase tracking-wider px-3.5 py-1 rounded-full border shadow-2xs ${badgeClass}`}>
+                        {scheme.government_level === 'Central Government' ? 'CENTRAL GOVERNMENT' : 'ALL INDIA SCHEME'}
                       </span>
                       {isEligible && (
                         <span className="inline-flex items-center gap-1.5 text-xs font-extrabold text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full border border-emerald-300 shadow-2xs">
