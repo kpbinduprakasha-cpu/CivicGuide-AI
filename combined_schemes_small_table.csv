@@ -1,0 +1,48 @@
+#,Scheme Name,Sector,Level / State,Key Direct Benefit,Official Portal
+1,PM-Kisan Samman Nidhi,Agriculture,🏛️ Central,"Rs. 6,000 per year transferred in three equal quarterly installments of Rs....",https://pmkisan.gov.in
+2,Ayushman Bharat - PM-JAY,Healthcare,🏛️ Central,"Cashless treatment up to Rs. 5,00,000 per family per year across empaneled ...",https://pmjay.gov.in
+3,PM Surya Ghar: Muft Bijli Yojana,Financial assistance,🏛️ Central,"Direct subsidy up to Rs. 78,000 for 3 kW system (Rs. 30,000 for 1 kW, Rs. 6...",https://pmsuryaghar.gov.in
+4,PM Vishwakarma Yojana,Employment,🏛️ Central,"PM Vishwakarma Certificate & ID, 5-7 days training with Rs. 500/day stipend...",https://pmvishwakarma.gov.in
+5,Pradhan Mantri Mudra Yojana (PMMY),Financial assistance,🏛️ Central,"Zero collateral security: Shishu (loans up to Rs. 50,000), Kishor (Rs. 50,0...",https://www.mudra.org.in
+6,Pradhan Mantri Awas Yojana (PMAY - Gramin & Urban),Housing,🏛️ Central,"Financial grant of Rs. 1,20,000 (plains) to Rs. 1,30,000 (hilly states) plu...",https://pmayg.nic.in
+7,Sukanya Samriddhi Yojana (SSY),Women and child welfare,🏛️ Central,"High compound interest rate (8.2% p.a.), complete tax exemption under Secti...",https://www.indiapost.gov.in
+8,Atal Pension Yojana (APY),Social welfare,🏛️ Central,"Guaranteed monthly pension of Rs. 1,000 to Rs. 5,000 after age 60; same pen...",https://www.npscra.nsdl.co.in
+9,National Scholarship Portal (NSP) Central Schemes,Education,🏛️ Central,"Direct financial reimbursement of tuition fees, admission fees, and monthly...",https://scholarships.gov.in
+10,Kisan Credit Card (KCC) Scheme,Agriculture,🏛️ Central,Credit limit up to Rs. 3 Lakh at effective interest rate of 4% p.a. (with 3...,https://myscheme.gov.in/schemes/kcc
+11,Gruha Lakshmi Scheme,Women and child welfare,📍 Karnataka,"Rs. 2,000 per month credited directly via Direct Benefit Transfer (DBT) int...",https://sevasindhugs.karnataka.gov.in
+12,Yuva Nidhi Scheme,Employment,📍 Karnataka,"Rs. 3,000 per month for degree graduates; Rs. 1,500 per month for diploma h...",https://sevasindhugs.karnataka.gov.in
+13,Gruha Jyothi Scheme,Financial assistance,📍 Karnataka,Zero electricity bill for usage within eligible monthly entitlement (up to ...,https://sevasindhugs.karnataka.gov.in
+14,Shakti Scheme,Women and child welfare,📍 Karnataka,100% free travel in ordinary and express city/suburban buses operated by KS...,https://ksrtc.karnataka.gov.in
+15,SSP Post-Matric & Vidyasiri Scholarship,Education,📍 Karnataka,"Full or partial tuition fee waiver, examination fees, and monthly maintenan...",https://ssp.postmatric.karnataka.gov.in
+16,Anna Bhagya Scheme,Social welfare,📍 Karnataka,Free food grains plus direct cash transfer of Rs. 34 per kg (Rs. 170 per pe...,https://ahara.kar.nic.in
+17,Mukhyamantri Majhi Ladki Bahin Yojana,Women and child welfare,📍 Maharashtra,"Rs. 1,500 per month directly deposited into the beneficiary's Aadhaar-linke...",https://ladakibahin.maharashtra.gov.in
+18,Mahatma Jyotirao Phule Jan Arogya Yojana (MJPJAY),Healthcare,📍 Maharashtra,"Cashless hospitalization up to Rs. 5,00,000 per family per year for major s...",https://www.jeevandayee.gov.in
+19,Namo Shetkari Mahasanman Nidhi Yojana,Agriculture,📍 Maharashtra,"Rs. 6,000 per year transferred in three installments of Rs. 2,000 each, mak...",https://krishi.maharashtra.gov.in
+20,Lek Ladki Yojana,Women and child welfare,📍 Maharashtra,"Rs. 5,000 at birth, Rs. 6,000 in Class 1, Rs. 7,000 in Class 6, Rs. 8,000 i...",https://womenchild.maharashtra.gov.in
+21,Delhi Lifeline Free Electricity & Water Scheme,Financial assistance,📍 Delhi,"Zero electricity bills up to 200 units, 50% discount between 201-400 units,...",https://delhi.gov.in
+22,Jai Bhim Mukhyamantri Pratibha Vikas Yojana,Education,📍 Delhi,Complete coaching fees paid directly to premier empaneled private coaching ...,https://scstwelfare.delhi.gov.in
+23,Mukhyamantri Teerth Yatra Yojana,Social welfare,📍 Delhi,"Free round-trip AC train travel, boarding, lodging, local transfers, and on...",https://edistrict.delhigovt.nic.in
+24,Kalaignar Magalir Urimai Thittam,Women and child welfare,📍 Tamil Nadu,"Rs. 1,000 per month deposited directly into the beneficiary woman's Aadhaar...",https://kmut.tn.gov.in
+25,Pudhumai Penn Scheme (Moovalur Ramamirtham Ammaiyar),Education,📍 Tamil Nadu,"Rs. 1,000 per month deposited directly into the student's bank account ever...",https://pudhumaipenn.tn.gov.in
+26,Chief Minister's Comprehensive Health Insurance Scheme (CMCHIS),Healthcare,📍 Tamil Nadu,"Cashless hospitalization up to Rs. 5,00,000 per family per year in empanele...",https://www.cmchistn.com
+27,Mukhyamantri Kanya Sumangala Yojana,Women and child welfare,📍 Uttar Pradesh,"Stage-wise cash transfers: Rs. 5,000 at birth, Rs. 2,000 upon vaccination, ...",https://mksy.up.gov.in
+28,Swami Vivekananda Yuva Sashaktikaran Yojana (Free Smartphone/Tablet),Education,📍 Uttar Pradesh,Free pre-configured Android smartphone or tablet loaded with educational co...,https://digishakti.up.gov.in
+29,UP Mukhyamantri Abhyudaya Yojana,Education,📍 Uttar Pradesh,Free physical and virtual coaching by subject experts and senior IAS/IPS/PC...,https://abhyuday.up.gov.in
+30,YSR Rythu Bharosa / Annadata Sukhibhava,Agriculture,📍 Andhra Pradesh,Financial assistance credited directly into bank accounts via DBT in instal...,https://ysrrythubharosa.ap.gov.in
+31,Dr. YSR Aarogyasri Health Scheme,Healthcare,📍 Andhra Pradesh,"Cashless hospitalization up to Rs. 25,00,000 per family per year, free foll...",https://aarogyasri.ap.gov.in
+32,Mahalakshmi Scheme (Telangana),Women and child welfare,📍 Telangana,"Rs. 2,500/month DBT cash transfer, unlimited free travel in Palle Velugu an...",https://telangana.gov.in
+33,Rythu Bharosa / Rythu Bandhu (Telangana),Agriculture,📍 Telangana,"Direct benefit transfer of Rs. 7,500 per acre per season (Kharif and Rabi) ...",https://rythubandhu.telangana.gov.in
+34,Kanyashree Prakalpa,Women and child welfare,📍 West Bengal,"K1: Annual scholarship of Rs. 1,000 for girls aged 13-18 (Classes 8-12); K2...",https://www.wbkanyashree.gov.in
+35,Lakshmir Bhandar Scheme,Women and child welfare,📍 West Bengal,"Rs. 1,200 per month for SC/ST women; Rs. 1,000 per month for General/OBC wo...",https://wb.gov.in
+36,Swasthya Sathi Scheme,Healthcare,📍 West Bengal,"Cashless hospitalization up to Rs. 5,00,000 per family per year for seconda...",https://swasthyasathi.gov.in
+37,Karunya Arogya Suraksha Padhathi (KASP),Healthcare,📍 Kerala,"Cashless hospitalization up to Rs. 5,00,000 per family per year covering cr...",https://sha.kerala.gov.in
+38,Kerala Social Security & Welfare Pensions,Social welfare,📍 Kerala,"Monthly financial pension of Rs. 1,600 credited directly to bank account or...",https://welfarepension.lsgkerala.gov.in
+39,Mukhyamantri Amrutam (MA) & MA Vatsalya Yojana,Healthcare,📍 Gujarat,"100% cashless hospitalization up to Rs. 10,00,000 per family per year cover...",https://magujarat.com
+40,Vhali Dikri Yojana,Women and child welfare,📍 Gujarat,"Rs. 4,000 at Class 1 enrollment, Rs. 6,000 at Class 9 enrollment, and Rs. 1...",https://wcd.gujarat.gov.in
+41,Mukhyamantri Ayushman Arogya Yojana (MAAY - Rajasthan),Healthcare,📍 Rajasthan,"Cashless hospitalization up to Rs. 25,00,000 per family per year in empanel...",https://health.rajasthan.gov.in
+42,Mukhyamantri Kanya Utthan Yojana (Bihar),Women and child welfare,📍 Bihar,"Financial aid of Rs. 2,000 at birth, Rs. 1,000 upon 1-year Aadhaar enrollme...",https://medhasoft.bih.nic.in
+43,Bihar Student Credit Card Scheme (MNSSBY),Education,📍 Bihar,"Collateral-free, state-guaranteed education loan up to Rs. 4,00,000 coverin...",https://www.7nishchay-yuvaupmission.bihar.gov.in
+44,Punjab Free Domestic Power Scheme,Financial assistance,📍 Punjab,Zero electricity bill for consumption up to 300 units per month....,https://pspcl.in
+45,Mukhyamantri Ladli Behna Yojana (MP),Women and child welfare,📍 Madhya Pradesh,"Rs. 1,250 credited directly on the 10th of every month into the woman's Aad...",https://cmladlibahna.mp.gov.in
+46,KALIA Scheme (Krushak Assistance for Livelihood and Income Augmentation),Agriculture,📍 Odisha,"Direct benefit transfer of Rs. 4,000 for Kharif and Rs. 4,000 for Rabi seas...",https://kalia.odisha.gov.in
+47,Orunodoi Scheme 2.0 (Assam),Women and child welfare,📍 Assam,"Monthly financial aid of Rs. 1,250 credited directly on the 10th of every m...",https://orunodoi.assam.gov.in

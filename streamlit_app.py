@@ -5,7 +5,7 @@ import pandas as pd
 import streamlit as st
 
 # ---------------------------------------------------------------------------
-# Page Configuration & Styling
+# Page Configuration & Styling (100% Pure Python Streamlit Platform)
 # ---------------------------------------------------------------------------
 st.set_page_config(
     page_title="CivicGuide AI • Central & State Public Services Platform",
@@ -14,11 +14,11 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom High-Contrast, Accessible Theme Styling
+# Custom High-Contrast, Clean, Accessible Theme Styling
 st.markdown("""
 <style>
     .main-title {
-        font-size: 2.3rem !important;
+        font-size: 2.1rem !important;
         font-weight: 900 !important;
         color: #064e3b !important;
         margin-bottom: 0.2rem !important;
@@ -27,19 +27,19 @@ st.markdown("""
         gap: 0.5rem;
     }
     .sub-title {
-        font-size: 1.05rem !important;
+        font-size: 0.95rem !important;
         font-weight: 600 !important;
         color: #475569 !important;
         margin-bottom: 1rem !important;
     }
     .scope-badge {
         display: inline-block;
-        padding: 0.25rem 0.75rem;
+        padding: 0.2rem 0.6rem;
         border-radius: 9999px;
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         font-weight: 800;
         text-transform: uppercase;
-        margin-right: 0.5rem;
+        margin-right: 0.4rem;
     }
     .badge-central {
         background-color: #eff6ff;
@@ -53,38 +53,58 @@ st.markdown("""
     }
     .portal-banner {
         background: linear-gradient(135deg, #ecfdf5 0%, #f0fdfa 50%, #f0f9ff 100%);
-        border: 2px solid #6ee7b7;
-        border-radius: 1.25rem;
-        padding: 1.25rem;
-        margin-bottom: 1.5rem;
+        border: 1.5px solid #6ee7b7;
+        border-radius: 1rem;
+        padding: 1rem;
+        margin-bottom: 1rem;
     }
     .scheme-card {
         background-color: #ffffff;
         border: 1px solid #e2e8f0;
-        border-radius: 1.25rem;
-        padding: 1.25rem;
-        margin-bottom: 1rem;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        border-radius: 1rem;
+        padding: 1.1rem;
+        margin-bottom: 0.8rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
         transition: all 0.2s ease;
     }
     .scheme-card:hover {
         border-color: #10b981;
-        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.08);
     }
     .benefit-box {
         background-color: #f8fafc;
         border: 1px solid #e2e8f0;
-        border-radius: 0.75rem;
-        padding: 0.75rem;
-        margin: 0.5rem 0;
+        border-radius: 0.6rem;
+        padding: 0.6rem;
+        margin: 0.4rem 0;
         font-weight: 600;
+        font-size: 0.85rem;
         color: #0f172a;
+    }
+    .stat-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 1rem;
+        padding: 1rem;
+        text-align: center;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .stat-number {
+        font-size: 1.8rem;
+        font-weight: 900;
+        color: #047857;
+    }
+    .stat-label {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #64748b;
+        text-transform: uppercase;
     }
 </style>
 """, unsafe_allow_html=True)
 
 # ---------------------------------------------------------------------------
-# Constants & Official State Portals Dictionary
+# Constants & Official State Portals Dictionary (All 36 States & UTs)
 # ---------------------------------------------------------------------------
 ALL_INDIAN_STATES = [
     "All India",
@@ -106,7 +126,7 @@ STATE_OFFICIAL_PORTALS = {
     "Karnataka": {
         "name": "Karnataka Seva Sindhu & Nadakacheri Portal",
         "url": "https://sevasindhu.karnataka.gov.in",
-        "description": "Official Government of Karnataka portal for citizen services, guarantee schemes (Gruha Lakshmi, Yuva Nidhi, Gruha Jyothi, Shakti), and revenue certificates."
+        "description": "Official Government of Karnataka portal for citizen services, guarantee schemes (Gruha Lakshmi, Yuva Nidhi, Gruha Jyothi, Shakti, Anna Bhagya), and revenue certificates."
     },
     "Maharashtra": {
         "name": "Aaple Sarkar / MahaOnline Portal",
@@ -191,7 +211,7 @@ STATE_OFFICIAL_PORTALS = {
 }
 
 # ---------------------------------------------------------------------------
-# Database Loader with Caching & Verified Git-Tracked Seed Fallbacks
+# Database Loader with Caching & Pure Python Git-Tracked Fallbacks
 # ---------------------------------------------------------------------------
 def _ensure_sqlite_database_seeded(db_path, schemes, services):
     """Ensure SQLite database is created and seeded with all verified records."""
@@ -346,14 +366,25 @@ def load_database_data():
 
 schemes_list, services_list = load_database_data()
 
+# Initialize session state for bookmarks / saved schemes
+if "saved_schemes" not in st.session_state:
+    st.session_state.saved_schemes = []
+
 # ---------------------------------------------------------------------------
-# Sidebar: Citizen Profile & App Navigation
+# Sidebar: Citizen Profile, Language, & Navigation
 # ---------------------------------------------------------------------------
 with st.sidebar:
-    st.image("https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/landmark.svg", width=48)
+    st.image("https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/landmark.svg", width=42)
     st.markdown("### **CivicGuide AI**")
-    st.caption("Citizen Public Services & Welfare Advisory Platform")
+    st.caption("Central & State Citizen Public Services Advisory")
     
+    # Language Selector (100% Pure Python UI)
+    selected_language = st.selectbox(
+        "🌐 Language / ಭಾಷೆ / भाषा",
+        ["English", "ಕನ್ನಡ (Kannada)", "हिंदी (Hindi)"],
+        index=0
+    )
+
     st.markdown("---")
     st.markdown("#### **Active Citizen Profile**")
     st.markdown("""
@@ -368,12 +399,15 @@ with st.sidebar:
     nav_choice = st.radio(
         "Navigate Platform",
         [
+            "🏠 Home & Overview",
             "🏛️ Schemes Directory",
             "🤖 AI Citizen Assistant",
             "📋 Eligibility Screening",
             "📍 Service Map & Taluks",
+            "👤 Saved Schemes & Profile",
             "ℹ️ About & GitHub"
-        ]
+        ],
+        index=1
     )
     
     st.markdown("---")
@@ -383,21 +417,97 @@ with st.sidebar:
     **Author:** [@kpbinduprakasha-cpu](https://github.com/kpbinduprakasha-cpu)
     """)
 
+# Helper to get localized scheme text
+def get_localized(s, key):
+    if selected_language == "ಕನ್ನಡ (Kannada)":
+        return s.get(f"{key}_kn") or s.get(key)
+    elif selected_language == "हिंदी (Hindi)":
+        return s.get(f"{key}_hi") or s.get(key)
+    return s.get(key)
+
 # ---------------------------------------------------------------------------
-# Main Page View: 1. Schemes Directory
+# 1. Main Page View: Home & Overview
 # ---------------------------------------------------------------------------
-if nav_choice == "🏛️ Schemes Directory":
+if nav_choice == "🏠 Home & Overview":
+    st.markdown('<div class="main-title">🏛️ Welcome to CivicGuide AI</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sub-title">Unified Central & State Government Public Services and Citizen Welfare Platform (100% Python).</div>', unsafe_allow_html=True)
+
+    # Metrics row
+    m1, m2, m3, m4 = st.columns(4)
+    with m1:
+        st.markdown(f"""
+        <div class="stat-card">
+            <div class="stat-number">{len(schemes_list)}</div>
+            <div class="stat-label">Verified Welfare Schemes</div>
+        </div>
+        """, unsafe_allow_html=True)
+    with m2:
+        central_count = len([s for s in schemes_list if "central" in (s.get("government_level") or "").lower()])
+        st.markdown(f"""
+        <div class="stat-card">
+            <div class="stat-number">{central_count}</div>
+            <div class="stat-label">Central Schemes</div>
+        </div>
+        """, unsafe_allow_html=True)
+    with m3:
+        st.markdown(f"""
+        <div class="stat-card">
+            <div class="stat-number">36</div>
+            <div class="stat-label">States & UTs Portals</div>
+        </div>
+        """, unsafe_allow_html=True)
+    with m4:
+        st.markdown(f"""
+        <div class="stat-card">
+            <div class="stat-number">{len(services_list)}</div>
+            <div class="stat-label">Public Service Centers</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    # Feature Cards
+    f1, f2, f3 = st.columns(3)
+    with f1:
+        st.markdown("""
+        <div class="scheme-card">
+            <h4 style="color:#047857; margin-bottom: 0.25rem;">🏛️ Schemes Directory</h4>
+            <p style="font-size: 0.85rem; color:#475569;">Explore Central Government and State-specific initiatives with direct official portals and document checklists.</p>
+        </div>
+        """, unsafe_allow_html=True)
+    with f2:
+        st.markdown("""
+        <div class="scheme-card">
+            <h4 style="color:#047857; margin-bottom: 0.25rem;">🤖 AI Citizen Assistant</h4>
+            <p style="font-size: 0.85rem; color:#475569;">Ask questions in natural language and receive grounded procedural answers with document requirements.</p>
+        </div>
+        """, unsafe_allow_html=True)
+    with f3:
+        st.markdown("""
+        <div class="scheme-card">
+            <h4 style="color:#047857; margin-bottom: 0.25rem;">📍 Service Map & Taluk Locator</h4>
+            <p style="font-size: 0.85rem; color:#475569;">Find government hospitals, DC offices, Tahsildars, and Grama One / CSC centers in Vijayanagara and across India.</p>
+        </div>
+        """, unsafe_allow_html=True)
+
+# ---------------------------------------------------------------------------
+# 2. Main Page View: Schemes Directory
+# ---------------------------------------------------------------------------
+elif nav_choice == "🏛️ Schemes Directory":
     st.markdown('<div class="main-title">🏛️ Government Welfare Schemes Directory</div>', unsafe_allow_html=True)
     st.markdown('<div class="sub-title">Verified Central & State Government Welfare Schemes across India with Document Checklists and Direct Official Links.</div>', unsafe_allow_html=True)
     
     # Row 1: Search & Controls
-    c1, c2, c3 = st.columns([3, 2, 2])
+    c1, c2, c3, c4 = st.columns([3, 2, 2, 2])
     with c1:
-        search_query = st.text_input("🔍 Search Schemes", placeholder="e.g., scholarship, solar, 2000, farmer, loan...")
+        search_query = st.text_input("🔍 Search Schemes", placeholder="e.g. scholarship, solar, 2000, farmer, loan...")
     with c2:
+        beneficiary_options = ["All", "Students", "Farmers", "Women", "Artisans", "Seniors"]
+        selected_beneficiary = st.selectbox("👥 Citizen Group", beneficiary_options)
+    with c3:
         category_options = ["All", "Agriculture", "Education", "Healthcare", "Employment", "Housing", "Women and child welfare", "Social welfare", "Financial assistance"]
         selected_category = st.selectbox("📂 Welfare Sector", category_options)
-    with c3:
+    with c4:
         view_mode = st.radio("Display Mode", ["🎴 Cards View", "📋 Combined Table View"], horizontal=True)
 
     # Row 2: Three-Tier Scope Selector & State Selector
@@ -419,16 +529,16 @@ if nav_choice == "🏛️ Schemes Directory":
     portal_info = STATE_OFFICIAL_PORTALS.get(selected_state, STATE_OFFICIAL_PORTALS["All India"])
     st.markdown(f"""
     <div class="portal-banner">
-        <div style="font-weight: 800; font-size: 0.85rem; color: #047857; text-transform: uppercase;">
+        <div style="font-weight: 800; font-size: 0.8rem; color: #047857; text-transform: uppercase;">
             Verified Official {selected_state if selected_state != 'All India' else 'National'} Government Portal
         </div>
-        <div style="font-size: 1.25rem; font-weight: 800; color: #0f172a; margin: 0.25rem 0;">
+        <div style="font-size: 1.15rem; font-weight: 800; color: #0f172a; margin: 0.2rem 0;">
             {portal_info['name']}
         </div>
-        <p style="font-size: 0.95rem; color: #334155; margin-bottom: 0.75rem;">
+        <p style="font-size: 0.85rem; color: #334155; margin-bottom: 0.5rem;">
             {portal_info['description']}
         </p>
-        <a href="{portal_info['url']}" target="_blank" style="display: inline-block; background-color: #059669; color: white; padding: 0.5rem 1.25rem; border-radius: 0.75rem; font-weight: 800; text-decoration: none;">
+        <a href="{portal_info['url']}" target="_blank" style="display: inline-block; background-color: #059669; color: white; padding: 0.4rem 1rem; border-radius: 0.6rem; font-size: 0.85rem; font-weight: 800; text-decoration: none;">
             Visit Official {selected_state if selected_state != 'All India' else 'myScheme'} Website ↗
         </a>
     </div>
@@ -451,13 +561,26 @@ if nav_choice == "🏛️ Schemes Directory":
                 (selected_state.lower() in (s.get("state") or "").lower() or selected_state.lower() in (s.get("government_level") or "").lower())
             ]
         else:
-            filtered = [] # Otherwise no show, prompt user
+            filtered = []
     else: # All Combined
         pass
 
     # Category Filtering
     if selected_category != "All":
         filtered = [s for s in filtered if selected_category.lower() in (s.get("category") or "").lower()]
+
+    # Beneficiary Audience Filtering
+    if selected_beneficiary != "All":
+        filtered = [
+            s for s in filtered
+            if (
+                (selected_beneficiary == "Students" and (s.get("category") == "Education" or "scholarship" in (s.get("description") or "").lower() or "yuva" in (s.get("name") or "").lower())) or
+                (selected_beneficiary == "Farmers" and (s.get("category") == "Agriculture" or "kisan" in (s.get("name") or "").lower() or "farmer" in (s.get("description") or "").lower())) or
+                (selected_beneficiary == "Women" and (s.get("category") == "Women and child welfare" or "woman" in (s.get("description") or "").lower() or "lakshmi" in (s.get("name") or "").lower() or "girl" in (s.get("description") or "").lower())) or
+                (selected_beneficiary == "Artisans" and ("artisan" in (s.get("description") or "").lower() or "vishwakarma" in (s.get("name") or "").lower() or "mudra" in (s.get("name") or "").lower())) or
+                (selected_beneficiary == "Seniors" and (s.get("category") == "Healthcare" or "pension" in (s.get("description") or "").lower() or "senior" in (s.get("eligibility") or "").lower()))
+            )
+        ]
 
     # Search Query
     if search_query.strip():
@@ -490,11 +613,11 @@ if nav_choice == "🏛️ Schemes Directory":
                 is_central = "central" in (s.get("government_level") or "").lower()
                 table_data.append({
                     "#": idx,
-                    "Scheme Name": s.get("name"),
+                    "Scheme Name": get_localized(s, "name"),
                     "Sector": s.get("category"),
                     "Government Level": "🏛️ Central" if is_central else f"📍 State: {s.get('state', 'State')}",
-                    "Direct Benefits": s.get("benefits"),
-                    "Eligibility": s.get("eligibility"),
+                    "Direct Benefits": get_localized(s, "benefits"),
+                    "Eligibility": get_localized(s, "eligibility"),
                     "Official Portal": s.get("official_url")
                 })
             df = pd.DataFrame(table_data)
@@ -534,30 +657,44 @@ if nav_choice == "🏛️ Schemes Directory":
                 with col:
                     is_central = "central" in (scheme.get("government_level") or "").lower()
                     badge_html = '<span class="scope-badge badge-central">🏛️ Central Government</span>' if is_central else f'<span class="scope-badge badge-state">📍 State Government • {scheme.get("state")}</span>'
-                    
+                    scheme_name = get_localized(scheme, "name")
+                    scheme_desc = get_localized(scheme, "description")
+                    scheme_benefits = get_localized(scheme, "benefits")
+                    scheme_eligibility = get_localized(scheme, "eligibility")
+
                     st.markdown(f"""
                     <div class="scheme-card">
                         <div>{badge_html}</div>
-                        <h4 style="margin: 0.5rem 0; font-weight: 800; color: #0f172a;">{scheme.get('name')}</h4>
-                        <span style="font-size: 0.8rem; font-weight: 700; color: #059669;">{scheme.get('category')}</span>
-                        <p style="font-size: 0.85rem; color: #475569; margin: 0.5rem 0;">{scheme.get('description')[:140]}...</p>
+                        <h4 style="margin: 0.4rem 0; font-weight: 800; color: #0f172a;">{scheme_name}</h4>
+                        <span style="font-size: 0.75rem; font-weight: 700; color: #059669;">{scheme.get('category')}</span>
+                        <p style="font-size: 0.8rem; color: #475569; margin: 0.4rem 0;">{scheme_desc[:130]}...</p>
                         <div class="benefit-box">
-                            💰 <strong>Benefit:</strong> {scheme.get('benefits')}
+                            💰 <strong>Benefit:</strong> {scheme_benefits[:95]}...
                         </div>
-                        <div style="font-size: 0.8rem; color: #334155; margin-top: 0.5rem;">
-                            <strong>Eligibility:</strong> {scheme.get('eligibility')[:120]}...
+                        <div style="font-size: 0.75rem; color: #334155; margin-top: 0.4rem;">
+                            <strong>Eligibility:</strong> {scheme_eligibility[:90]}...
                         </div>
                     </div>
                     """, unsafe_allow_html=True)
                     
-                    with st.expander(f"📋 Document Checklist & Apply for {scheme.get('name')}"):
+                    with st.expander(f"📋 Document Checklist & Apply for {scheme_name}"):
                         st.markdown(f"**Mandatory Documents:** {scheme.get('required_documents')}")
                         st.markdown(f"**How to Apply:** {scheme.get('application_process')}")
                         if scheme.get('official_url'):
                             st.link_button("Visit Official Application Portal ↗", scheme.get('official_url'))
+                        
+                        # Bookmark Scheme in Python session
+                        is_saved = scheme['id'] in st.session_state.saved_schemes
+                        btn_label = "★ Saved" if is_saved else "☆ Bookmark Scheme"
+                        if st.button(btn_label, key=f"save_{scheme['id']}"):
+                            if is_saved:
+                                st.session_state.saved_schemes.remove(scheme['id'])
+                            else:
+                                st.session_state.saved_schemes.append(scheme['id'])
+                            st.rerun()
 
 # ---------------------------------------------------------------------------
-# Main Page View: 2. AI Citizen Assistant
+# 3. Main Page View: AI Citizen Assistant
 # ---------------------------------------------------------------------------
 elif nav_choice == "🤖 AI Citizen Assistant":
     st.markdown('<div class="main-title">🤖 AI Citizen Assistant</div>', unsafe_allow_html=True)
@@ -663,7 +800,7 @@ elif nav_choice == "🤖 AI Citizen Assistant":
             st.session_state.messages.append({"role": "assistant", "content": response_text})
 
 # ---------------------------------------------------------------------------
-# Main Page View: 3. Eligibility Screening
+# 4. Main Page View: Eligibility Screening
 # ---------------------------------------------------------------------------
 elif nav_choice == "📋 Eligibility Screening":
     st.markdown('<div class="main-title">📋 Citizen Demographic Eligibility Checker</div>', unsafe_allow_html=True)
@@ -686,7 +823,7 @@ elif nav_choice == "📋 Eligibility Screening":
     if submit:
         st.success(f"Demographic Evaluation Complete for **{gender}, {age} Years, {state}** (Annual Income: ₹{income:,})")
         
-        # Simple rule-based match
+        # Rule-based matching engine
         matched = []
         for s in schemes_list:
             score = 0
@@ -731,16 +868,16 @@ elif nav_choice == "📋 Eligibility Screening":
             <div class="scheme-card">
                 <span class="scope-badge {'badge-central' if 'central' in (s.get('government_level') or '').lower() else 'badge-state'}">{s.get('government_level')}</span>
                 <span style="float: right; font-weight: 800; color: {'#059669' if item['status'] == 'Qualified' else '#d97706'};">● {item['status']}</span>
-                <h4 style="margin: 0.5rem 0; font-weight: 800;">{s.get('name')}</h4>
+                <h4 style="margin: 0.4rem 0; font-weight: 800;">{s.get('name')}</h4>
                 <div class="benefit-box">💰 Benefit: {s.get('benefits')}</div>
-                <div style="font-size: 0.85rem; color: #064e3b; font-weight: 600;">
+                <div style="font-size: 0.8rem; color: #064e3b; font-weight: 600;">
                     ✓ Matched Criteria: {' • '.join(item['reasons'])}
                 </div>
             </div>
             """, unsafe_allow_html=True)
 
 # ---------------------------------------------------------------------------
-# Main Page View: 4. Service Map & Taluk Locator
+# 5. Main Page View: Service Map & Taluk Locator
 # ---------------------------------------------------------------------------
 elif nav_choice == "📍 Service Map & Taluks":
     st.markdown('<div class="main-title">📍 Public Services Map & Taluk Directory</div>', unsafe_allow_html=True)
@@ -748,9 +885,15 @@ elif nav_choice == "📍 Service Map & Taluks":
 
     m1, m2 = st.columns(2)
     with m1:
-        map_state = st.selectbox("Select State", ["Karnataka", "Maharashtra", "Delhi", "Tamil Nadu"], index=0)
+        map_state = st.selectbox("Select State", ["Karnataka", "Maharashtra", "Delhi", "Tamil Nadu", "Uttar Pradesh"], index=0)
     with m2:
-        dist_options = ["Vijayanagara (HQ: Hosapete)", "Ballari", "Bengaluru Urban", "Mysuru"] if map_state == "Karnataka" else ["Mumbai", "Pune", "Central Delhi", "Chennai"]
+        karnataka_districts = [
+            "Vijayanagara (HQ: Hosapete)", "Bagalkote", "Ballari", "Belagavi", "Bengaluru Rural", "Bengaluru Urban",
+            "Bidar", "Chamarajanagara", "Chikkaballapura", "Chikkamagaluru", "Chitradurga", "Dakshina Kannada",
+            "Davanagere", "Dharwad", "Gadag", "Hassan", "Haveri", "Kalaburagi", "Kodagu", "Kolar", "Koppal",
+            "Mandya", "Mysuru", "Raichur", "Ramanagara", "Shivamogga", "Tumakuru", "Udupi", "Uttara Kannada", "Yadgir"
+        ]
+        dist_options = karnataka_districts if map_state == "Karnataka" else ["Mumbai", "Pune", "Central Delhi", "Chennai", "Lucknow"]
         map_district = st.selectbox("Select District", dist_options)
 
     # 6 Taluks for Vijayanagara District
@@ -764,30 +907,69 @@ elif nav_choice == "📍 Service Map & Taluks":
     # Map Visualization
     if services_list:
         df_services = pd.DataFrame(services_list)
-        # Filter valid lat/long
         map_data = df_services.dropna(subset=['latitude', 'longitude'])
         if not map_data.empty:
             st.markdown("#### **Interactive Public Offices Map**")
             st.map(map_data[['latitude', 'longitude']], zoom=10)
 
-        st.markdown("#### **Verified Public Service Offices Directory**")
+        st.markdown("#### **Verified Public Service Offices Directory (Small Table)**")
         st.dataframe(
             df_services[['name', 'category', 'taluk', 'address', 'phone', 'government_level']],
-            use_container_width=True
+            use_container_width=True,
+            hide_index=True
         )
 
 # ---------------------------------------------------------------------------
-# Main Page View: 5. About & GitHub
+# 6. Main Page View: Saved Schemes & Profile
+# ---------------------------------------------------------------------------
+elif nav_choice == "👤 Saved Schemes & Profile":
+    st.markdown('<div class="main-title">👤 Citizen Profile & Saved Schemes</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sub-title">Review your demographic qualifications and bookmarked government welfare programs.</div>', unsafe_allow_html=True)
+
+    p1, p2 = st.columns([1, 2])
+    with p1:
+        st.markdown("""
+        <div class="scheme-card">
+            <h4 style="color:#047857; margin-bottom: 0.5rem;">Citizen Profile Card</h4>
+            <p><strong>Name:</strong> K P BINDUPRAKASHA</p>
+            <p><strong>Age:</strong> 24 Years</p>
+            <p><strong>Gender:</strong> Male</p>
+            <p><strong>State:</strong> Karnataka</p>
+            <p><strong>District:</strong> Vijayanagara</p>
+            <p><strong>Occupation:</strong> Graduate / Job Aspirant</p>
+            <p><strong>Ration Card:</strong> BPL Priority Card</p>
+            <p><strong>Aadhaar Linked:</strong> Yes (NPCI Active)</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+    with p2:
+        st.markdown("#### **Bookmarked / Saved Schemes**")
+        saved_items = [s for s in schemes_list if s['id'] in st.session_state.saved_schemes]
+        if not saved_items:
+            st.info("You haven't bookmarked any schemes yet. Go to **🏛️ Schemes Directory** and click **'☆ Bookmark Scheme'** on any initiative to track it here.")
+        else:
+            for s in saved_items:
+                st.markdown(f"""
+                <div class="scheme-card">
+                    <span class="scope-badge badge-state">{s.get('government_level')}</span>
+                    <h4 style="margin: 0.4rem 0;">{s.get('name')}</h4>
+                    <div class="benefit-box">💰 {s.get('benefits')}</div>
+                    <a href="{s.get('official_url')}" target="_blank" style="color: #059669; font-weight: 700; text-decoration: none;">Apply on Official Portal ↗</a>
+                </div>
+                """, unsafe_allow_html=True)
+
+# ---------------------------------------------------------------------------
+# 7. Main Page View: About & GitHub
 # ---------------------------------------------------------------------------
 else:
     st.markdown('<div class="main-title">ℹ️ About CivicGuide AI</div>', unsafe_allow_html=True)
     st.markdown("""
-    **CivicGuide AI** is an open-source, citizen-centric public services platform developed to bridge the gap between Indian citizens and government welfare initiatives.
+    **CivicGuide AI** is an open-source, citizen-centric public services platform developed in pure Python for one-click deployment on **Streamlit Community Cloud**.
 
-    ### **Key Architecture Highlights**
-    - **Frontend:** React 18, Vite, Tailwind CSS, Lucide React, Leaflet Maps.
-    - **Backend:** Python Flask RESTful APIs, SQLAlchemy ORM, ChromaDB RAG Vector Store.
-    - **Streamlit Cloud:** Native Streamlit application (`streamlit_app.py`) for one-click serverless cloud hosting.
+    ### **Key Architecture Highlights (100% Pure Python)**
+    - **Cloud Deployment:** Streamlit Community Cloud ([https://civicguide-ai-z8kvuoxjzwadtzsfdcpf5g.streamlit.app/](https://civicguide-ai-z8kvuoxjzwadtzsfdcpf5g.streamlit.app/))
+    - **Backend & Data:** Pure Python SQLite DB, Pandas, 47 verified government schemes, 56 public service centers.
+    - **Language Support:** English, ಕನ್ನಡ Kannada, and हिंदी Hindi.
     - **Open Source Repository:** [https://github.com/kpbinduprakasha-cpu/CivicGuide-AI](https://github.com/kpbinduprakasha-cpu/CivicGuide-AI)
     - **Lead Developer:** **K P Bindu Prakasha** ([@kpbinduprakasha-cpu](https://github.com/kpbinduprakasha-cpu))
     """)
