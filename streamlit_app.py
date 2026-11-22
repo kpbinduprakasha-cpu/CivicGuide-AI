@@ -1,5 +1,6 @@
 import os
 import sqlite3
+import importlib.util
 import pandas as pd
 import streamlit as st
 
@@ -190,11 +191,121 @@ STATE_OFFICIAL_PORTALS = {
 }
 
 # ---------------------------------------------------------------------------
-# Database Loader with Caching
+# Database Loader with Caching & Verified Git-Tracked Seed Fallbacks
 # ---------------------------------------------------------------------------
+def _ensure_sqlite_database_seeded(db_path, schemes, services):
+    """Ensure SQLite database is created and seeded with all verified records."""
+    try:
+        os.makedirs(os.path.dirname(os.path.abspath(db_path)), exist_ok=True)
+        conn = sqlite3.connect(db_path)
+        cur = conn.cursor()
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS schemes (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT, name_kn TEXT, name_hi TEXT,
+                category TEXT, description TEXT, description_kn TEXT, description_hi TEXT,
+                benefits TEXT, benefits_kn TEXT, benefits_hi TEXT,
+                eligibility TEXT, eligibility_kn TEXT, eligibility_hi TEXT,
+                required_documents TEXT, application_process TEXT, official_url TEXT,
+                government_level TEXT, state TEXT, source_date TEXT, verified INTEGER
+            )
+        ''')
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS public_services (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT, name_kn TEXT, name_hi TEXT,
+                category TEXT, state TEXT, district_city TEXT, taluk TEXT,
+                government_level TEXT, address TEXT, latitude REAL, longitude REAL,
+                phone TEXT, official_url TEXT, verified INTEGER
+            )
+        ''')
+        cur.execute('SELECT COUNT(*) FROM schemes')
+        if cur.fetchone()[0] == 0 and schemes:
+            for s in schemes:
+                cur.execute('''
+                    INSERT INTO schemes (name, name_kn, name_hi, category, description, description_kn, description_hi,
+                                         benefits, benefits_kn, benefits_hi, eligibility, eligibility_kn, eligibility_hi,
+                                         required_documents, application_process, official_url, government_level, state, source_date, verified)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ''', (
+                    s.get('name'), s.get('name_kn'), s.get('name_hi'), s.get('category'),
+                    s.get('description'), s.get('description_kn'), s.get('description_hi'),
+                    s.get('benefits'), s.get('benefits_kn'), s.get('benefits_hi'),
+                    s.get('eligibility'), s.get('eligibility_kn'), s.get('eligibility_hi'),
+                    s.get('required_documents'), s.get('application_process'), s.get('official_url'),
+                    s.get('government_level'), s.get('state'), s.get('source_date'), 1 if s.get('verified') else 0
+                ))
+        cur.execute('SELECT COUNT(*) FROM public_services')
+        if cur.fetchone()[0] == 0 and services:
+            for sv in services:
+                cur.execute('''
+                    INSERT INTO public_services (name, name_kn, name_hi, category, state, district_city, taluk,
+                                                 government_level, address, latitude, longitude, phone, official_url, verified)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ''', (
+                    sv.get('name'), sv.get('name_kn'), sv.get('name_hi'), sv.get('category'),
+                    sv.get('state'), sv.get('district_city'), sv.get('taluk'),
+                    sv.get('government_level'), sv.get('address'), sv.get('latitude'), sv.get('longitude'),
+                    sv.get('phone'), sv.get('official_url'), 1 if sv.get('verified') else 0
+                ))
+        conn.commit()
+        conn.close()
+    except Exception:
+        pass
+
+def _load_data_from_python_modules():
+    """Directly loads verified data from git-tracked Python modules without external dependencies."""
+    schemes = []
+    services = []
+    curr_dir = os.path.dirname(os.path.abspath(__file__))
+
+    # 1. Load All-India Schemes from git-tracked backend/app/utils/all_india_schemes_data.py
+    schemes_candidates = [
+        os.path.join(curr_dir, "backend", "app", "utils", "all_india_schemes_data.py"),
+        os.path.join("backend", "app", "utils", "all_india_schemes_data.py"),
+    ]
+    for s_path in schemes_candidates:
+        if os.path.exists(s_path):
+            try:
+                spec = importlib.util.spec_from_file_location("all_india_schemes_data", s_path)
+                mod = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(mod)
+                if hasattr(mod, "ALL_INDIA_SCHEMES"):
+                    for idx, s in enumerate(mod.ALL_INDIA_SCHEMES, start=1):
+                        item = dict(s)
+                        item["id"] = idx
+                        schemes.append(item)
+                    break
+            except Exception:
+                pass
+
+    # 2. Load Public Services from git-tracked backend/app/utils/all_india_services_data.py
+    services_candidates = [
+        os.path.join(curr_dir, "backend", "app", "utils", "all_india_services_data.py"),
+        os.path.join("backend", "app", "utils", "all_india_services_data.py"),
+    ]
+    for sv_path in services_candidates:
+        if os.path.exists(sv_path):
+            try:
+                spec = importlib.util.spec_from_file_location("all_india_services_data", sv_path)
+                mod = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(mod)
+                if hasattr(mod, "ALL_PUBLIC_SERVICES"):
+                    for idx, sv in enumerate(mod.ALL_PUBLIC_SERVICES, start=1):
+                        item = dict(sv)
+                        item["id"] = idx
+                        services.append(item)
+                    break
+            except Exception:
+                pass
+
+    return schemes, services
+
 @st.cache_data
 def load_database_data():
+    curr_dir = os.path.dirname(os.path.abspath(__file__))
     db_paths = [
+        os.path.join(curr_dir, "database", "users.db"),
         os.path.join("database", "users.db"),
         os.path.join("backend", "civicguide.db"),
         "users.db"
@@ -204,20 +315,34 @@ def load_database_data():
         if os.path.exists(p):
             db_file = p
             break
-            
-    if not db_file:
-        # Fallback in-memory dataset if database file not found
-        return [], []
 
-    try:
-        conn = sqlite3.connect(db_file)
-        schemes_df = pd.read_sql_query("SELECT * FROM schemes ORDER BY id ASC", conn)
-        services_df = pd.read_sql_query("SELECT * FROM public_services ORDER BY id ASC", conn)
-        conn.close()
-        return schemes_df.to_dict(orient="records"), services_df.to_dict(orient="records")
-    except Exception as e:
-        st.error(f"Error reading database: {e}")
-        return [], []
+    schemes = []
+    services = []
+
+    if db_file:
+        try:
+            conn = sqlite3.connect(db_file)
+            schemes_df = pd.read_sql_query("SELECT * FROM schemes ORDER BY id ASC", conn)
+            services_df = pd.read_sql_query("SELECT * FROM public_services ORDER BY id ASC", conn)
+            conn.close()
+            schemes = schemes_df.to_dict(orient="records")
+            services = services_df.to_dict(orient="records")
+        except Exception:
+            pass
+
+    # If database file is missing or contains 0 records (e.g. deployed to Streamlit Community Cloud),
+    # load directly from our git-tracked verified datasets:
+    if not schemes or len(schemes) == 0:
+        py_schemes, py_services = _load_data_from_python_modules()
+        schemes = py_schemes
+        if not services or len(services) == 0:
+            services = py_services
+
+        # Auto-seed SQLite database file in database/users.db for future queries
+        target_db = os.path.join("database", "users.db")
+        _ensure_sqlite_database_seeded(target_db, schemes, services)
+
+    return schemes, services
 
 schemes_list, services_list = load_database_data()
 
@@ -350,7 +475,12 @@ if nav_choice == "🏛️ Schemes Directory":
         st.warning("📍 **Please select a State from the dropdown above to view its State Government schemes.**")
         st.info("State Government welfare programs are specific to individual states. Choose Karnataka, Maharashtra, Delhi, Tamil Nadu, Uttar Pradesh, Rajasthan, etc., to load official initiatives.")
     elif len(filtered) == 0:
-        st.info(f"No schemes found matching your active criteria under '{scope_choice}' for '{selected_state}'. Please reset filters or view the official portal banner above.")
+        st.info(f"ℹ️ No schemes found matching Welfare Sector '**{selected_category}**' under '**{scope_choice}**' for '**{selected_state}**'.")
+        if selected_category != "All":
+            st.markdown(f"💡 **Tip:** Change **Welfare Sector** to **'All'** to view all verified initiatives for {selected_state}.")
+        if search_query.strip():
+            st.markdown(f"💡 **Tip:** Try clearing the search keyword: `{search_query}`.")
+        st.markdown("💡 You can also switch Scope to **🏛️ Central Government** (10 schemes) or **🇮🇳 All Combined** (47 schemes) to view nationwide benefits.")
     else:
         st.markdown(f"**Showing {len(filtered)} verified schemes**")
 
@@ -422,17 +552,70 @@ elif nav_choice == "🤖 AI Citizen Assistant":
         "Harapanahalli Taluk General Hospital services",
         "Yuva Nidhi Scheme eligibility criteria"
     ]
+    def _generate_assistant_reply(query):
+        q = query.lower()
+        # 1. Match scheme from loaded verified schemes
+        for s in schemes_list:
+            s_name = (s.get("name") or "").lower()
+            name_words = [w for w in s_name.replace("-", " ").replace(":", " ").split() if len(w) > 3 and w not in ["scheme", "yojana", "pradhan", "mantri"]]
+            if any(w in q for w in name_words):
+                gov_lvl = s.get('government_level', 'Government Scheme')
+                state_lbl = f" • {s.get('state')}" if s.get('state') and s.get('state') != 'All India' else ""
+                return f"""### 🏛️ Verified Scheme Guidance: {s.get('name')}
+**Level:** {gov_lvl}{state_lbl} | **Sector:** {s.get('category')}
+
+#### 💰 Direct Benefits:
+{s.get('benefits')}
+
+#### 👥 Eligibility Criteria:
+{s.get('eligibility')}
+
+#### 📋 Required Documents:
+{s.get('required_documents')}
+
+#### 📝 Step-by-Step Application Process:
+{s.get('application_process')}
+
+🔗 **Official Application Portal:** [{s.get('official_url')}]({s.get('official_url')})
+"""
+
+        # 2. Match public service office from loaded directory
+        for sv in services_list:
+            t = (sv.get("taluk") or "").lower()
+            sv_name = (sv.get("name") or "").lower()
+            if t and t in q and ("hospital" in q or "office" in q or "csc" in q or "centre" in q or "tahsildar" in q):
+                return f"""### 📍 Verified Public Facility: {sv.get('name')}
+**Category:** {sv.get('category')} | **Taluk:** {sv.get('taluk')} ({sv.get('district_city')}, {sv.get('state')})
+
+- 🏢 **Address:** {sv.get('address')}
+- 📞 **Helpline / Phone:** {sv.get('phone')}
+- 🏛️ **Government Jurisdiction:** {sv.get('government_level')}
+
+🔗 **Official Portal:** [{sv.get('official_url')}]({sv.get('official_url')})
+"""
+
+        # 3. Comprehensive standard citizen procedure
+        return f"""### 🏛️ Verified Government Guidance for: "{query}"
+
+1. **Eligibility Evaluation:** Check demographic qualifications (age, annual income, resident state, ration card status) under **📋 Eligibility Screening**.
+2. **Mandatory Documents Checklist:**
+   - Aadhaar Card (linked to active mobile number for OTP)
+   - Income / Caste Certificate (Nadakacheri / Revenue Dept)
+   - Bank Account linked to Aadhaar (NPCI / DBT enabled)
+   - Ration Card (BPL Priority / Antyodaya / APL)
+3. **Application Mode:**
+   - **Online:** Official state or central portals (Seva Sindhu, myScheme, PM-Kisan)
+   - **Offline / Assisted:** Visit your nearest Grama One, Karnataka One, or CSC Center
+4. **Tracking:** Always record your Acknowledgement Number / Reference ID to verify status.
+
+🔗 **National myScheme Portal:** [https://www.myscheme.gov.in](https://www.myscheme.gov.in)  
+🔗 **Karnataka Seva Sindhu Portal:** [https://sevasindhu.karnataka.gov.in](https://sevasindhu.karnataka.gov.in)
+"""
+
     for i, q in enumerate(quick_queries):
         if qcols[i].button(q, key=f"quick_{i}"):
             st.session_state.messages.append({"role": "user", "content": q})
-            # Generate procedural response
-            reply = f"### Step-by-Step Procedure for: {q}\n\n"
-            reply += "1. **Eligibility Verification:** Confirm your resident domicile, income bracket (BPL/APL), and age criteria.\n"
-            reply += "2. **Required Documents:** Keep your Aadhaar Card, Ration Card, and bank passbook linked with NPCI/Aadhaar ready.\n"
-            reply += "3. **Application Mode:** Visit your nearest Grama One / Common Service Centre (CSC) or submit online at the official portal.\n"
-            reply += "4. **Tracking:** Save your acknowledgement reference number to track sanction status.\n\n"
-            reply += "📌 **Issuing Authority:** Department of Social Welfare / District Administration Vijayanagara.\n"
-            reply += "🔗 **Official Portal:** https://sevasindhu.karnataka.gov.in"
+            reply = _generate_assistant_reply(q)
             st.session_state.messages.append({"role": "assistant", "content": reply})
 
     # Render Chat History
@@ -446,18 +629,8 @@ elif nav_choice == "🤖 AI Citizen Assistant":
         with st.chat_message("user"):
             st.markdown(user_query)
 
-        # Procedural RAG response generator
         with st.chat_message("assistant"):
-            response_text = f"### Verified Government Guidance for: {user_query}\n\n"
-            response_text += "1. **Qualification Assessment:** Based on verified government charters, citizens can avail this service through direct digital portals or local citizen facilitation counters.\n"
-            response_text += "2. **Key Documents Required:** Aadhaar Card, Income & Caste Certificate (Nadakacheri), Bank Passbook, and Mobile Number linked to Aadhaar.\n"
-            response_text += "3. **Step-by-Step Procedure:**\n"
-            response_text += "   - Step 1: Open the official citizen services portal or visit your nearest Grama One/CSC.\n"
-            response_text += "   - Step 2: Complete biometric / OTP authentication using your Aadhaar number.\n"
-            response_text += "   - Step 3: Fill out the application form and upload scanned copies of requisite documents.\n"
-            response_text += "   - Step 4: Collect the physical/digital Acknowledgement Number for tracking.\n\n"
-            response_text += "🏛️ **Official Issuing Authority:** Government of Karnataka / Government of India\n"
-            response_text += "🔗 **Official Service Portal:** [https://sevasindhu.karnataka.gov.in](https://sevasindhu.karnataka.gov.in)"
+            response_text = _generate_assistant_reply(user_query)
             st.markdown(response_text)
             st.session_state.messages.append({"role": "assistant", "content": response_text})
 
