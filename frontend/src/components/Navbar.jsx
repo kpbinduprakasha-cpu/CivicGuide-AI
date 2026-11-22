@@ -3,6 +3,7 @@ import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import LanguageSelector from './LanguageSelector';
+import GithubIcon from './GithubIcon';
 import { 
   Landmark, 
   Bot, 
@@ -85,6 +86,18 @@ const Navbar = () => {
           <div className="hidden sm:flex items-center gap-3">
             <LanguageSelector />
 
+            {/* GitHub Account Link */}
+            <a
+              href="https://github.com/kpbinduprakasha-cpu/CivicGuide-AI"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 border border-slate-200 transition-all shadow-2xs hover:scale-105"
+              title="GitHub: @kpbinduprakasha-cpu"
+            >
+              <GithubIcon className="w-4 h-4 text-slate-800" />
+              <span className="hidden xl:inline">GitHub</span>
+            </a>
+
             {isAuthenticated ? (
               <div className="flex items-center gap-2 pl-2 border-l border-slate-200">
                 <Link
@@ -158,6 +171,18 @@ const Navbar = () => {
                 </Link>
               );
             })}
+
+            {/* Mobile GitHub Account Link */}
+            <a
+              href="https://github.com/kpbinduprakasha-cpu/CivicGuide-AI"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-bold text-slate-800 hover:bg-slate-100 transition-colors"
+            >
+              <GithubIcon className="w-5 h-5 text-slate-900" />
+              <span>GitHub (@kpbinduprakasha-cpu)</span>
+            </a>
           </div>
 
           <div className="pt-4 border-t border-slate-100 space-y-2">

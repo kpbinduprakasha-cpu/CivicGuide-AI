@@ -41,6 +41,7 @@ import {
   CheckCircle
 } from 'lucide-react';
 import LanguageSelector from '../components/LanguageSelector';
+import GithubIcon from '../components/GithubIcon';
 
 const ALL_INDIAN_LANGUAGES = [
   'English', 'Hindi', 'Kannada', 'Telugu', 'Tamil', 
@@ -666,6 +667,41 @@ const UserDashboard = () => {
                 ) : (
                   <span className="text-xs text-slate-500">English</span>
                 )}
+              </div>
+            </div>
+
+            {/* Connected GitHub Account */}
+            <div className="mt-4 p-4 rounded-2xl bg-slate-50/70 border border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center shrink-0 shadow-xs">
+                  <GithubIcon className="w-5 h-5" />
+                </div>
+                <div>
+                  <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block">
+                    Developer & Citizen GitHub
+                  </span>
+                  <a
+                    href="https://github.com/kpbinduprakasha-cpu"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-bold text-slate-900 hover:text-emerald-700 text-sm flex items-center gap-1.5 transition-colors"
+                  >
+                    <span>@kpbinduprakasha-cpu</span>
+                    <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
+                  </a>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <a
+                  href="https://github.com/kpbinduprakasha-cpu/CivicGuide-AI"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-700 hover:text-slate-900 bg-white hover:bg-slate-100 border border-slate-200 transition-all shadow-2xs"
+                >
+                  <GithubIcon className="w-3.5 h-3.5" />
+                  <span>CivicGuide-AI Repo ↗</span>
+                </a>
               </div>
             </div>
 
