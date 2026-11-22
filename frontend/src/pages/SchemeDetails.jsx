@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import { 
   Landmark, 
@@ -12,17 +13,23 @@ import {
   CheckCircle2, 
   Clock, 
   Calendar,
-  AlertCircle
+  AlertCircle,
+  ArrowUpRight,
+  X
 } from 'lucide-react';
 
 const SchemeDetails = () => {
   const { id } = useParams();
   const { t, language } = useLanguage();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   const [scheme, setScheme] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [showApplyModal, setShowApplyModal] = useState(false);
+  const [applyRemarks, setApplyRemarks] = useState('');
+  const [applySuccessMsg, setApplySuccessMsg] = useState('');
 
   useEffect(() => {
     const fetchScheme = async () => {
@@ -216,6 +223,19 @@ const SchemeDetails = () => {
             <ExternalLink className="w-4 h-4" />
           </a>
 
+          <button
+            type="button"
+            onClick={() => {
+              setApplyRemarks('');
+              setApplySuccessMsg('');
+              setShowApplyModal(true);
+            }}
+            className="py-3.5 px-6 rounded-2xl font-bold text-xs text-emerald-800 bg-emerald-100 hover:bg-emerald-200 text-center flex items-center justify-center gap-2 transition-colors"
+          >
+            <ArrowUpRight className="w-4 h-4 text-emerald-800" />
+            <span>Track Application in Dashboard</span>
+          </button>
+
           <Link
             to={`/eligibility?scheme_id=${scheme.id}`}
             className="py-3.5 px-6 rounded-2xl font-bold text-xs text-slate-800 bg-amber-100 hover:bg-amber-200 text-center flex items-center justify-center gap-2 transition-colors"
@@ -234,6 +254,129 @@ const SchemeDetails = () => {
         </div>
 
       </div>
+
+      {/* Direct Apply / Track Modal */}
+      {showApplyModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fade-in">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl border border-slate-200 space-y-5">
+            
+            <div className="flex items-start justify-between border-b border-slate-100 pb-3">
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600">
+                  Citizen Application Tracker
+                </span>
+                <h3 className="text-lg font-bold text-slate-900 leading-snug">
+                  {scheme.name}
+                </h3>
+                <span className="text-xs text-slate-500 font-medium">
+                  {scheme.government_level}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowApplyModal(false)}
+                className="p-1.5 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {applySuccessMsg ? (
+              <div className="p-5 rounded-2xl bg-emerald-50 border border-emerald-300 text-center space-y-2">
+                <CheckCircle2 className="w-8 h-8 text-emerald-600 mx-auto" />
+                <h4 className="font-bold text-emerald-950 text-sm">
+                  Application Logged in Dashboard!
+                </h4>
+                <p className="text-xs text-emerald-800 font-mono">
+                  {applySuccessMsg}
+                </p>
+                <p className="text-[11px] text-slate-500 pt-1">
+                  You can monitor its approval lifecycle and Central vs State circle graphs at any time on your Citizen Dashboard.
+                </p>
+              </div>
+            ) : (
+              <form 
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  const isCentral = scheme.government_level?.toLowerCase().includes('central');
+                  const prefix = isCentral ? 'ACK-CENT' : 'ACK-STATE';
+                  const randomAck = `${prefix}-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+
+                  const newApp = {
+                    id: `app-${Date.now()}`,
+                    scheme_name: scheme.name,
+                    government_level: scheme.government_level,
+                    category: scheme.category,
+                    ack_no: randomAck,
+                    applied_date: 'Today',
+                    status: 'In Review',
+                    benefit: scheme.benefits?.slice(0, 60) || 'Verified welfare assistance',
+                    approval_date: 'Under Verification',
+                    disbursed: false,
+                    portal_url: scheme.official_url || 'https://india.gov.in',
+                    remarks: applyRemarks || 'Applied via CivicGuide AI Directory'
+                  };
+
+                  const storageKey = `civicguide_apps_${user?.user_id || 'kpbindup625'}`;
+                  try {
+                    const existing = localStorage.getItem(storageKey);
+                    const appsList = existing ? JSON.parse(existing) : [];
+                    localStorage.setItem(storageKey, JSON.stringify([newApp, ...appsList]));
+                  } catch (err) {
+                    console.warn('Failed to record app:', err);
+                  }
+
+                  setApplySuccessMsg(`Application officially tracked! Ack No: ${randomAck}`);
+                  setTimeout(() => {
+                    setApplySuccessMsg('');
+                    setShowApplyModal(false);
+                  }, 2200);
+                }} 
+                className="space-y-4"
+              >
+                <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs space-y-1">
+                  <div className="font-bold text-slate-800">Direct Benefit:</div>
+                  <p className="text-slate-600 line-clamp-2">{scheme.benefits}</p>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    Application Remarks / Reference (Optional)
+                  </label>
+                  <input
+                    type="text"
+                    value={applyRemarks}
+                    onChange={(e) => setApplyRemarks(e.target.value)}
+                    placeholder="e.g. Applied via official portal or Grama One center"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
+                  />
+                </div>
+
+                <div className="flex items-center justify-between gap-3 pt-2">
+                  <a
+                    href={scheme.official_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-2xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors"
+                  >
+                    <span>Open Official Portal</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+
+                  <button
+                    type="submit"
+                    className="px-5 py-2.5 rounded-2xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 transition-colors shadow-md shadow-emerald-600/20"
+                  >
+                    Confirm & Track Application
+                  </button>
+                </div>
+
+              </form>
+            )}
+
+          </div>
+        </div>
+      )}
 
     </div>
   );

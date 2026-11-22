@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify, g
 from ..models import db, Scheme
 from ..auth.jwt_auth import admin_required
+from ..services.eligibility_service import EligibilityService
 
 scheme_bp = Blueprint('schemes', __name__, url_prefix='/api/schemes')
 
@@ -131,6 +132,55 @@ def get_scheme(scheme_id):
         return jsonify({'error': 'Scheme not found.'}), 404
     return jsonify({
         'scheme': scheme.to_dict(lang=lang)
+    }), 200
+
+@scheme_bp.route('/recommendations', methods=['POST'])
+def recommend_schemes():
+    """
+    Evaluates citizen demographics and returns personalized scheme recommendations
+    with criteria match badges and eligibility confidence scores.
+    """
+    data = request.get_json() or {}
+    lang = data.get('lang', 'en').strip().lower()
+    if lang not in ['en', 'kn', 'hi']:
+        lang = 'en'
+
+    eval_results = EligibilityService.evaluate(data, language=lang)
+    lookup = {res['scheme_id']: res for res in eval_results}
+
+    schemes = Scheme.query.order_by(Scheme.id.asc()).all()
+    results = []
+    
+    for s in schemes:
+        eval_data = lookup.get(s.id)
+        s_dict = s.to_dict(lang=lang)
+        if eval_data:
+            s_dict['match_status'] = eval_data['status']
+            s_dict['satisfied_criteria'] = eval_data['satisfied_criteria']
+            s_dict['unmet_criteria'] = eval_data['unmet_criteria']
+            s_dict['explanation'] = eval_data['explanation']
+            # Match score: count satisfied conditions
+            s_dict['match_score'] = len(eval_data['satisfied_criteria'])
+        else:
+            s_dict['match_status'] = 'Possibly Eligible'
+            s_dict['satisfied_criteria'] = []
+            s_dict['unmet_criteria'] = []
+            s_dict['match_score'] = 1
+
+        results.append(s_dict)
+
+    # Sort: Eligible/Possibly Eligible first, then descending match_score
+    results.sort(key=lambda x: (
+        1 if x['match_status'] in ['Eligible', 'Possibly Eligible'] else (
+            0.5 if 'Partially' in x['match_status'] else 0
+        ),
+        x['match_score']
+    ), reverse=True)
+
+    return jsonify({
+        'count': len(results),
+        'recommended_count': len([r for r in results if r['match_status'] in ['Eligible', 'Possibly Eligible']]),
+        'schemes': results
     }), 200
 
 @scheme_bp.route('', methods=['POST'])
