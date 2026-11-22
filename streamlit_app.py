@@ -45,43 +45,48 @@ st.markdown("""
         margin-bottom: 1.5rem;
         box-shadow: 0 1px 3px rgba(0,0,0,0.03);
     }
+    /* Top Navbar Brand & Logo (Matches User Screenshot) */
     .brand-wrap {
         display: flex;
         align-items: center;
         gap: 0.75rem;
     }
     .brand-logo {
-        width: 38px;
-        height: 38px;
-        background-color: #047857;
+        width: 44px;
+        height: 44px;
+        background: linear-gradient(135deg, #047857 0%, #059669 50%, #d97706 100%);
         color: #ffffff;
-        border-radius: 0.75rem;
+        border-radius: 1rem;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.2rem;
+        font-size: 1.4rem;
+        box-shadow: 0 4px 6px -1px rgba(4, 120, 87, 0.25);
     }
     .brand-title {
-        font-size: 1.15rem;
+        font-size: 1.25rem;
         font-weight: 900;
         color: #0f172a;
         line-height: 1.1;
+        letter-spacing: -0.02em;
     }
     .brand-pill {
         display: inline-block;
-        background-color: #dbeafe;
-        color: #1e40af;
-        font-size: 0.65rem;
+        background-color: #e0e7ff;
+        color: #3730a3;
+        border: 1px solid #c7d2fe;
+        font-size: 0.68rem;
         font-weight: 800;
-        padding: 0.15rem 0.45rem;
+        padding: 0.15rem 0.55rem;
         border-radius: 9999px;
-        margin-left: 0.4rem;
+        margin-left: 0.35rem;
         text-transform: uppercase;
         vertical-align: middle;
+        letter-spacing: 0.04em;
     }
     .brand-subtitle {
         font-size: 0.75rem;
-        font-weight: 600;
+        font-weight: 700;
         color: #64748b;
     }
     
@@ -200,6 +205,110 @@ st.markdown("""
         font-weight: 600;
         font-size: 0.85rem;
         color: #0f172a;
+    }
+
+    /* =========================================================================
+       EXACT REACT-STYLE TOP NAVBAR BUTTONS & RADIO TABS (Matches User Image)
+       ========================================================================= */
+    /* Hide native radio input circles/bullets across all horizontal radios */
+    div[data-testid="stRadio"] div[role="radiogroup"] label > div:first-child {
+        display: none !important;
+    }
+    
+    /* Make the radiogroup a neat flex row */
+    div[data-testid="stRadio"] div[role="radiogroup"] {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        gap: 0.4rem !important;
+        flex-wrap: wrap !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    /* Inactive navbar tab button style */
+    div[data-testid="stRadio"] div[role="radiogroup"] label {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 0.45rem 0.85rem !important;
+        border-radius: 0.75rem !important;
+        background-color: transparent !important;
+        border: 1px solid transparent !important;
+        cursor: pointer !important;
+        transition: all 0.15s ease-in-out !important;
+        margin: 0 !important;
+    }
+    div[data-testid="stRadio"] div[role="radiogroup"] label:hover {
+        background-color: #f1f5f9 !important;
+    }
+    div[data-testid="stRadio"] div[role="radiogroup"] label p {
+        font-size: 0.92rem !important;
+        font-weight: 700 !important;
+        color: #475569 !important;
+        margin: 0 !important;
+        line-height: 1.2 !important;
+        white-space: nowrap !important;
+    }
+    div[data-testid="stRadio"] div[role="radiogroup"] label:hover p {
+        color: #0f172a !important;
+    }
+
+    /* ACTIVE TAB: Mint green pill with dark green bold text (Exact match to Image) */
+    div[data-testid="stRadio"] div[role="radiogroup"] label:has(input:checked) {
+        background-color: #d1fae5 !important;
+        border: 1px solid #a7f3d0 !important;
+        box-shadow: 0 1px 2px rgba(16, 185, 129, 0.15) !important;
+    }
+    div[data-testid="stRadio"] div[role="radiogroup"] label:has(input:checked) p {
+        color: #065f46 !important;
+        font-weight: 900 !important;
+    }
+
+    /* Fallback for browsers without :has */
+    div[data-testid="stRadio"] div[role="radiogroup"] label[aria-checked="true"],
+    div[data-testid="stRadio"] div[role="radiogroup"] label[data-checked="true"] {
+        background-color: #d1fae5 !important;
+        border: 1px solid #a7f3d0 !important;
+    }
+    div[data-testid="stRadio"] div[role="radiogroup"] label[aria-checked="true"] p,
+    div[data-testid="stRadio"] div[role="radiogroup"] label[data-checked="true"] p {
+        color: #065f46 !important;
+        font-weight: 900 !important;
+    }
+
+    /* GitHub Link Button Style */
+    div[data-testid="stLinkButton"] a {
+        background-color: #f8fafc !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 0.75rem !important;
+        color: #334155 !important;
+        font-weight: 800 !important;
+        font-size: 0.85rem !important;
+        padding: 0.45rem 0.85rem !important;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.03) !important;
+        transition: all 0.2s ease !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 0.35rem !important;
+    }
+    div[data-testid="stLinkButton"] a:hover {
+        background-color: #f1f5f9 !important;
+        color: #0f172a !important;
+        border-color: #cbd5e1 !important;
+        transform: translateY(-1px);
+    }
+
+    /* Language Selectbox Style */
+    div[data-testid="stSelectbox"] div[data-baseweb="select"] > div {
+        border-radius: 0.75rem !important;
+        border-color: #e2e8f0 !important;
+        background-color: #ffffff !important;
+        font-weight: 700 !important;
+        font-size: 0.85rem !important;
+        color: #334155 !important;
+        min-height: 2.3rem !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -609,9 +718,9 @@ CivicGuide AI assists Indian citizens with verified guidelines, eligibility chec
 schemes_list, services_list = load_database_data()
 
 # ---------------------------------------------------------------------------
-# TOP NAVBAR: Matches Image 2 React Header Exactly
+# TOP NAVBAR: Matches User Image Exactly
 # ---------------------------------------------------------------------------
-nav_col_logo, nav_col_tabs, nav_col_right = st.columns([3, 5, 3])
+nav_col_logo, nav_col_tabs, nav_col_right = st.columns([2.6, 6.4, 3.0], vertical_alignment="center")
 
 with nav_col_logo:
     st.markdown("""
@@ -628,11 +737,11 @@ with nav_col_tabs:
     active_nav = st.radio(
         "Navigation",
         [
-            "Home",
-            "Government Schemes",
-            "AI Assistant",
-            "Eligibility Checker",
-            "Service Map"
+            "🧭 Home",
+            "🏛️ Government Schemes",
+            "🤖 AI Assistant",
+            "📋 Eligibility Checker",
+            "📍 Service Map"
         ],
         index=0,
         horizontal=True,
@@ -640,15 +749,21 @@ with nav_col_tabs:
     )
 
 with nav_col_right:
-    c_lang, c_gh, c_user = st.columns([3, 2, 1])
+    c_lang, c_gh, c_user, c_out = st.columns([3.5, 2.5, 1, 0.8], vertical_alignment="center")
     with c_lang:
         selected_lang = st.selectbox("Language", ["English (English)", "ಕನ್ನಡ (Kannada)", "हिंदी (Hindi)"], index=0, label_visibility="collapsed")
     with c_gh:
         st.link_button("GitHub", "https://github.com/kpbinduprakasha-cpu/CivicGuide-AI")
     with c_user:
         st.markdown("""
-        <div style="width: 34px; height: 34px; border-radius: 50%; background-color: #047857; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem;" title="Citizen: K P BINDUPRAKASHA">
+        <div style="width: 34px; height: 34px; border-radius: 50%; background-color: #047857; color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.95rem; border: 2px solid #a7f3d0;" title="Citizen: K P BINDUPRAKASHA">
             K
+        </div>
+        """, unsafe_allow_html=True)
+    with c_out:
+        st.markdown("""
+        <div style="font-size: 1.15rem; color: #64748b; cursor: pointer; text-align: center;" title="Sign Out">
+            🚪
         </div>
         """, unsafe_allow_html=True)
 
@@ -657,7 +772,7 @@ st.markdown("<hr style='margin-top: 0.2rem; margin-bottom: 1.25rem; border-color
 # ---------------------------------------------------------------------------
 # VIEW: 1. GOVERNMENT SCHEMES (Matches Image 2 Exactly)
 # ---------------------------------------------------------------------------
-if active_nav == "Government Schemes":
+if "Government Schemes" in active_nav:
     
     # Hero Title & Action Pills Row
     h_col1, h_col2 = st.columns([3, 2])
@@ -952,7 +1067,7 @@ if active_nav == "Government Schemes":
 # ---------------------------------------------------------------------------
 # VIEW: 2. HOME & OVERVIEW (Matches Images 5, 6, 7, 8, 9 Exactly)
 # ---------------------------------------------------------------------------
-elif active_nav == "Home":
+elif "Home" in active_nav:
     
     # 1. HERO SECTION (Matches Image 5)
     st.markdown("""
@@ -1198,7 +1313,7 @@ elif active_nav == "Home":
 # ---------------------------------------------------------------------------
 # VIEW: 3. AI CITIZEN ASSISTANT (Guaranteed 5-Step Process)
 # ---------------------------------------------------------------------------
-elif active_nav == "AI Assistant":
+elif "AI Assistant" in active_nav:
     st.markdown('<div class="hero-title">🤖 AI Citizen Assistant</div>', unsafe_allow_html=True)
     st.markdown('<div class="hero-desc">Grounded Policy Assistant providing step-by-step application instructions, eligibility criteria, required documents, and official portal links.</div>', unsafe_allow_html=True)
 
@@ -1236,7 +1351,7 @@ elif active_nav == "AI Assistant":
 # ---------------------------------------------------------------------------
 # VIEW: 4. ELIGIBILITY CHECKER
 # ---------------------------------------------------------------------------
-elif active_nav == "Eligibility Checker":
+elif "Eligibility Checker" in active_nav:
     st.markdown('<div class="hero-title">📋 Citizen Demographic Eligibility Checker</div>', unsafe_allow_html=True)
     st.markdown('<div class="hero-desc">Evaluate your demographic qualifications against all 47 verified Central & State government schemes.</div>', unsafe_allow_html=True)
 
@@ -1288,7 +1403,7 @@ elif active_nav == "Eligibility Checker":
 # ---------------------------------------------------------------------------
 # VIEW: 5. SERVICE MAP
 # ---------------------------------------------------------------------------
-elif active_nav == "Service Map":
+elif "Service Map" in active_nav:
     st.markdown('<div class="hero-title">📍 Public Services Map & Taluk Directory</div>', unsafe_allow_html=True)
     st.markdown('<div class="hero-desc">Find Deputy Commissioner, Tahsildar, District Hospitals, and Grama One / CSC centers in Vijayanagara and across India.</div>', unsafe_allow_html=True)
 
