@@ -37,7 +37,9 @@ import {
   Award,
   Info,
   FileCheck2,
-  ArrowUpRight
+  ArrowUpRight,
+  LayoutGrid,
+  Table as TableIcon
 } from 'lucide-react';
 
 export const ALL_INDIAN_STATES = [
@@ -273,8 +275,9 @@ const GovernmentSchemes = () => {
     searchParams.get('state') || 'All India'
   );
   const [jurisdiction, setJurisdiction] = useState(
-    searchParams.get('level') || 'All'
+    searchParams.get('level') || 'Central Government'
   );
+  const [viewMode, setViewMode] = useState('cards'); // 'cards' | 'table'
   const [sortBy, setSortBy] = useState('recommended');
 
   // AI Recommendation Feature State
@@ -356,8 +359,10 @@ const GovernmentSchemes = () => {
 
       if (jurisdiction === 'Central Government') {
         params.append('mode', 'central');
+      } else if (jurisdiction === 'State Government') {
+        params.append('mode', 'state');
       } else {
-        // All schemes across India are returned (state selection only reveals that state's official portal website link)
+        // All combined schemes across Central & State governments
         params.append('mode', 'all');
       }
 
@@ -432,8 +437,7 @@ const GovernmentSchemes = () => {
   const handleJurisdictionSelect = (jur) => {
     setJurisdiction(jur);
     setSearchParams(prev => {
-      if (jur !== 'All') prev.set('level', jur);
-      else prev.delete('level');
+      prev.set('level', jur);
       return prev;
     });
   };
@@ -615,7 +619,7 @@ const GovernmentSchemes = () => {
     if (lvl.toLowerCase().includes('central')) {
       return 'bg-blue-50 text-blue-900 border-blue-200';
     }
-    return 'bg-emerald-50 text-emerald-900 border-emerald-200';
+    return 'bg-amber-50 text-amber-900 border-amber-200';
   };
 
   return (
@@ -741,17 +745,6 @@ const GovernmentSchemes = () => {
             <div className="inline-flex rounded-2xl bg-slate-100 p-1.5 flex-wrap gap-1.5">
               <button
                 type="button"
-                onClick={() => handleJurisdictionSelect('All')}
-                className={`px-5 py-2.5 rounded-xl text-base sm:text-lg font-extrabold transition-all ${
-                  jurisdiction === 'All'
-                    ? 'bg-white text-emerald-800 shadow-sm'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                🇮🇳 All Over India Schemes ({schemes.length})
-              </button>
-              <button
-                type="button"
                 onClick={() => handleJurisdictionSelect('Central Government')}
                 className={`px-5 py-2.5 rounded-xl text-base sm:text-lg font-extrabold transition-all ${
                   jurisdiction === 'Central Government'
@@ -759,7 +752,29 @@ const GovernmentSchemes = () => {
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                🏛️ Central Government
+                🏛️ Central Government ({jurisdiction === 'Central Government' ? schemes.length : '10'})
+              </button>
+              <button
+                type="button"
+                onClick={() => handleJurisdictionSelect('State Government')}
+                className={`px-5 py-2.5 rounded-xl text-base sm:text-lg font-extrabold transition-all ${
+                  jurisdiction === 'State Government'
+                    ? 'bg-white text-emerald-800 shadow-sm'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                📍 State Government ({jurisdiction === 'State Government' ? schemes.length : '37'})
+              </button>
+              <button
+                type="button"
+                onClick={() => handleJurisdictionSelect('All')}
+                className={`px-5 py-2.5 rounded-xl text-base sm:text-lg font-extrabold transition-all ${
+                  jurisdiction === 'All'
+                    ? 'bg-white text-emerald-800 shadow-sm'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                🇮🇳 All Combined ({jurisdiction === 'All' ? schemes.length : '47'})
               </button>
             </div>
 
@@ -785,9 +800,40 @@ const GovernmentSchemes = () => {
             </div>
           </div>
 
-          {/* Scheme Counter */}
-          <div className="text-base sm:text-lg text-slate-700 font-extrabold shrink-0 bg-slate-50 border border-slate-200 px-5 py-2.5 rounded-2xl shadow-xs">
-            Showing <strong className="text-emerald-800 text-lg sm:text-xl font-black">{displayedSchemes.length}</strong> of {schemes.length} verified schemes
+          {/* Controls: View Mode (Cards / Table) & Scheme Counter */}
+          <div className="flex flex-wrap items-center gap-3 shrink-0">
+            <div className="inline-flex rounded-2xl bg-slate-100 p-1 border border-slate-200 shadow-2xs">
+              <button
+                type="button"
+                onClick={() => setViewMode('cards')}
+                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition-all ${
+                  viewMode === 'cards'
+                    ? 'bg-white text-emerald-800 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+                title="Switch to Card Grid View"
+              >
+                <LayoutGrid className="w-4 h-4 text-emerald-600" />
+                <span>Cards View</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode('table')}
+                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition-all ${
+                  viewMode === 'table'
+                    ? 'bg-white text-emerald-800 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+                title="Switch to Combined Schemes Table View"
+              >
+                <TableIcon className="w-4 h-4 text-emerald-600" />
+                <span>Combined Table View</span>
+              </button>
+            </div>
+
+            <div className="text-base sm:text-lg text-slate-700 font-extrabold shrink-0 bg-slate-50 border border-slate-200 px-5 py-2.5 rounded-2xl shadow-xs">
+              Showing <strong className="text-emerald-800 text-lg sm:text-xl font-black">{displayedSchemes.length}</strong> of {schemes.length} verified schemes
+            </div>
           </div>
         </div>
 
@@ -918,6 +964,89 @@ const GovernmentSchemes = () => {
             Reset All Filters & View Full Directory
           </button>
         </div>
+      ) : viewMode === 'table' ? (
+        <div className="w-full overflow-hidden bg-white rounded-3xl border border-slate-200/90 shadow-sm animate-fade-in">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse min-w-[950px]">
+              <thead>
+                <tr className="bg-slate-50 border-b border-slate-200 text-slate-800 text-xs sm:text-sm font-black uppercase tracking-wider">
+                  <th className="py-4 px-4 w-12 text-center">#</th>
+                  <th className="py-4 px-5">Scheme & Sector</th>
+                  <th className="py-4 px-4">Government Level</th>
+                  <th className="py-4 px-5">Direct Benefits</th>
+                  <th className="py-4 px-5">Eligibility Criteria</th>
+                  <th className="py-4 px-4 text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 text-sm sm:text-base">
+                {displayedSchemes.map((scheme, idx) => {
+                  const isCentral = scheme.government_level?.toLowerCase().includes('central');
+                  const Icon = categoryIcons[scheme.category] || Landmark;
+                  return (
+                    <tr key={scheme.id} className="hover:bg-slate-50/80 transition-colors">
+                      <td className="py-4 px-4 font-bold text-slate-400 text-center">{idx + 1}</td>
+                      <td className="py-4 px-5 max-w-xs">
+                        <div className="flex items-start gap-3">
+                          <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 border border-emerald-100 mt-0.5">
+                            <Icon className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <Link 
+                              to={`/schemes/${scheme.id}`}
+                              className="font-extrabold text-slate-900 hover:text-emerald-700 leading-snug line-clamp-2 transition-colors"
+                            >
+                              {scheme.name}
+                            </Link>
+                            <span className="inline-block mt-1 text-xs font-bold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                              {scheme.category}
+                            </span>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="py-4 px-4 whitespace-nowrap">
+                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider border shadow-2xs ${
+                          isCentral ? 'bg-blue-50 text-blue-900 border-blue-200' : 'bg-amber-50 text-amber-900 border-amber-200'
+                        }`}>
+                          {isCentral ? '🏛️ Central' : `📍 State: ${scheme.state || 'State'}`}
+                        </span>
+                      </td>
+                      <td className="py-4 px-5 max-w-sm">
+                        <p className="text-xs sm:text-sm text-slate-800 font-semibold line-clamp-2">
+                          {scheme.benefits}
+                        </p>
+                      </td>
+                      <td className="py-4 px-5 max-w-xs">
+                        <p className="text-xs sm:text-sm text-slate-600 line-clamp-2">
+                          {scheme.eligibility}
+                        </p>
+                      </td>
+                      <td className="py-4 px-4 text-center whitespace-nowrap">
+                        <div className="inline-flex items-center gap-2">
+                          <Link
+                            to={`/schemes/${scheme.id}`}
+                            className="px-3.5 py-2 rounded-xl text-xs font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 transition-colors"
+                          >
+                            Full Details
+                          </Link>
+                          {scheme.official_url && (
+                            <a
+                              href={scheme.official_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-xs transition-colors"
+                            >
+                              <span>Apply ↗</span>
+                            </a>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3 gap-6 sm:gap-7 lg:gap-8">
           {displayedSchemes.map((scheme) => {
@@ -943,7 +1072,7 @@ const GovernmentSchemes = () => {
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className={`text-xs sm:text-sm font-black uppercase tracking-wider px-3.5 py-1 rounded-full border shadow-2xs ${badgeClass}`}>
-                        {scheme.government_level === 'Central Government' ? 'CENTRAL GOVERNMENT' : 'ALL INDIA SCHEME'}
+                        {scheme.government_level === 'Central Government' ? 'CENTRAL GOVERNMENT' : `STATE GOVERNMENT • ${scheme.state || 'STATE'}`}
                       </span>
                       {isEligible && (
                         <span className="inline-flex items-center gap-1.5 text-xs font-extrabold text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full border border-emerald-300 shadow-2xs">

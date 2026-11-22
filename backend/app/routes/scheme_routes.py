@@ -58,10 +58,15 @@ def list_schemes():
     if category and category != 'All':
         query = query.filter(Scheme.category.ilike(f'%{category}%'))
 
-    # Jurisdiction / Mode / State filtering: All-India schemes are always available across the platform
+    # Jurisdiction / Mode / State filtering:
+    # 1. Central Government: shows central government schemes
+    # 2. State Government: shows state government schemes across India (not restricted to a single state)
+    # 3. All: combines both Central and State government schemes together
     if mode == 'central' or level == 'Central Government' or scope == 'central_only':
         query = query.filter(Scheme.government_level.ilike('%Central%'))
-    # All other queries return all verified All-India schemes
+    elif mode == 'state' or level == 'State Government' or scope == 'state_only':
+        query = query.filter(~Scheme.government_level.ilike('%Central%'))
+    # All / default queries return all verified schemes combining Central & State Government
 
     if q:
         search_filter = (
