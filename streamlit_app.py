@@ -1312,7 +1312,8 @@ if active_nav_key == "schemes":
                     "Level": "🏛️ Central" if is_central else f"📍 {s.get('state', 'State')}",
                     "Direct Benefits": s.get("benefits"),
                     "Eligibility": s.get("eligibility"),
-                    "Official Portal": s.get("official_url")
+                    "Mandatory Documents": s.get("required_documents") or "Aadhaar Card, Identity Proof, Bank Passbook",
+                    "Official Portal": s.get("official_url") or "https://www.myscheme.gov.in"
                 })
             df = pd.DataFrame(table_data)
             
@@ -1339,7 +1340,8 @@ if active_nav_key == "schemes":
                     "Level": st.column_config.TextColumn("Level", width="small"),
                     "Direct Benefits": st.column_config.TextColumn("Direct Benefits", width="large"),
                     "Eligibility": st.column_config.TextColumn("Eligibility", width="large"),
-                    "Official Portal": st.column_config.LinkColumn("Official Portal", display_text="Visit ↗")
+                    "Mandatory Documents": st.column_config.TextColumn("Mandatory Documents", width="large"),
+                    "Official Portal": st.column_config.LinkColumn("Official Portal", display_text="Apply Online ↗")
                 }
             )
         else:
@@ -1351,29 +1353,42 @@ if active_nav_key == "schemes":
                     with row_cols[c_idx]:
                         is_central = "central" in (scheme.get("government_level") or "").lower()
                         badge_html = '<span class="badge-central">🏛️ CENTRAL GOVERNMENT</span>' if is_central else f'<span class="badge-state">📍 STATE GOVERNMENT • {scheme.get("state")}</span>'
+                        doc_text = scheme.get('required_documents') or "Aadhaar Card, Identity Proof, Bank Passbook, Address Proof"
+                        portal_url = scheme.get('official_url') or "https://www.myscheme.gov.in"
                         
                         st.markdown(f"""
-                        <div class="scheme-card" style="height: 380px; min-height: 380px; max-height: 380px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; margin-bottom: 0.5rem; box-sizing: border-box;">
+                        <div class="scheme-card" style="height: 520px; min-height: 520px; max-height: 520px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; margin-bottom: 0.5rem; box-sizing: border-box;">
                             <div>
                                 <div style="height: 24px; margin-bottom: 0.25rem;">{badge_html}</div>
                                 <h4 style="margin: 0.35rem 0 0.2rem 0; font-weight: 800; font-size: 1.05rem; color: #0f172a; height: 2.6rem; min-height: 2.6rem; max-height: 2.6rem; overflow: hidden; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">{scheme.get('name')}</h4>
                                 <div style="height: 24px; margin-bottom: 0.35rem;"><span class="badge-sector">{scheme.get('category')}</span></div>
-                                <p style="font-size: 0.82rem; color: #475569; margin: 0 0 0.4rem 0; line-height: 1.4; height: 3.5rem; min-height: 3.5rem; max-height: 3.5rem; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">{scheme.get('description')}</p>
-                                <div class="benefit-box" style="height: 4.2rem; min-height: 4.2rem; max-height: 4.2rem; overflow: hidden; margin: 0.35rem 0; font-size: 0.8rem; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">
+                                <p style="font-size: 0.82rem; color: #475569; margin: 0 0 0.35rem 0; line-height: 1.35; height: 3.2rem; min-height: 3.2rem; max-height: 3.2rem; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">{scheme.get('description')}</p>
+                                
+                                <div class="benefit-box" style="height: 3.8rem; min-height: 3.8rem; max-height: 3.8rem; overflow: hidden; margin: 0.3rem 0; font-size: 0.78rem; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">
                                     💰 <strong>Benefit:</strong> {scheme.get('benefits')}
                                 </div>
-                                <div style="font-size: 0.78rem; color: #334155; margin-top: 0.25rem; height: 2.4rem; min-height: 2.4rem; max-height: 2.4rem; overflow: hidden; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
-                                    <strong>Eligibility:</strong> {scheme.get('eligibility')}
+                                
+                                <div style="font-size: 0.76rem; color: #334155; margin-top: 0.25rem; height: 2.2rem; min-height: 2.2rem; max-height: 2.2rem; overflow: hidden; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
+                                    👥 <strong>Eligibility:</strong> {scheme.get('eligibility')}
                                 </div>
+
+                                <div style="background-color: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 0.65rem; padding: 0.45rem 0.65rem; margin-top: 0.4rem; font-size: 0.76rem; color: #065f46; line-height: 1.3; height: 3.8rem; min-height: 3.8rem; max-height: 3.8rem; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">
+                                    📑 <strong>Mandatory Documents:</strong> {doc_text}
+                                </div>
+                            </div>
+                            
+                            <div style="border-top: 1px solid #e2e8f0; padding-top: 0.65rem; margin-top: auto;">
+                                <a href="{portal_url}" target="_blank" style="background: linear-gradient(135deg, #059669 0%, #047857 100%); color: #ffffff !important; padding: 0.55rem 0.85rem; border-radius: 0.65rem; font-size: 0.82rem; font-weight: 800; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 0.4rem; box-shadow: 0 2px 4px rgba(5,150,105,0.25); text-align: center;">
+                                    🚀 Apply on Official Portal ↗
+                                </a>
                             </div>
                         </div>
                         """, unsafe_allow_html=True)
                         
-                        with st.expander(f"📋 Document Checklist & Apply for {scheme.get('name')}"):
-                            st.markdown(f"**Mandatory Documents:** {scheme.get('required_documents')}")
-                            st.markdown(f"**How to Apply:** {scheme.get('application_process')}")
+                        with st.expander(f"ℹ️ Step-by-Step Instructions: {scheme.get('name')}"):
+                            st.markdown(f"**How to Apply:** {scheme.get('application_process', 'Apply online via the official portal with required documents.')}")
                             if scheme.get('official_url'):
-                                st.link_button("Visit Official Application Portal ↗", scheme.get('official_url'), use_container_width=True)
+                                st.markdown(f"**Direct Link:** [{scheme.get('official_url')}]({scheme.get('official_url')})")
 
 # ---------------------------------------------------------------------------
 # VIEW: 2. HOME & OVERVIEW (Matches Images 5, 6, 7, 8, 9 Exactly)
@@ -1515,25 +1530,29 @@ elif active_nav_key == "home":
         {
             "name": "PM-Kisan Samman Nidhi",
             "desc": "Central government direct income support scheme providing Rs. 6,000 annually in three installments to all eligible landholding farmer families across India.",
-            "benefit": "Rs. 6,000 per year transferred in three equal quarterly installments of Rs. 2,000 directly into the Aadhaar-linked bank account via DBT.",
+            "benefit": "Rs. 6,000/year via direct DBT in three ₹2,000 installments into Aadhaar-linked bank account.",
+            "docs": "Aadhaar Card, Land Record (ROR/Khata/Pahani), Bank Passbook linked to Aadhaar",
             "url": "https://pmkisan.gov.in"
         },
         {
             "name": "Ayushman Bharat - PM-JAY",
             "desc": "Flagship national health protection scheme offering up to Rs. 5 Lakh cashless hospitalization coverage per family per year for secondary and tertiary healthcare.",
-            "benefit": "Cashless treatment up to Rs. 5,00,000 per family per year across empaneled public and private hospitals throughout India.",
+            "benefit": "Cashless treatment up to Rs. 5,00,000 per family per year across empaneled public & private hospitals.",
+            "docs": "Aadhaar Card, Ration Card / SECC 2011 proof, Family ID Certificate",
             "url": "https://pmjay.gov.in"
         },
         {
             "name": "PM Surya Ghar: Muft Bijli Yojana",
             "desc": "Central scheme providing up to 300 units of free electricity per month to households by giving capital subsidies up to Rs. 78,000 for installing rooftop solar systems.",
-            "benefit": "Direct subsidy up to Rs. 78,000 for 3 kW system, zero electricity bills, and income from selling surplus power back to the grid.",
+            "benefit": "Direct subsidy up to Rs. 78,000 for 3 kW rooftop solar system & zero electricity bills.",
+            "docs": "Electricity Consumer Bill, Proof of Roof/House Ownership, Aadhaar, Bank Passbook",
             "url": "https://pmsuryaghar.gov.in"
         },
         {
             "name": "PM Vishwakarma Yojana",
             "desc": "Holistic support initiative for traditional artisans and craftspeople across 18 trades, offering official ID, Rs. 15,000 toolkit voucher, training stipend, and collateral-free loans.",
-            "benefit": "PM Vishwakarma Certificate & ID, 5-7 days training with Rs. 500/day stipend, Rs. 15,000 e-voucher for tools, and 5% loan up to Rs. 3 Lakh.",
+            "benefit": "PM Vishwakarma Certificate & ID, ₹500/day stipend, ₹15,000 tool voucher, 5% loan up to ₹3 Lakh.",
+            "docs": "Aadhaar Card, Mobile Number, Bank Passbook, Traditional Artisan Trade declaration",
             "url": "https://pmvishwakarma.gov.in"
         }
     ]
@@ -1542,22 +1561,26 @@ elif active_nav_key == "home":
     for idx, p in enumerate(pop_schemes):
         with p_cols[idx]:
             st.markdown(f"""
-            <div class="scheme-card" style="height: 380px; min-height: 380px; max-height: 380px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; margin-bottom: 0.5rem; box-sizing: border-box;">
+            <div class="scheme-card" style="height: 460px; min-height: 460px; max-height: 460px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; margin-bottom: 0.5rem; box-sizing: border-box;">
                 <div>
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem; height: 24px;">
                         <span class="badge-central">{_tr('centralGovBadge')}</span>
                         <span style="font-size: 0.7rem; font-weight: 800; color: #047857; background-color: #ecfdf5; padding: 0.1rem 0.4rem; border-radius: 9999px;">{_tr('verifiedBadge')}</span>
                     </div>
                     <h4 style="font-size: 0.98rem; font-weight: 900; color: #0f172a; margin: 0.25rem 0; height: 2.6rem; min-height: 2.6rem; max-height: 2.6rem; overflow: hidden; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">{p['name']}</h4>
-                    <p style="font-size: 0.8rem; color: #475569; line-height: 1.4; height: 3.8rem; min-height: 3.8rem; max-height: 3.8rem; overflow: hidden; margin-bottom: 0.4rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">{p['desc']}</p>
-                    <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.6rem; padding: 0.5rem; height: 4.8rem; min-height: 4.8rem; max-height: 4.8rem; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">
-                        <span style="font-size: 0.7rem; font-weight: 800; color: #065f46; display: block; margin-bottom: 0.15rem;">{_tr('keyBenefitLabel')}</span>
-                        <span style="font-size: 0.75rem; color: #334155; line-height: 1.3;">{p['benefit'][:110]}...</span>
+                    <p style="font-size: 0.8rem; color: #475569; line-height: 1.35; height: 3.4rem; min-height: 3.4rem; max-height: 3.4rem; overflow: hidden; margin-bottom: 0.35rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">{p['desc']}</p>
+                    <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.6rem; padding: 0.45rem; height: 4.2rem; min-height: 4.2rem; max-height: 4.2rem; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">
+                        <span style="font-size: 0.7rem; font-weight: 800; color: #065f46; display: block; margin-bottom: 0.1rem;">{_tr('keyBenefitLabel')}</span>
+                        <span style="font-size: 0.74rem; color: #334155; line-height: 1.3;">{p['benefit']}</span>
+                    </div>
+                    <div style="background-color: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 0.6rem; padding: 0.45rem; height: 3.6rem; min-height: 3.6rem; max-height: 3.6rem; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; margin-top: 0.35rem;">
+                        <span style="font-size: 0.7rem; font-weight: 800; color: #047857; display: block; margin-bottom: 0.1rem;">📑 Mandatory Documents:</span>
+                        <span style="font-size: 0.73rem; color: #065f46; line-height: 1.25;">{p['docs']}</span>
                     </div>
                 </div>
                 <div style="border-top: 1px solid #e2e8f0; padding-top: 0.65rem; margin-top: auto;">
-                    <a href="{p['url']}" target="_blank" style="background-color: #047857; color: white; padding: 0.45rem 0.85rem; border-radius: 0.6rem; font-size: 0.8rem; font-weight: 800; text-decoration: none; display: block; text-align: center;">
-                        {_tr('visitOfficialWebsite')}
+                    <a href="{p['url']}" target="_blank" style="background: linear-gradient(135deg, #059669 0%, #047857 100%); color: white !important; padding: 0.5rem 0.85rem; border-radius: 0.65rem; font-size: 0.82rem; font-weight: 800; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 0.4rem; box-shadow: 0 2px 4px rgba(5,150,105,0.25); text-align: center;">
+                        🚀 {_tr('visitOfficialWebsite')} ↗
                     </a>
                 </div>
             </div>

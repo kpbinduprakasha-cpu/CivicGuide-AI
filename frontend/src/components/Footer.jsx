@@ -2,7 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Landmark, ShieldCheck, ExternalLink, Heart, MapPin } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
-import GithubIcon from './GithubIcon';
 
 const Footer = () => {
   const { t } = useLanguage();
@@ -26,20 +25,6 @@ const Footer = () => {
             <div className="flex items-center gap-2 text-xs text-emerald-400 font-medium">
               <MapPin className="w-3.5 h-3.5" />
               <span>All India • Central & State Governments</span>
-            </div>
-
-            {/* GitHub Account Link */}
-            <div className="pt-2">
-              <a
-                href="https://github.com/kpbinduprakasha-cpu/CivicGuide-AI"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-extrabold bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 transition-all hover:scale-102 shadow-xs"
-              >
-                <GithubIcon className="w-4 h-4 text-white" />
-                <span>GitHub: @kpbinduprakasha-cpu</span>
-                <ExternalLink className="w-3 h-3 text-slate-400" />
-              </a>
             </div>
           </div>
 
@@ -165,19 +150,9 @@ const Footer = () => {
         {/* Bottom bar */}
         <div className="mt-12 pt-6 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-4">
           <p>
-            © {new Date().getFullYear()} CivicGuide AI • Built by <a href="https://github.com/kpbinduprakasha-cpu" target="_blank" rel="noopener noreferrer" className="font-bold text-slate-200 hover:text-emerald-400 underline">K P Bindu Prakasha</a>.
+            © {new Date().getFullYear()} CivicGuide AI • Built for Indian Citizens.
           </p>
           <div className="flex items-center gap-4 text-slate-400 flex-wrap">
-            <a
-              href="https://github.com/kpbinduprakasha-cpu/CivicGuide-AI"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-slate-300 hover:text-emerald-400 font-bold transition-colors"
-            >
-              <GithubIcon className="w-3.5 h-3.5" />
-              <span>GitHub Repository</span>
-            </a>
-            <span>•</span>
             <span>Map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer" className="underline hover:text-white">OpenStreetMap</a> contributors</span>
             <span>•</span>
             <Link to="/admin/login" className="hover:text-amber-400 transition-colors">Admin Portal</Link>

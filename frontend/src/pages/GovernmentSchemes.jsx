@@ -1188,9 +1188,10 @@ const GovernmentSchemes = () => {
                     </div>
                   )}
 
-                  {/* Documents Required Snippet */}
-                  <div className="text-xs sm:text-sm text-slate-700 font-medium line-clamp-1 pt-0.5">
-                    <strong className="text-slate-900 font-bold">Documents:</strong> {docsList.slice(0, 3).join(', ')}{docsList.length > 3 ? ` +${docsList.length - 3} more` : ''}
+                  {/* Mandatory Documents Required Box */}
+                  <div className="p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-200/80 text-xs sm:text-sm text-emerald-950">
+                    <strong className="text-emerald-900 font-extrabold block mb-1">📑 Mandatory Required Documents:</strong>
+                    <span className="font-semibold text-emerald-900/90 leading-relaxed">{scheme.required_documents || 'Aadhaar Card, Identity Proof, Bank Passbook'}</span>
                   </div>
 
                 </div>
@@ -1214,17 +1215,28 @@ const GovernmentSchemes = () => {
                         title="Check required documents checklist"
                       >
                         <FileCheck2 className="w-4 h-4 text-slate-700" />
-                        <span>Docs</span>
+                        <span>Docs Checklist</span>
                       </button>
 
-                      <button
-                        type="button"
-                        onClick={() => handleOpenApplyModal(scheme)}
-                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-black text-white bg-emerald-600 hover:bg-emerald-700 shadow-md shadow-emerald-600/20 transition-all hover:scale-102"
-                      >
-                        <span>Apply / Track</span>
-                        <ArrowUpRight className="w-4 h-4" />
-                      </button>
+                      {scheme.official_url ? (
+                        <a
+                          href={scheme.official_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-black text-white bg-emerald-600 hover:bg-emerald-700 shadow-md shadow-emerald-600/20 transition-all hover:scale-102"
+                        >
+                          <span>🚀 Apply ↗</span>
+                        </a>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => handleOpenApplyModal(scheme)}
+                          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-black text-white bg-emerald-600 hover:bg-emerald-700 shadow-md shadow-emerald-600/20 transition-all hover:scale-102"
+                        >
+                          <span>Apply</span>
+                          <ArrowUpRight className="w-4 h-4" />
+                        </button>
+                      )}
                     </div>
                   </div>
 
