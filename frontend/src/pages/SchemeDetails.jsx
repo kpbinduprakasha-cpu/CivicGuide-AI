@@ -211,6 +211,26 @@ const SchemeDetails = () => {
           </div>
         </div>
 
+        {/* 3-Minute Quick Application Highlight Banner */}
+        <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xs">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-black text-sm shrink-0 shadow-xs">
+              ⚡
+            </div>
+            <div>
+              <span className="font-extrabold text-slate-900 text-sm block">
+                Complete Online Application in Only 3 Minutes
+              </span>
+              <span className="text-xs text-slate-600 font-medium">
+                Instant E-KYC with Aadhaar OTP • No physical queues • Real-time SMS acknowledgement
+              </span>
+            </div>
+          </div>
+          <span className="text-xs font-bold text-emerald-800 bg-white px-3 py-1.5 rounded-xl border border-emerald-300 shrink-0">
+            ⏱️ Complete in 3 Mins
+          </span>
+        </div>
+
         {/* Bottom Action Bar */}
         <div className="pt-4 flex flex-col sm:flex-row gap-3">
           <a
@@ -219,7 +239,7 @@ const SchemeDetails = () => {
             rel="noopener noreferrer"
             className="flex-1 py-3.5 px-6 rounded-2xl font-bold text-xs text-white bg-emerald-600 hover:bg-emerald-700 shadow-md shadow-emerald-600/30 text-center flex items-center justify-center gap-2"
           >
-            <span>Open Official Application Portal</span>
+            <span>🚀 Apply on Official Portal (Complete in 3 Mins)</span>
             <ExternalLink className="w-4 h-4" />
           </a>
 

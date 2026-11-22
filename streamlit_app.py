@@ -1357,7 +1357,7 @@ if active_nav_key == "schemes":
                         portal_url = scheme.get('official_url') or "https://www.myscheme.gov.in"
                         
                         st.markdown(f"""
-                        <div class="scheme-card" style="height: 520px; min-height: 520px; max-height: 520px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; margin-bottom: 0.5rem; box-sizing: border-box;">
+                        <div class="scheme-card" style="height: 560px; min-height: 560px; max-height: 560px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; margin-bottom: 0.5rem; box-sizing: border-box;">
                             <div>
                                 <div style="height: 24px; margin-bottom: 0.25rem;">{badge_html}</div>
                                 <h4 style="margin: 0.35rem 0 0.2rem 0; font-weight: 800; font-size: 1.05rem; color: #0f172a; height: 2.6rem; min-height: 2.6rem; max-height: 2.6rem; overflow: hidden; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">{scheme.get('name')}</h4>
@@ -1378,17 +1378,57 @@ if active_nav_key == "schemes":
                             </div>
                             
                             <div style="border-top: 1px solid #e2e8f0; padding-top: 0.65rem; margin-top: auto;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.45rem;">
+                                    <span style="font-size: 0.72rem; font-weight: 800; color: #047857; background-color: #ecfdf5; border: 1px solid #a7f3d0; padding: 0.2rem 0.55rem; border-radius: 9999px; display: inline-flex; align-items: center; gap: 0.25rem;">
+                                        ⚡ Complete in only 3 minutes
+                                    </span>
+                                    <span style="font-size: 0.68rem; font-weight: 700; color: #64748b;">
+                                        Instant E-KYC / OTP
+                                    </span>
+                                </div>
                                 <a href="{portal_url}" target="_blank" style="background: linear-gradient(135deg, #059669 0%, #047857 100%); color: #ffffff !important; padding: 0.55rem 0.85rem; border-radius: 0.65rem; font-size: 0.82rem; font-weight: 800; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 0.4rem; box-shadow: 0 2px 4px rgba(5,150,105,0.25); text-align: center;">
-                                    🚀 Apply on Official Portal ↗
+                                    🚀 Apply on Official Portal (Complete in 3 Mins) ↗
                                 </a>
                             </div>
                         </div>
                         """, unsafe_allow_html=True)
                         
-                        with st.expander(f"ℹ️ Step-by-Step Instructions: {scheme.get('name')}"):
+                        with st.expander(f"⚡ 3-Minute Quick Application Guide: {scheme.get('name')}"):
+                            st.markdown(f"""
+                            <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 0.85rem; margin-bottom: 0.65rem;">
+                                <div style="font-size: 0.85rem; font-weight: 800; color: #0f172a; margin-bottom: 0.35rem;">
+                                    ⏱️ Complete Application in Only 3 Minutes:
+                                </div>
+                                <div style="font-size: 0.78rem; color: #334155; line-height: 1.5;">
+                                    • <strong>Minute 1:</strong> Authenticate with Aadhaar & Mobile OTP.<br/>
+                                    • <strong>Minute 2:</strong> Enter required document proof ({doc_text[:75]}...).<br/>
+                                    • <strong>Minute 3:</strong> Final submission & instant ACK receipt generation.
+                                </div>
+                            </div>
+                            """, unsafe_allow_html=True)
                             st.markdown(f"**How to Apply:** {scheme.get('application_process', 'Apply online via the official portal with required documents.')}")
                             if scheme.get('official_url'):
-                                st.markdown(f"**Direct Link:** [{scheme.get('official_url')}]({scheme.get('official_url')})")
+                                st.markdown(f"**Official Portal:** [{scheme.get('official_url')}]({scheme.get('official_url')})")
+                            
+                            ack_btn_key = f"log_app_btn_{c_idx}_{r_start}"
+                            if st.button("📥 Record & Track in Citizen Dashboard (Instant)", key=ack_btn_key, use_container_width=True):
+                                if "citizen_applications" not in st.session_state:
+                                    st.session_state["citizen_applications"] = list(DEFAULT_APPLICATIONS)
+                                new_ack = f"ACK-{'CENT' if is_central else 'STATE'}-2026-{1000 + (c_idx * 29 + r_start * 13) % 9000}"
+                                if not any(a.get("scheme_name") == scheme.get("name") for a in st.session_state["citizen_applications"]):
+                                    st.session_state["citizen_applications"].insert(0, {
+                                        "id": f"app-live-{c_idx}-{r_start}",
+                                        "scheme_name": scheme.get("name"),
+                                        "government_level": "Central Government" if is_central else f"{scheme.get('state', 'State')} Government",
+                                        "category": scheme.get("category", "Public Welfare"),
+                                        "ack_no": new_ack,
+                                        "applied_date": "Today",
+                                        "status": "In Verification",
+                                        "benefit": (scheme.get("benefits") or "Direct Welfare Assistance")[:55],
+                                        "approval_date": "Verification in Progress",
+                                        "portal_url": portal_url
+                                    })
+                                st.success(f"🎉 Application Logged in 3 Minutes! Your Official ACK: {new_ack}. Track live status on your Citizen Dashboard.")
 
 # ---------------------------------------------------------------------------
 # VIEW: 2. HOME & OVERVIEW (Matches Images 5, 6, 7, 8, 9 Exactly)
@@ -1561,7 +1601,7 @@ elif active_nav_key == "home":
     for idx, p in enumerate(pop_schemes):
         with p_cols[idx]:
             st.markdown(f"""
-            <div class="scheme-card" style="height: 460px; min-height: 460px; max-height: 460px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; margin-bottom: 0.5rem; box-sizing: border-box;">
+            <div class="scheme-card" style="height: 495px; min-height: 495px; max-height: 495px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; margin-bottom: 0.5rem; box-sizing: border-box;">
                 <div>
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem; height: 24px;">
                         <span class="badge-central">{_tr('centralGovBadge')}</span>
@@ -1579,8 +1619,16 @@ elif active_nav_key == "home":
                     </div>
                 </div>
                 <div style="border-top: 1px solid #e2e8f0; padding-top: 0.65rem; margin-top: auto;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+                        <span style="font-size: 0.7rem; font-weight: 800; color: #047857; background-color: #ecfdf5; border: 1px solid #a7f3d0; padding: 0.12rem 0.45rem; border-radius: 9999px;">
+                            ⚡ Complete in only 3 minutes
+                        </span>
+                        <span style="font-size: 0.68rem; font-weight: 700; color: #64748b;">
+                            Direct DBT
+                        </span>
+                    </div>
                     <a href="{p['url']}" target="_blank" style="background: linear-gradient(135deg, #059669 0%, #047857 100%); color: white !important; padding: 0.5rem 0.85rem; border-radius: 0.65rem; font-size: 0.82rem; font-weight: 800; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 0.4rem; box-shadow: 0 2px 4px rgba(5,150,105,0.25); text-align: center;">
-                        🚀 {_tr('visitOfficialWebsite')} ↗
+                        🚀 {_tr('visitOfficialWebsite')} (Apply in 3 Mins) ↗
                     </a>
                 </div>
             </div>

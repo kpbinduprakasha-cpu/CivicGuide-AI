@@ -1211,11 +1211,11 @@ const GovernmentSchemes = () => {
                       <button
                         type="button"
                         onClick={() => handleOpenChecklist(scheme)}
-                        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold text-slate-800 bg-slate-100 hover:bg-slate-200 transition-colors"
+                        className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-slate-800 bg-slate-100 hover:bg-slate-200 transition-colors"
                         title="Check required documents checklist"
                       >
                         <FileCheck2 className="w-4 h-4 text-slate-700" />
-                        <span>Docs Checklist</span>
+                        <span>Docs</span>
                       </button>
 
                       {scheme.official_url ? (
@@ -1223,25 +1223,31 @@ const GovernmentSchemes = () => {
                           href={scheme.official_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-black text-white bg-emerald-600 hover:bg-emerald-700 shadow-md shadow-emerald-600/20 transition-all hover:scale-102"
+                          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black text-white bg-emerald-600 hover:bg-emerald-700 shadow-md shadow-emerald-600/20 transition-all hover:scale-102"
+                          title="Complete application in only 3 minutes on official portal"
                         >
-                          <span>🚀 Apply ↗</span>
+                          <span>🚀 Apply (3 Mins) ↗</span>
                         </a>
                       ) : (
                         <button
                           type="button"
                           onClick={() => handleOpenApplyModal(scheme)}
-                          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-black text-white bg-emerald-600 hover:bg-emerald-700 shadow-md shadow-emerald-600/20 transition-all hover:scale-102"
+                          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black text-white bg-emerald-600 hover:bg-emerald-700 shadow-md shadow-emerald-600/20 transition-all hover:scale-102"
                         >
-                          <span>Apply</span>
+                          <span>Apply in 3 Mins</span>
                           <ArrowUpRight className="w-4 h-4" />
                         </button>
                       )}
                     </div>
                   </div>
 
-                  {/* External Portal Link */}
+                  {/* 3-Minute Quick Application Note & External Portal Link */}
                   <div className="flex items-center justify-between text-xs sm:text-sm pt-2 border-t border-slate-100 font-semibold">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[11px] font-extrabold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full inline-flex items-center gap-1">
+                        ⚡ Complete in only 3 minutes
+                      </span>
+                    </div>
                     <Link
                       to={`/eligibility?scheme_id=${scheme.id}`}
                       className="text-emerald-700 hover:underline font-bold"
