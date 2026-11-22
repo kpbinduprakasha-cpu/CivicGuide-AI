@@ -212,25 +212,34 @@ st.markdown("""
     }
 
     /* =========================================================================
-       EXACT REACT-STYLE TOP NAVBAR BUTTONS & RADIO TABS (Matches User Image)
+       EXACT REACT-STYLE TOP NAVBAR BUTTONS & TABS (Matches User Image Exactly)
        ========================================================================= */
-    /* Hide native radio input */
-    div[data-testid="stRadio"] div[role="radiogroup"] input[type="radio"] {
+    /* Hide native radio input and all radio indicator circles/bullets */
+    div[data-testid="stRadio"] input[type="radio"] {
         display: none !important;
+        position: absolute !important;
+        opacity: 0 !important;
+        width: 0 !important;
+        height: 0 !important;
     }
 
-    /* Hide the radio circle / bullet (the element that is NOT the last child) */
-    div[data-testid="stRadio"] div[role="radiogroup"] label > div:not(:last-child),
-    div[data-testid="stRadio"] div[role="radiogroup"] label > div:not(:has(p)),
-    div[data-testid="stRadio"] div[role="radiogroup"] label svg {
+    /* Target ONLY the first child of the label which is the radio circle, NEVER markdown container */
+    div[data-testid="stRadio"] [data-baseweb="radio"] > span:first-child,
+    div[data-testid="stRadio"] [data-baseweb="radio"] > div:first-child:not([data-testid="stMarkdownContainer"]),
+    div[data-testid="stRadio"] label > span:first-child,
+    div[data-testid="stRadio"] label > div:first-child:not([data-testid="stMarkdownContainer"]),
+    div[data-testid="stRadio"] label svg {
         display: none !important;
         width: 0 !important;
         height: 0 !important;
+        min-width: 0 !important;
+        max-width: 0 !important;
         margin: 0 !important;
         padding: 0 !important;
         border: none !important;
         visibility: hidden !important;
         opacity: 0 !important;
+        pointer-events: none !important;
     }
 
     /* Strict ONE-LINE flex row without wrapping */
@@ -239,13 +248,14 @@ st.markdown("""
         flex-direction: row !important;
         align-items: center !important;
         justify-content: flex-start !important;
-        gap: 0.25rem !important;
+        gap: 0.35rem !important;
         flex-wrap: nowrap !important;
         white-space: nowrap !important;
         overflow-x: auto !important;
         padding: 0 !important;
         margin: 0 !important;
         scrollbar-width: none !important;
+        width: 100% !important;
     }
     div[data-testid="stRadio"] div[role="radiogroup"]::-webkit-scrollbar {
         display: none !important;
@@ -256,7 +266,7 @@ st.markdown("""
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
-        padding: 0.35rem 0.65rem !important;
+        padding: 0.45rem 0.85rem !important;
         border-radius: 0.75rem !important;
         background-color: transparent !important;
         border: 1px solid transparent !important;
@@ -271,49 +281,39 @@ st.markdown("""
     }
 
     /* Label text - GUARANTEED 100% VISIBLE */
-    div[data-testid="stRadio"] div[role="radiogroup"] label > div:last-child,
-    div[data-testid="stRadio"] div[role="radiogroup"] label [data-testid="stMarkdownContainer"],
-    div[data-testid="stRadio"] div[role="radiogroup"] label p {
+    div[data-testid="stRadio"] [data-testid="stMarkdownContainer"],
+    div[data-testid="stRadio"] [data-testid="stMarkdownContainer"] p,
+    div[data-testid="stRadio"] [data-testid="stMarkdownContainer"] span {
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
         visibility: visible !important;
         opacity: 1 !important;
-        position: static !important;
-        font-size: 0.88rem !important;
+        font-size: 0.92rem !important;
         font-weight: 700 !important;
         color: #475569 !important;
         margin: 0 !important;
         line-height: 1.2 !important;
         white-space: nowrap !important;
     }
-    div[data-testid="stRadio"] div[role="radiogroup"] label:hover p {
+    div[data-testid="stRadio"] div[role="radiogroup"] label:hover [data-testid="stMarkdownContainer"] p {
         color: #0f172a !important;
     }
 
     /* ACTIVE TAB: Mint green pill with dark green bold text (Exact match to React Image) */
-    div[data-testid="stRadio"] div[role="radiogroup"] label:has(input:checked) {
-        background-color: #d1fae5 !important;
-        border: 1px solid #a7f3d0 !important;
-        box-shadow: 0 1px 2px rgba(16, 185, 129, 0.15) !important;
-    }
-    div[data-testid="stRadio"] div[role="radiogroup"] label:has(input:checked) p,
-    div[data-testid="stRadio"] div[role="radiogroup"] label:has(input:checked) div,
-    div[data-testid="stRadio"] div[role="radiogroup"] label:has(input:checked) span {
-        color: #065f46 !important;
-        font-weight: 900 !important;
-    }
-
-    /* Fallback for browsers without :has */
+    div[data-testid="stRadio"] div[role="radiogroup"] label:has(input:checked),
     div[data-testid="stRadio"] div[role="radiogroup"] label[aria-checked="true"],
     div[data-testid="stRadio"] div[role="radiogroup"] label[data-checked="true"] {
         background-color: #d1fae5 !important;
         border: 1px solid #a7f3d0 !important;
+        box-shadow: 0 1px 2px rgba(16, 185, 129, 0.15) !important;
     }
-    div[data-testid="stRadio"] div[role="radiogroup"] label[aria-checked="true"] p,
-    div[data-testid="stRadio"] div[role="radiogroup"] label[data-checked="true"] p {
+    div[data-testid="stRadio"] div[role="radiogroup"] label:has(input:checked) [data-testid="stMarkdownContainer"] p,
+    div[data-testid="stRadio"] div[role="radiogroup"] label:has(input:checked) [data-testid="stMarkdownContainer"] span,
+    div[data-testid="stRadio"] div[role="radiogroup"] label[aria-checked="true"] [data-testid="stMarkdownContainer"] p,
+    div[data-testid="stRadio"] div[role="radiogroup"] label[data-checked="true"] [data-testid="stMarkdownContainer"] p {
         color: #065f46 !important;
-        font-weight: 900 !important;
+        font-weight: 800 !important;
     }
 
     /* GitHub Link Button Style */
@@ -352,33 +352,13 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ---------------------------------------------------------------------------
-# Constants & Official State Portals Dictionary
+# Constants & Official State Portals Dictionary & Multilingual Engine
 # ---------------------------------------------------------------------------
-ALL_INDIAN_LANGUAGES = [
-    "English (English)",
-    "हिन्दी (Hindi)",
-    "ಕನ್ನಡ (Kannada)",
-    "తెలుగు (Telugu)",
-    "தமிழ் (Tamil)",
-    "मराठी (Marathi)",
-    "বাংলা (Bengali)",
-    "ગુજરાતી (Gujarati)",
-    "മലയാളം (Malayalam)",
-    "ਪੰਜਾਬੀ (Punjabi)",
-    "ଓଡ଼ିଆ (Odia)",
-    "অসমীয়া (Assamese)",
-    "اردو (Urdu)",
-    "संस्कृतम् (Sanskrit)",
-    "कोंकणी (Konkani)",
-    "नेपाली (Nepali)",
-    "मैथिली (Maithili)",
-    "ᱥᱟᱱᱛᱟᱲᱤ (Santali)",
-    "کٲشُر (Kashmiri)",
-    "सिन्धी (Sindhi)",
-    "डोगरी (Dogri)",
-    "মৈতৈಲೋನ್ (Manipuri)",
-    "बर' (Bodo)"
-]
+from translations import ALL_INDIAN_LANGUAGES, LANG_CODE_MAP, t, TRANSLATIONS
+
+def _tr(key, default=None):
+    cur_code = st.session_state.get("current_lang_code", "en")
+    return t(key, cur_code, default)
 
 ALL_INDIAN_STATES = [
     "All India",
@@ -782,43 +762,56 @@ CivicGuide AI assists Indian citizens with verified guidelines, eligibility chec
 schemes_list, services_list = load_database_data()
 
 # ---------------------------------------------------------------------------
-# TOP NAVBAR: Matches User Image Exactly (Single Line Layout)
+# TOP NAVBAR: Matches User Image Exactly (Single Line Layout & Multilingual)
 # ---------------------------------------------------------------------------
-if "top_navbar_tab" not in st.session_state:
-    st.session_state.top_navbar_tab = "🧭 Home"
+selected_lang_name = st.session_state.get("top_navbar_language", "English (English)")
+cur_lang_code = LANG_CODE_MAP.get(selected_lang_name, "en")
+st.session_state["current_lang_code"] = cur_lang_code
 
-nav_col_logo, nav_col_tabs, nav_col_right = st.columns([1.6, 7.8, 2.6], vertical_alignment="center")
+if "top_navbar_tab_key" not in st.session_state:
+    st.session_state.top_navbar_tab_key = "home"
+
+nav_col_logo, nav_col_tabs, nav_col_right = st.columns([1.8, 7.4, 2.8], vertical_alignment="center")
 
 with nav_col_logo:
-    st.markdown("""
+    st.markdown(f"""
     <div class="brand-wrap">
         <div class="brand-logo">🏛️</div>
         <div>
-            <div class="brand-title">CivicGuide AI <span class="brand-pill">ALL INDIA</span></div>
-            <div class="brand-subtitle">Central & State Governments</div>
+            <div class="brand-title">{_tr('appName')} <span class="brand-pill">{_tr('allIndiaPill')}</span></div>
+            <div class="brand-subtitle">{_tr('tagline')}</div>
         </div>
     </div>
     """, unsafe_allow_html=True)
 
+NAV_ICONS = {
+    "home": "🧭",
+    "schemes": "🏛️",
+    "chatbot": "🤖",
+    "eligibility": "📋",
+    "serviceMap": "📍"
+}
+
 with nav_col_tabs:
-    active_nav = st.radio(
+    active_nav_key = st.radio(
         "Navigation",
-        [
-            "🧭 Home",
-            "🏛️ Government Schemes",
-            "🤖 AI Assistant",
-            "📋 Eligibility Checker",
-            "📍 Service Map"
-        ],
+        ["home", "schemes", "chatbot", "eligibility", "serviceMap"],
+        format_func=lambda k: f"{NAV_ICONS[k]} {_tr(k)}",
         horizontal=True,
         label_visibility="collapsed",
-        key="top_navbar_tab"
+        key="top_navbar_tab_key"
     )
 
 with nav_col_right:
-    c_lang, c_gh, c_user, c_out = st.columns([4.2, 2.2, 0.9, 0.7], vertical_alignment="center")
+    c_lang, c_gh, c_user = st.columns([5.0, 2.2, 1.0], vertical_alignment="center")
     with c_lang:
-        selected_lang = st.selectbox("Language", ALL_INDIAN_LANGUAGES, index=0, key="top_navbar_language", label_visibility="collapsed")
+        selected_lang = st.selectbox(
+            "Language",
+            ALL_INDIAN_LANGUAGES,
+            index=ALL_INDIAN_LANGUAGES.index(selected_lang_name) if selected_lang_name in ALL_INDIAN_LANGUAGES else 0,
+            key="top_navbar_language",
+            label_visibility="collapsed"
+        )
     with c_gh:
         st.link_button("GitHub", "https://github.com/kpbinduprakasha-cpu/CivicGuide-AI")
     with c_user:
@@ -827,35 +820,33 @@ with nav_col_right:
             K
         </div>
         """, unsafe_allow_html=True)
-    with c_out:
-        st.markdown("""
-        <div style="font-size: 1.15rem; color: #64748b; cursor: pointer; text-align: center;" title="Sign Out">
-            🚪
-        </div>
-        """, unsafe_allow_html=True)
 
 st.markdown("<hr style='margin-top: 0.2rem; margin-bottom: 1.25rem; border-color: #e2e8f0;'>", unsafe_allow_html=True)
 
 # ---------------------------------------------------------------------------
 # VIEW: 1. GOVERNMENT SCHEMES (Matches Image 2 Exactly)
 # ---------------------------------------------------------------------------
-if "Government Schemes" in active_nav:
+if active_nav_key == "schemes":
     
     # Hero Title & Action Pills Row
     h_col1, h_col2 = st.columns([3, 2])
     with h_col1:
-        st.markdown('<div class="hero-badge">🛡️ Official Government Welfare Directory • Verified All-India Database</div>', unsafe_allow_html=True)
-        st.markdown('<div class="hero-title">Government Schemes</div>', unsafe_allow_html=True)
-        st.markdown('<div class="hero-desc">Search, filter, and apply for Central and State government welfare schemes across India. Verified with official application guidelines, required document checklists, and citizen eligibility matching.</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="hero-badge">{_tr("schemesDirBadge")}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="hero-title">{_tr("schemesDirTitle")}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="hero-desc">{_tr("schemesDirSub")}</div>', unsafe_allow_html=True)
     with h_col2:
         st.markdown("<div style='height: 1.5rem;'></div>", unsafe_allow_html=True)
         b1, b2, b3 = st.columns(3)
         with b1:
-            st.button("📍 Offices & Taluk Map", key="h_btn1")
+            if st.button(f"📍 {_tr('serviceMap')}", key="h_btn1", use_container_width=True):
+                st.session_state.top_navbar_tab_key = "serviceMap"
+                st.rerun()
         with b2:
-            st.button("🔖 Saved Schemes (0)", key="h_btn2")
+            st.button("🔖 Saved (0)", key="h_btn2", use_container_width=True)
         with b3:
-            st.button("✨ AI Matched (40)", key="h_btn3")
+            if st.button("✨ AI Matched (40)", key="h_btn3", use_container_width=True):
+                st.session_state.top_navbar_tab_key = "chatbot"
+                st.rerun()
 
     # -----------------------------------------------------------------------
     # Main White Filter Card (Matches Image 2)
@@ -867,16 +858,16 @@ if "Government Schemes" in active_nav:
     with s_col1:
         search_query = st.text_input(
             "Search Schemes",
-            placeholder="Search by scheme name, benefits, or keywords (e.g. scholarship, solar, 2000, farmer, loan)...",
+            placeholder=_tr("searchPlaceholder"),
             label_visibility="collapsed"
         )
     with s_col2:
         sort_by = st.selectbox(
             "Sort By",
             [
-                "⭐ AI Best Match First",
-                "🏛️ Central Government First",
-                "📍 State Government First",
+                f"⭐ {_tr('sortBy')} (AI Best Match)",
+                f"🏛️ {_tr('scopeCentral')}",
+                f"📍 {_tr('scopeState')}",
                 "🔤 Scheme Name (A to Z)"
             ],
             index=0,
@@ -1134,27 +1125,38 @@ if "Government Schemes" in active_nav:
 # ---------------------------------------------------------------------------
 # VIEW: 2. HOME & OVERVIEW (Matches Images 5, 6, 7, 8, 9 Exactly)
 # ---------------------------------------------------------------------------
-elif "Home" in active_nav:
+elif active_nav_key == "home":
     
-    # 1. HERO SECTION (Matches Image 5)
-    st.markdown("""
-    <div style="background: linear-gradient(180deg, #064e3b 0%, #0f172a 100%); color: white; padding: 3rem 2rem 3rem 2rem; border-radius: 1.5rem; text-align: center; margin-bottom: 1.5rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.25);">
+    # 1. HERO SECTION (Matches Images 4 & 5)
+    st.markdown(f"""
+    <div style="background: linear-gradient(180deg, #064e3b 0%, #0f172a 100%); color: white; padding: 3rem 2rem 2.5rem 2rem; border-radius: 1.5rem; text-align: center; margin-bottom: 1.5rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.25);">
         <div style="display: inline-flex; align-items: center; gap: 0.5rem; background-color: rgba(16, 185, 129, 0.2); border: 1px solid rgba(16, 185, 129, 0.4); padding: 0.35rem 1rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 700; color: #6ee7b7; margin-bottom: 1.25rem;">
-            ✨ All India | Central & State Governments • Verified Government Sources
+            {_tr('districtTag')} • {_tr('verifiedBadge')}
         </div>
         <h1 style="font-size: 2.5rem; font-weight: 900; line-height: 1.2; margin: 0 0 1rem 0; letter-spacing: -0.025em; color: #ffffff;">
-            Understand Your Rights & Government Schemes Across India
+            {_tr('heroTitle')}
         </h1>
         <p style="font-size: 1.05rem; color: #cbd5e1; max-width: 48rem; margin: 0 auto 1.5rem auto; line-height: 1.6;">
-            Empowering citizens across all Indian States, Union Territories, and Central Government initiatives with instant, AI-guided verified scheme explanations, eligibility checks, and public service locations.
+            {_tr('heroSubtitle')}
         </p>
     </div>
     """, unsafe_allow_html=True)
 
-    # 2. STATE EXPLORER PILLS & STATS (Matches Image 6)
-    st.markdown("""
+    # Hero Search Bar (Matches Image 4)
+    h_s_col1, h_s_col2 = st.columns([5, 1.2])
+    with h_s_col1:
+        hero_search = st.text_input("Home Search", placeholder=_tr("searchSchemesPlaceholder"), label_visibility="collapsed", key="home_search_inp")
+    with h_s_col2:
+        if st.button(_tr("searchBtn"), key="home_search_btn", use_container_width=True):
+            st.session_state.top_navbar_tab_key = "schemes"
+            st.rerun()
+
+    st.markdown("<div style='height: 1rem;'></div>", unsafe_allow_html=True)
+
+    # 2. STATE EXPLORER PILLS & STATS (Matches Image 5)
+    st.markdown(f"""
     <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 1.5rem;">
-        <span style="font-size: 0.85rem; font-weight: 800; color: #475569;">Explore by State:</span>
+        <span style="font-size: 0.85rem; font-weight: 800; color: #475569;">{_tr('exploreByState')}</span>
         <span style="background-color: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; padding: 0.2rem 0.65rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 800;">Karnataka</span>
         <span style="background-color: #f1f5f9; color: #334155; border: 1px solid #e2e8f0; padding: 0.2rem 0.65rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 800;">Maharashtra</span>
         <span style="background-color: #f1f5f9; color: #334155; border: 1px solid #e2e8f0; padding: 0.2rem 0.65rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 800;">Delhi</span>
@@ -1165,106 +1167,106 @@ elif "Home" in active_nav:
     </div>
     """, unsafe_allow_html=True)
 
-    # 4 Stat Counters
+    # 4 Stat Counters (Matches Image 5)
     m1, m2, m3, m4 = st.columns(4)
     with m1:
         st.markdown(f"""
         <div class="filter-card" style="text-align: center; border-radius: 1.25rem;">
-            <div style="font-size: 2.2rem; font-weight: 900; color: #0f172a;">45+</div>
-            <div style="font-size: 0.85rem; font-weight: 700; color: #64748b;">National & State Schemes</div>
+            <div style="font-size: 2.2rem; font-weight: 900; color: #0f172a;">{_tr('stat1Num')}</div>
+            <div style="font-size: 0.85rem; font-weight: 700; color: #64748b;">{_tr('stat1Label')}</div>
         </div>
         """, unsafe_allow_html=True)
     with m2:
-        st.markdown("""
+        st.markdown(f"""
         <div class="filter-card" style="text-align: center; border-radius: 1.25rem;">
-            <div style="font-size: 2.2rem; font-weight: 900; color: #047857;">All India</div>
-            <div style="font-size: 0.85rem; font-weight: 700; color: #64748b;">Central & 28+ States/UTs</div>
+            <div style="font-size: 2.2rem; font-weight: 900; color: #047857;">{_tr('stat2Num')}</div>
+            <div style="font-size: 0.85rem; font-weight: 700; color: #64748b;">{_tr('stat2Label')}</div>
         </div>
         """, unsafe_allow_html=True)
     with m3:
-        st.markdown("""
+        st.markdown(f"""
         <div class="filter-card" style="text-align: center; border-radius: 1.25rem;">
-            <div style="font-size: 2.2rem; font-weight: 900; color: #d97706;">23 Languages</div>
-            <div style="font-size: 0.85rem; font-weight: 700; color: #64748b;">All Scheduled Indian Languages</div>
+            <div style="font-size: 2.2rem; font-weight: 900; color: #d97706;">{_tr('stat3Num')}</div>
+            <div style="font-size: 0.85rem; font-weight: 700; color: #64748b;">{_tr('stat3Label')}</div>
         </div>
         """, unsafe_allow_html=True)
     with m4:
-        st.markdown("""
+        st.markdown(f"""
         <div class="filter-card" style="text-align: center; border-radius: 1.25rem;">
-            <div style="font-size: 2.2rem; font-weight: 900; color: #0284c7;">100% RAG</div>
-            <div style="font-size: 0.85rem; font-weight: 700; color: #64748b;">Zero Hallucinations</div>
+            <div style="font-size: 2.2rem; font-weight: 900; color: #0284c7;">{_tr('stat4Num')}</div>
+            <div style="font-size: 0.85rem; font-weight: 700; color: #64748b;">{_tr('stat4Label')}</div>
         </div>
         """, unsafe_allow_html=True)
 
-    # 3. FEATURE LAUNCH CARDS (Matches Image 6)
+    # 3. FEATURE LAUNCH CARDS (Matches Image 5)
     f_col1, f_col2, f_col3 = st.columns(3)
     with f_col1:
-        st.markdown("""
+        st.markdown(f"""
         <div class="filter-card" style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
             <div>
                 <div style="width: 40px; height: 40px; border-radius: 0.75rem; background-color: #ecfdf5; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 0.75rem;">
                     🤖
                 </div>
-                <h3 style="font-size: 1.15rem; font-weight: 900; color: #0f172a; margin: 0 0 0.5rem 0;">AI Assistant</h3>
+                <h3 style="font-size: 1.15rem; font-weight: 900; color: #0f172a; margin: 0 0 0.5rem 0;">{_tr('feature1Title')}</h3>
                 <p style="font-size: 0.85rem; color: #475569; line-height: 1.5; margin: 0 0 1rem 0;">
-                    Ask government policy, scholarship, and citizen rights questions in Kannada, English, or Hindi with speech input and voice responses.
+                    {_tr('feature1Desc')}
                 </p>
             </div>
         </div>
         """, unsafe_allow_html=True)
-        if st.button("Launch AI Assistant →", key="btn_f1", use_container_width=True):
-            st.session_state.top_navbar_tab = "🤖 AI Assistant"
+        if st.button(_tr('feature1Btn'), key="btn_f1", use_container_width=True):
+            st.session_state.top_navbar_tab_key = "chatbot"
             st.rerun()
     with f_col2:
-        st.markdown("""
+        st.markdown(f"""
         <div class="filter-card" style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
             <div>
                 <div style="width: 40px; height: 40px; border-radius: 0.75rem; background-color: #fef3c7; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 0.75rem;">
                     📋
                 </div>
-                <h3 style="font-size: 1.15rem; font-weight: 900; color: #0f172a; margin: 0 0 0.5rem 0;">Eligibility Checker</h3>
+                <h3 style="font-size: 1.15rem; font-weight: 900; color: #0f172a; margin: 0 0 0.5rem 0;">{_tr('feature2Title')}</h3>
                 <p style="font-size: 0.85rem; color: #475569; line-height: 1.5; margin: 0 0 1rem 0;">
-                    Evaluate your family's eligibility against official scheme criteria with detailed met conditions, required documents, and application links.
+                    {_tr('feature2Desc')}
                 </p>
             </div>
         </div>
         """, unsafe_allow_html=True)
-        if st.button("Check Eligibility →", key="btn_f2", use_container_width=True):
-            st.session_state.top_navbar_tab = "📋 Eligibility Checker"
+        if st.button(_tr('feature2Btn'), key="btn_f2", use_container_width=True):
+            st.session_state.top_navbar_tab_key = "eligibility"
             st.rerun()
     with f_col3:
-        st.markdown("""
+        st.markdown(f"""
         <div class="filter-card" style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
             <div>
                 <div style="width: 40px; height: 40px; border-radius: 0.75rem; background-color: #eff6ff; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 0.75rem;">
                     📍
                 </div>
-                <h3 style="font-size: 1.15rem; font-weight: 900; color: #0f172a; margin: 0 0 0.5rem 0;">Service Map</h3>
+                <h3 style="font-size: 1.15rem; font-weight: 900; color: #0f172a; margin: 0 0 0.5rem 0;">{_tr('feature3Title')}</h3>
                 <p style="font-size: 0.85rem; color: #475569; line-height: 1.5; margin: 0 0 1rem 0;">
-                    Interactive OpenStreetMap directory of Central Ministries, AIIMS, Passport Seva Kendras, State Secretariats, and CSCs across India and Karnataka.
+                    {_tr('feature3Desc')}
                 </p>
             </div>
         </div>
         """, unsafe_allow_html=True)
-        if st.button("Explore All India Map →", key="btn_f3", use_container_width=True):
-            st.session_state.top_navbar_tab = "📍 Service Map"
+        if st.button(_tr('feature3Btn'), key="btn_f3", use_container_width=True):
+            st.session_state.top_navbar_tab_key = "serviceMap"
             st.rerun()
 
     st.markdown("<div style='height: 1.5rem;'></div>", unsafe_allow_html=True)
 
-    # 4. POPULAR NATIONAL & STATE SCHEMES (Matches Images 7 & 8)
+    # 4. POPULAR NATIONAL & STATE SCHEMES (Matches Image 6)
     col_pop_title, col_pop_btn = st.columns([3.5, 1.5], vertical_alignment="center")
     with col_pop_title:
-        st.markdown("""
+        st.markdown(f"""
         <div style="margin-bottom: 0.5rem;">
-            <span style="font-size: 0.75rem; font-weight: 800; color: #047857; text-transform: uppercase; letter-spacing: 0.05em;">VERIFIED WELFARE CATALOG</span>
-            <h2 style="font-size: 1.75rem; font-weight: 900; color: #0f172a; margin: 0.2rem 0;">Popular National & State Schemes</h2>
-            <p style="font-size: 0.85rem; color: #64748b; margin: 0;">Key welfare initiatives for women, farmers, artisans, students, and citizens across India.</p>
+            <span style="font-size: 0.75rem; font-weight: 800; color: #047857; text-transform: uppercase; letter-spacing: 0.05em;">{_tr('popSchemesTag')}</span>
+            <h2 style="font-size: 1.75rem; font-weight: 900; color: #0f172a; margin: 0.2rem 0;">{_tr('popSchemesTitle')}</h2>
+            <p style="font-size: 0.85rem; color: #64748b; margin: 0;">{_tr('popSchemesSub')}</p>
         </div>
         """, unsafe_allow_html=True)
     with col_pop_btn:
-        if st.button("View All Schemes →", key="btn_view_all_pop", use_container_width=True):
-            st.session_state.top_navbar_tab = "🏛️ Government Schemes"
+        if st.button(_tr('viewAllSchemes'), key="btn_view_all_pop", use_container_width=True):
+            st.session_state.top_navbar_tab_key = "schemes"
             st.rerun()
 
     pop_schemes = [
@@ -1301,19 +1303,19 @@ elif "Home" in active_nav:
             <div class="scheme-card" style="height: 100%;">
                 <div>
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                        <span class="badge-central">CENTRAL GOVERNMENT</span>
-                        <span style="font-size: 0.7rem; font-weight: 800; color: #047857; background-color: #ecfdf5; padding: 0.1rem 0.4rem; border-radius: 9999px;">✓ Verified</span>
+                        <span class="badge-central">{_tr('centralGovBadge')}</span>
+                        <span style="font-size: 0.7rem; font-weight: 800; color: #047857; background-color: #ecfdf5; padding: 0.1rem 0.4rem; border-radius: 9999px;">{_tr('verifiedBadge')}</span>
                     </div>
                     <h4 style="font-size: 1rem; font-weight: 900; color: #0f172a; margin: 0.35rem 0;">{p['name']}</h4>
                     <p style="font-size: 0.8rem; color: #475569; line-height: 1.4; height: 3.8rem; overflow: hidden; margin-bottom: 0.5rem;">{p['desc']}</p>
                     <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.6rem; padding: 0.5rem; margin-bottom: 0.75rem;">
-                        <span style="font-size: 0.7rem; font-weight: 800; color: #065f46; display: block;">Key Benefit:</span>
+                        <span style="font-size: 0.7rem; font-weight: 800; color: #065f46; display: block;">{_tr('keyBenefitLabel')}</span>
                         <span style="font-size: 0.75rem; color: #334155; line-height: 1.3;">{p['benefit'][:110]}...</span>
                     </div>
                 </div>
                 <div style="border-top: 1px solid #e2e8f0; padding-top: 0.65rem;">
                     <a href="{p['url']}" target="_blank" style="background-color: #047857; color: white; padding: 0.45rem 0.85rem; border-radius: 0.6rem; font-size: 0.8rem; font-weight: 800; text-decoration: none; display: block; text-align: center;">
-                        Visit Official Website ↗
+                        {_tr('visitOfficialWebsite')}
                     </a>
                 </div>
             </div>
@@ -1321,74 +1323,74 @@ elif "Home" in active_nav:
 
     st.markdown("<div style='height: 2rem;'></div>", unsafe_allow_html=True)
 
-    # 5. HOW CIVICGUIDE AI WORKS (Matches Image 8 Exactly)
-    st.markdown("""
+    # 5. HOW CIVICGUIDE AI WORKS (Matches Image 6 / 4-Step Process)
+    st.markdown(f"""
     <div style="text-align: center; margin-bottom: 1.5rem;">
-        <span style="font-size: 0.75rem; font-weight: 800; color: #047857; text-transform: uppercase; letter-spacing: 0.05em;">SIMPLE 4-STEP PROCESS</span>
-        <h2 style="font-size: 2rem; font-weight: 900; color: #0f172a; margin: 0.2rem 0;">How CivicGuide AI Works</h2>
-        <p style="font-size: 0.85rem; color: #64748b;">Designed specifically to make government schemes accessible to every citizen without complex legal jargon.</p>
+        <span style="font-size: 0.75rem; font-weight: 800; color: #047857; text-transform: uppercase; letter-spacing: 0.05em;">{_tr('howItWorksTag')}</span>
+        <h2 style="font-size: 2rem; font-weight: 900; color: #0f172a; margin: 0.2rem 0;">{_tr('howItWorksTitle')}</h2>
+        <p style="font-size: 0.85rem; color: #64748b;">{_tr('howItWorksSub')}</p>
     </div>
     """, unsafe_allow_html=True)
 
     w1, w2, w3, w4 = st.columns(4)
     with w1:
-        st.markdown("""
+        st.markdown(f"""
         <div class="filter-card" style="height: 100%; position: relative;">
             <span style="position: absolute; top: 1rem; right: 1.25rem; font-size: 1.5rem; font-weight: 900; color: #d1fae5;">01</span>
             <div style="width: 34px; height: 34px; border-radius: 0.5rem; background-color: #ecfdf5; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; margin-bottom: 0.5rem;">🤖</div>
-            <h4 style="font-size: 0.95rem; font-weight: 900; color: #0f172a; margin: 0 0 0.35rem 0;">1. Search & Ask AI Assistant</h4>
-            <p style="font-size: 0.8rem; color: #475569; line-height: 1.4; margin: 0;">Enter scheme keywords or ask questions in Kannada, English, or Hindi to get instant verified policy guidance and required documents.</p>
+            <h4 style="font-size: 0.95rem; font-weight: 900; color: #0f172a; margin: 0 0 0.35rem 0;">{_tr('howStep1Title')}</h4>
+            <p style="font-size: 0.8rem; color: #475569; line-height: 1.4; margin: 0;">{_tr('howStep1Desc')}</p>
         </div>
         """, unsafe_allow_html=True)
-        if st.button("Ask AI Assistant →", key="btn_w1", use_container_width=True):
-            st.session_state.top_navbar_tab = "🤖 AI Assistant"
+        if st.button(_tr('howStep1Btn'), key="btn_w1", use_container_width=True):
+            st.session_state.top_navbar_tab_key = "chatbot"
             st.rerun()
     with w2:
-        st.markdown("""
+        st.markdown(f"""
         <div class="filter-card" style="height: 100%; position: relative;">
             <span style="position: absolute; top: 1rem; right: 1.25rem; font-size: 1.5rem; font-weight: 900; color: #fef3c7;">02</span>
             <div style="width: 34px; height: 34px; border-radius: 0.5rem; background-color: #fef3c7; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; margin-bottom: 0.5rem;">📋</div>
-            <h4 style="font-size: 0.95rem; font-weight: 900; color: #0f172a; margin: 0 0 0.35rem 0;">2. Check Family Eligibility</h4>
-            <p style="font-size: 0.8rem; color: #475569; line-height: 1.4; margin: 0;">Screen your age, annual household income, category, and domicile against official rules across all 47 Central & State welfare initiatives.</p>
+            <h4 style="font-size: 0.95rem; font-weight: 900; color: #0f172a; margin: 0 0 0.35rem 0;">{_tr('howStep2Title')}</h4>
+            <p style="font-size: 0.8rem; color: #475569; line-height: 1.4; margin: 0;">{_tr('howStep2Desc')}</p>
         </div>
         """, unsafe_allow_html=True)
-        if st.button("Check Eligibility →", key="btn_w2", use_container_width=True):
-            st.session_state.top_navbar_tab = "📋 Eligibility Checker"
+        if st.button(_tr('howStep2Btn'), key="btn_w2", use_container_width=True):
+            st.session_state.top_navbar_tab_key = "eligibility"
             st.rerun()
     with w3:
-        st.markdown("""
+        st.markdown(f"""
         <div class="filter-card" style="height: 100%; position: relative;">
             <span style="position: absolute; top: 1rem; right: 1.25rem; font-size: 1.5rem; font-weight: 900; color: #dbeafe;">03</span>
             <div style="width: 34px; height: 34px; border-radius: 0.5rem; background-color: #eff6ff; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; margin-bottom: 0.5rem;">🏛️</div>
-            <h4 style="font-size: 0.95rem; font-weight: 900; color: #0f172a; margin: 0 0 0.35rem 0;">3. Review Required Documents</h4>
-            <p style="font-size: 0.8rem; color: #475569; line-height: 1.4; margin: 0;">Review complete official checklists including Aadhaar, Nadakacheri certificates, and NPCI-linked bank account passbooks before applying.</p>
+            <h4 style="font-size: 0.95rem; font-weight: 900; color: #0f172a; margin: 0 0 0.35rem 0;">{_tr('howStep3Title')}</h4>
+            <p style="font-size: 0.8rem; color: #475569; line-height: 1.4; margin: 0;">{_tr('howStep3Desc')}</p>
         </div>
         """, unsafe_allow_html=True)
-        if st.button("Browse Schemes →", key="btn_w3", use_container_width=True):
-            st.session_state.top_navbar_tab = "🏛️ Government Schemes"
+        if st.button(_tr('howStep3Btn'), key="btn_w3", use_container_width=True):
+            st.session_state.top_navbar_tab_key = "schemes"
             st.rerun()
     with w4:
-        st.markdown("""
+        st.markdown(f"""
         <div class="filter-card" style="height: 100%; position: relative;">
             <span style="position: absolute; top: 1rem; right: 1.25rem; font-size: 1.5rem; font-weight: 900; color: #d1fae5;">04</span>
             <div style="width: 34px; height: 34px; border-radius: 0.5rem; background-color: #ecfdf5; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; margin-bottom: 0.5rem;">🌐</div>
-            <h4 style="font-size: 0.95rem; font-weight: 900; color: #0f172a; margin: 0 0 0.35rem 0;">4. Direct Official Application</h4>
-            <p style="font-size: 0.8rem; color: #475569; line-height: 1.4; margin: 0;">Click verified one-touch links to submit applications directly on government portals like Seva Sindhu, myScheme, and PM-Kisan without middlemen.</p>
+            <h4 style="font-size: 0.95rem; font-weight: 900; color: #0f172a; margin: 0 0 0.35rem 0;">{_tr('howStep4Title')}</h4>
+            <p style="font-size: 0.8rem; color: #475569; line-height: 1.4; margin: 0;">{_tr('howStep4Desc')}</p>
         </div>
         """, unsafe_allow_html=True)
-        if st.button("Explore Service Map →", key="btn_w4", use_container_width=True):
-            st.session_state.top_navbar_tab = "📍 Service Map"
+        if st.button(_tr('howStep4Btn'), key="btn_w4", use_container_width=True):
+            st.session_state.top_navbar_tab_key = "serviceMap"
             st.rerun()
 
     st.markdown("<div style='height: 2rem;'></div>", unsafe_allow_html=True)
 
     # 6. DISTRICT MAP & SERVICES (Matches Image 9 Exactly)
-    st.markdown("""
+    st.markdown(f"""
     <div style="background: linear-gradient(90deg, #064e3b 0%, #0f172a 100%); color: white; padding: 2rem 2.5rem; border-radius: 1.5rem; margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
         <div>
-            <span style="font-size: 0.75rem; font-weight: 800; color: #fde047; text-transform: uppercase; letter-spacing: 0.05em;">DISTRICT MAP & SERVICES</span>
-            <h3 style="font-size: 1.6rem; font-weight: 900; color: white; margin: 0.2rem 0;">Public Services & Offices Across India</h3>
-            <p style="font-size: 0.85rem; color: #cbd5e1; margin: 0; max-width: 48rem;">Find Central Ministries, AIIMS, Passport Seva Kendras, State Secretariats, District Collectorates, and Common Service Centres (CSCs).</p>
+            <span style="font-size: 0.75rem; font-weight: 800; color: #fde047; text-transform: uppercase; letter-spacing: 0.05em;">{_tr('districtMapTag')}</span>
+            <h3 style="font-size: 1.6rem; font-weight: 900; color: white; margin: 0.2rem 0;">{_tr('districtMapTitle')}</h3>
+            <p style="font-size: 0.85rem; color: #cbd5e1; margin: 0; max-width: 48rem;">{_tr('districtMapSub')}</p>
         </div>
         <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
             <span style="background-color: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: #e2e8f0; padding: 0.2rem 0.65rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">Hosapete (5 services)</span>
@@ -1404,15 +1406,15 @@ elif "Home" in active_nav:
 # ---------------------------------------------------------------------------
 # VIEW: 3. AI CITIZEN ASSISTANT (Guaranteed 5-Step Process)
 # ---------------------------------------------------------------------------
-elif "AI Assistant" in active_nav:
-    st.markdown('<div class="hero-title">🤖 AI Citizen Assistant</div>', unsafe_allow_html=True)
-    st.markdown('<div class="hero-desc">Grounded Policy Assistant providing step-by-step application instructions, eligibility criteria, required documents, and official portal links.</div>', unsafe_allow_html=True)
+elif active_nav_key == "chatbot":
+    st.markdown(f'<div class="hero-title">{_tr("chatHeroTitle")}</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="hero-desc">{_tr("chatHeroSub")}</div>', unsafe_allow_html=True)
 
     if "chat_messages" not in st.session_state:
         st.session_state.chat_messages = [
             {
                 "role": "assistant",
-                "content": "Namaskara! I am your CivicGuide AI assistant. How can I help you with government schemes, certificates (Caste/Income/RTC), or application procedures today?",
+                "content": _tr("chatWelcome"),
                 "url": "https://www.myscheme.gov.in"
             }
         ]
@@ -1421,9 +1423,9 @@ elif "AI Assistant" in active_nav:
         with st.chat_message(msg["role"]):
             st.markdown(msg["content"])
             if msg.get("url"):
-                st.link_button("Visit Official Website ↗", msg["url"])
+                st.link_button(_tr("visitOfficialWebsite"), msg["url"])
 
-    if query := st.chat_input("Ask about any scheme, caste certificate, RTC/pahani, ration card, or how to apply..."):
+    if query := st.chat_input(_tr("chatPlaceholder")):
         st.session_state.chat_messages.append({"role": "user", "content": query})
         with st.chat_message("user"):
             st.markdown(query)
@@ -1432,7 +1434,7 @@ elif "AI Assistant" in active_nav:
             res = _synthesize_python_ai_reply(query, schemes_list)
             st.markdown(res["answer"])
             if res.get("url"):
-                st.link_button("Visit Official Website ↗", res["url"])
+                st.link_button(_tr("visitOfficialWebsite"), res["url"])
             st.session_state.chat_messages.append({
                 "role": "assistant",
                 "content": res["answer"],
@@ -1442,9 +1444,9 @@ elif "AI Assistant" in active_nav:
 # ---------------------------------------------------------------------------
 # VIEW: 4. ELIGIBILITY CHECKER
 # ---------------------------------------------------------------------------
-elif "Eligibility Checker" in active_nav:
-    st.markdown('<div class="hero-title">📋 Citizen Demographic Eligibility Checker</div>', unsafe_allow_html=True)
-    st.markdown('<div class="hero-desc">Evaluate your demographic qualifications against all 47 verified Central & State government schemes.</div>', unsafe_allow_html=True)
+elif active_nav_key == "eligibility":
+    st.markdown(f'<div class="hero-title">{_tr("eligibilityHeroTitle")}</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="hero-desc">{_tr("eligibilityHeroSub")}</div>', unsafe_allow_html=True)
 
     with st.form("eligibility_form"):
         e1, e2, e3 = st.columns(3)
@@ -1458,7 +1460,7 @@ elif "Eligibility Checker" in active_nav:
             income = st.number_input("Annual Household Income (₹)", min_value=0, max_value=2500000, value=120000, step=10000)
             ration_card = st.selectbox("Ration Card Category", ["BPL (Below Poverty Line)", "Antyodaya (AAY)", "APL (Above Poverty Line)", "None"])
 
-        submit = st.form_submit_button("🔍 Evaluate My Eligibility Across All Schemes")
+        submit = st.form_submit_button(f"🔍 {_tr('feature2Btn')}")
 
     if submit:
         st.success(f"Demographic Evaluation Complete for **{gender}, {age} Years, {state}** (Annual Income: ₹{income:,})")
@@ -1494,9 +1496,9 @@ elif "Eligibility Checker" in active_nav:
 # ---------------------------------------------------------------------------
 # VIEW: 5. SERVICE MAP
 # ---------------------------------------------------------------------------
-elif "Service Map" in active_nav:
-    st.markdown('<div class="hero-title">📍 Public Services Map & Taluk Directory</div>', unsafe_allow_html=True)
-    st.markdown('<div class="hero-desc">Find Deputy Commissioner, Tahsildar, District Hospitals, and Grama One / CSC centers in Vijayanagara and across India.</div>', unsafe_allow_html=True)
+elif active_nav_key == "serviceMap":
+    st.markdown(f'<div class="hero-title">{_tr("mapHeroTitle")}</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="hero-desc">{_tr("mapHeroSub")}</div>', unsafe_allow_html=True)
 
     if services_list:
         df_services = pd.DataFrame(services_list)
@@ -1504,7 +1506,7 @@ elif "Service Map" in active_nav:
         if not map_data.empty:
             st.map(map_data[['latitude', 'longitude']], zoom=10)
 
-        st.markdown("#### **Verified Public Service Offices Directory (Small Table)**")
+        st.markdown(f"#### **{_tr('mapHeroTitle')}**")
         st.dataframe(
             df_services[['name', 'category', 'taluk', 'address', 'phone', 'government_level']],
             use_container_width=True,
