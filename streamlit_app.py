@@ -486,18 +486,46 @@ if nav_choice == "🏛️ Schemes Directory":
 
         if view_mode == "📋 Combined Table View":
             table_data = []
-            for s in filtered:
+            for idx, s in enumerate(filtered, 1):
                 is_central = "central" in (s.get("government_level") or "").lower()
                 table_data.append({
+                    "#": idx,
                     "Scheme Name": s.get("name"),
                     "Sector": s.get("category"),
-                    "Government Level": "Central Government" if is_central else f"State: {s.get('state', 'State')}",
-                    "Key Direct Benefit": s.get("benefits"),
+                    "Government Level": "🏛️ Central" if is_central else f"📍 State: {s.get('state', 'State')}",
+                    "Direct Benefits": s.get("benefits"),
                     "Eligibility": s.get("eligibility"),
                     "Official Portal": s.get("official_url")
                 })
             df = pd.DataFrame(table_data)
-            st.dataframe(df, use_container_width=True)
+            
+            # Action controls row: CSV download
+            csv_data = df.to_csv(index=False).encode('utf-8')
+            t_col1, t_col2 = st.columns([4, 1])
+            with t_col2:
+                st.download_button(
+                    "📥 Export Small Table (CSV)",
+                    data=csv_data,
+                    file_name="civicguide_schemes_small_table.csv",
+                    mime="text/csv",
+                    use_container_width=True
+                )
+            
+            # Compact table rendering
+            st.dataframe(
+                df,
+                use_container_width=True,
+                hide_index=True,
+                column_config={
+                    "#": st.column_config.NumberColumn("#", width="small"),
+                    "Scheme Name": st.column_config.TextColumn("Scheme Name", width="medium"),
+                    "Sector": st.column_config.TextColumn("Sector", width="small"),
+                    "Government Level": st.column_config.TextColumn("Government Level", width="small"),
+                    "Direct Benefits": st.column_config.TextColumn("Direct Benefits", width="large"),
+                    "Eligibility": st.column_config.TextColumn("Eligibility", width="large"),
+                    "Official Portal": st.column_config.LinkColumn("Official Portal", display_text="Visit ↗")
+                }
+            )
         else:
             # Cards View (Grid of 3 columns)
             cols = st.columns(3)

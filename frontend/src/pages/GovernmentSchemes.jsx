@@ -737,43 +737,43 @@ const GovernmentSchemes = () => {
         </div>
 
         {/* Row 2: Jurisdiction Scope & State Official Portal Website Selector */}
-        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 pt-4 border-t border-slate-100 w-full">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pt-3 border-t border-slate-100 w-full text-xs sm:text-sm">
           
-          <div className="flex flex-wrap items-center gap-3 text-base sm:text-lg text-slate-800 font-bold flex-1">
-            <div className="flex items-center gap-2 text-slate-900 text-base sm:text-lg font-extrabold shrink-0">
-              <Filter className="w-5 h-5 text-emerald-600" />
+          <div className="flex flex-wrap items-center gap-2 flex-1">
+            <div className="flex items-center gap-1.5 text-slate-800 text-xs sm:text-sm font-bold shrink-0">
+              <Filter className="w-4 h-4 text-emerald-600" />
               <span>Schemes Scope:</span>
             </div>
             
-            <div className="inline-flex rounded-2xl bg-slate-100 p-1.5 flex-wrap gap-1.5">
+            <div className="inline-flex rounded-xl bg-slate-100 p-1 flex-wrap gap-1 border border-slate-200/80">
               <button
                 type="button"
                 onClick={() => handleJurisdictionSelect('Central Government')}
-                className={`px-5 py-2.5 rounded-xl text-base sm:text-lg font-extrabold transition-all ${
+                className={`px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition-all ${
                   jurisdiction === 'Central Government'
-                    ? 'bg-white text-emerald-800 shadow-sm'
+                    ? 'bg-white text-emerald-800 shadow-2xs font-extrabold'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                🏛️ Central Government ({jurisdiction === 'Central Government' ? schemes.length : '10'})
+                🏛️ Central ({jurisdiction === 'Central Government' ? schemes.length : '10'})
               </button>
               <button
                 type="button"
                 onClick={() => handleJurisdictionSelect('State Government')}
-                className={`px-5 py-2.5 rounded-xl text-base sm:text-lg font-extrabold transition-all ${
+                className={`px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition-all ${
                   jurisdiction === 'State Government'
-                    ? 'bg-white text-emerald-800 shadow-sm'
+                    ? 'bg-white text-emerald-800 shadow-2xs font-extrabold'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                📍 State Government {jurisdiction === 'State Government' && selectedState && selectedState !== 'All India' ? `(${selectedState}: ${schemes.length})` : ''}
+                📍 State {jurisdiction === 'State Government' && selectedState && selectedState !== 'All India' ? `(${selectedState}: ${schemes.length})` : ''}
               </button>
               <button
                 type="button"
                 onClick={() => handleJurisdictionSelect('All')}
-                className={`px-5 py-2.5 rounded-xl text-base sm:text-lg font-extrabold transition-all ${
+                className={`px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition-all ${
                   jurisdiction === 'All'
-                    ? 'bg-white text-emerald-800 shadow-sm'
+                    ? 'bg-white text-emerald-800 shadow-2xs font-extrabold'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
@@ -782,15 +782,15 @@ const GovernmentSchemes = () => {
             </div>
 
             {/* Official State Portal Selector */}
-            <div className="flex items-center gap-2 pl-1 sm:pl-3">
-              <label className="text-sm sm:text-base font-extrabold text-slate-700 whitespace-nowrap">
-                🏛️ State Portal Link:
+            <div className="flex items-center gap-1.5 pl-1 sm:pl-2">
+              <label className="text-xs font-bold text-slate-600 whitespace-nowrap">
+                🏛️ Portal:
               </label>
               <div className="relative inline-flex items-center">
                 <select
                   value={selectedState}
                   onChange={(e) => handleStateChange(e.target.value)}
-                  className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200/90 border border-slate-300 text-base sm:text-lg font-extrabold text-slate-900 cursor-pointer focus:outline-hidden focus:ring-2 focus:ring-emerald-500 shadow-xs"
+                  className="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200/90 border border-slate-300 text-xs sm:text-sm font-bold text-slate-900 cursor-pointer focus:outline-hidden focus:ring-1 focus:ring-emerald-500 shadow-2xs"
                   title="Select State to view official government website portal"
                 >
                   {ALL_INDIAN_STATES.map((st) => (
@@ -804,86 +804,85 @@ const GovernmentSchemes = () => {
           </div>
 
           {/* Controls: View Mode (Cards / Table) & Scheme Counter */}
-          <div className="flex flex-wrap items-center gap-3 shrink-0">
-            <div className="inline-flex rounded-2xl bg-slate-100 p-1 border border-slate-200 shadow-2xs">
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
+            <div className="inline-flex rounded-xl bg-slate-100 p-0.5 border border-slate-200">
               <button
                 type="button"
                 onClick={() => setViewMode('cards')}
-                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition-all ${
+                className={`px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition-all ${
                   viewMode === 'cards'
-                    ? 'bg-white text-emerald-800 shadow-xs'
+                    ? 'bg-white text-emerald-800 shadow-2xs'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
                 title="Switch to Card Grid View"
               >
-                <LayoutGrid className="w-4 h-4 text-emerald-600" />
+                <LayoutGrid className="w-3.5 h-3.5 text-emerald-600" />
                 <span>Cards View</span>
               </button>
               <button
                 type="button"
                 onClick={() => setViewMode('table')}
-                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition-all ${
+                className={`px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition-all ${
                   viewMode === 'table'
-                    ? 'bg-white text-emerald-800 shadow-xs'
+                    ? 'bg-white text-emerald-800 shadow-2xs'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
                 title="Switch to Combined Schemes Table View"
               >
-                <TableIcon className="w-4 h-4 text-emerald-600" />
-                <span>Combined Table View</span>
+                <TableIcon className="w-3.5 h-3.5 text-emerald-600" />
+                <span>Combined Table</span>
               </button>
             </div>
 
-            <div className="text-base sm:text-lg text-slate-700 font-extrabold shrink-0 bg-slate-50 border border-slate-200 px-5 py-2.5 rounded-2xl shadow-xs">
-              Showing <strong className="text-emerald-800 text-lg sm:text-xl font-black">{displayedSchemes.length}</strong> of {schemes.length} verified schemes
+            <div className="text-xs text-slate-700 font-bold shrink-0 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-lg shadow-2xs">
+              Showing <strong className="text-emerald-800 font-extrabold">{displayedSchemes.length}</strong> of {schemes.length} schemes
             </div>
           </div>
         </div>
 
         {/* Prominent Official State / National Government Portal Website Link Banner */}
         {selectedState && STATE_OFFICIAL_PORTALS[selectedState] && (
-          <div className="w-full bg-gradient-to-r from-emerald-50 via-teal-50 to-sky-50 border-2 border-emerald-300 rounded-3xl p-5 sm:p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 animate-fade-in">
-            <div className="flex items-start gap-3.5">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-md">
-                <ExternalLink className="w-6 h-6" />
+          <div className="w-full bg-gradient-to-r from-emerald-50 via-teal-50/70 to-sky-50 border border-emerald-300 rounded-2xl p-3 sm:p-4 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-3 animate-fade-in">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+                <ExternalLink className="w-4 h-4" />
               </div>
-              <div className="space-y-1">
+              <div className="space-y-0.5">
                 <div className="inline-flex items-center gap-2">
-                  <span className="text-xs sm:text-sm font-black uppercase tracking-wider bg-emerald-200 text-emerald-950 px-3 py-0.5 rounded-full">
-                    Official {selectedState === 'All India' ? 'National Portal' : `${selectedState} State Government Portal`}
+                  <span className="text-[10px] font-black uppercase tracking-wider bg-emerald-200 text-emerald-950 px-2 py-0.5 rounded-full">
+                    {selectedState === 'All India' ? 'National Portal' : `${selectedState} Portal`}
                   </span>
-                  <span className="text-xs sm:text-sm font-bold text-slate-500">Verified Direct Link</span>
+                  <span className="text-[11px] font-bold text-slate-500">Verified Link</span>
                 </div>
-                <h4 className="text-lg sm:text-xl font-black text-slate-900">
+                <h4 className="text-sm sm:text-base font-bold text-slate-900">
                   {STATE_OFFICIAL_PORTALS[selectedState].name}
                 </h4>
-                <p className="text-sm sm:text-base text-slate-700 leading-relaxed max-w-3xl">
+                <p className="text-xs text-slate-600 line-clamp-1 max-w-2xl">
                   {STATE_OFFICIAL_PORTALS[selectedState].description}
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 shrink-0">
+            <div className="flex items-center gap-2 shrink-0">
               <a
                 href={STATE_OFFICIAL_PORTALS[selectedState].url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl text-base font-black text-white bg-emerald-600 hover:bg-emerald-700 shadow-md hover:shadow-lg transition-all hover:scale-102"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-2xs transition-all"
               >
-                <span>Visit Official {selectedState === 'All India' ? 'myScheme' : selectedState} Website</span>
-                <ExternalLink className="w-4 h-4" />
+                <span>Visit {selectedState === 'All India' ? 'myScheme' : selectedState} Website ↗</span>
               </a>
             </div>
           </div>
         )}
 
-        {/* Row 3: Target Beneficiary Audience Filter (Full Width Occupied) */}
-        <div className="pt-3 border-t border-slate-100 space-y-2.5 w-full">
-          <div className="text-sm sm:text-base font-extrabold uppercase tracking-wider text-slate-700 flex items-center justify-between">
+        {/* Row 3: Target Beneficiary Audience Filter Table (Small & Compact) */}
+        <div className="pt-2 border-t border-slate-100 space-y-1.5 w-full">
+          <div className="text-xs font-bold uppercase tracking-wider text-slate-600 flex items-center justify-between">
             <span>Target Citizen Group:</span>
-            <span className="text-xs sm:text-sm font-bold text-slate-400">Select audience to filter</span>
+            <span className="text-[11px] font-semibold text-slate-400">Select audience filter</span>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-3 w-full">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-1.5 sm:gap-2 w-full">
             {BENEFICIARY_AUDIENCES.map((b) => {
               const BIcon = b.icon;
               const isSelected = selectedBeneficiary === b.id;
@@ -892,13 +891,13 @@ const GovernmentSchemes = () => {
                   key={b.id}
                   type="button"
                   onClick={() => setSelectedBeneficiary(b.id)}
-                  className={`w-full inline-flex items-center justify-center text-center gap-2 px-3.5 py-3 rounded-2xl text-sm sm:text-base font-bold transition-all shadow-xs ${
+                  className={`w-full inline-flex items-center justify-center text-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-semibold transition-all shadow-2xs ${
                     isSelected
-                      ? 'bg-slate-900 text-white shadow-md shadow-slate-900/20 scale-[1.01]'
+                      ? 'bg-slate-900 text-white font-bold shadow-xs'
                       : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 hover:border-slate-300'
                   }`}
                 >
-                  <BIcon className="w-4 h-4 shrink-0" />
+                  <BIcon className="w-3.5 h-3.5 shrink-0" />
                   <span className="truncate">{b.label}</span>
                 </button>
               );
@@ -906,21 +905,21 @@ const GovernmentSchemes = () => {
           </div>
         </div>
 
-        {/* Row 4: Categories Chips (Full Width Occupied) */}
-        <div className="pt-3 border-t border-slate-100 space-y-2.5 w-full">
-          <div className="text-sm sm:text-base font-extrabold uppercase tracking-wider text-slate-700 flex items-center justify-between">
+        {/* Row 4: Welfare Sector Filter Table (Small & Compact) */}
+        <div className="pt-2 border-t border-slate-100 space-y-1.5 w-full">
+          <div className="text-xs font-bold uppercase tracking-wider text-slate-600 flex items-center justify-between">
             <span>Welfare Sector:</span>
-            <span className="text-xs sm:text-sm font-bold text-slate-400">Select sector to filter</span>
+            <span className="text-[11px] font-semibold text-slate-400">Select sector filter</span>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-9 gap-2 sm:gap-2.5 w-full">
+          <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 gap-1.5 sm:gap-2 w-full">
             {categories.map((cat) => (
               <button
                 key={cat}
                 type="button"
                 onClick={() => handleCategorySelect(cat)}
-                className={`w-full inline-flex items-center justify-center text-center px-2.5 py-2.5 rounded-2xl text-sm sm:text-base font-bold transition-all shadow-xs ${
+                className={`w-full inline-flex items-center justify-center text-center px-2 py-1.5 rounded-xl text-xs font-semibold transition-all shadow-2xs ${
                   selectedCategory === cat
-                    ? 'bg-emerald-600 text-white font-black shadow-md shadow-emerald-600/20 scale-[1.01]'
+                    ? 'bg-emerald-600 text-white font-bold shadow-xs'
                     : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200/80 hover:border-slate-300'
                 }`}
               >
@@ -998,75 +997,76 @@ const GovernmentSchemes = () => {
           </button>
         </div>
       ) : viewMode === 'table' ? (
-        <div className="w-full overflow-hidden bg-white rounded-3xl border border-slate-200/90 shadow-sm animate-fade-in">
+        <div className="w-full overflow-hidden bg-white rounded-2xl border border-slate-200/90 shadow-2xs animate-fade-in">
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse min-w-[950px]">
+            <table className="w-full text-left border-collapse text-xs">
               <thead>
-                <tr className="bg-slate-50 border-b border-slate-200 text-slate-800 text-xs sm:text-sm font-black uppercase tracking-wider">
-                  <th className="py-4 px-4 w-12 text-center">#</th>
-                  <th className="py-4 px-5">Scheme & Sector</th>
-                  <th className="py-4 px-4">Government Level</th>
-                  <th className="py-4 px-5">Direct Benefits</th>
-                  <th className="py-4 px-5">Eligibility Criteria</th>
-                  <th className="py-4 px-4 text-center">Actions</th>
+                <tr className="bg-slate-100/90 border-b border-slate-200 text-slate-700 text-[11px] font-black uppercase tracking-wider">
+                  <th className="py-2.5 px-3 w-10 text-center">#</th>
+                  <th className="py-2.5 px-3 min-w-[200px]">Scheme & Sector</th>
+                  <th className="py-2.5 px-3 whitespace-nowrap">Government Level</th>
+                  <th className="py-2.5 px-3 min-w-[220px]">Direct Benefits</th>
+                  <th className="py-2.5 px-3 min-w-[200px]">Eligibility Criteria</th>
+                  <th className="py-2.5 px-3 text-center whitespace-nowrap">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 text-sm sm:text-base">
+              <tbody className="divide-y divide-slate-100 text-xs">
                 {displayedSchemes.map((scheme, idx) => {
                   const isCentral = scheme.government_level?.toLowerCase().includes('central');
                   const Icon = categoryIcons[scheme.category] || Landmark;
                   return (
-                    <tr key={scheme.id} className="hover:bg-slate-50/80 transition-colors">
-                      <td className="py-4 px-4 font-bold text-slate-400 text-center">{idx + 1}</td>
-                      <td className="py-4 px-5 max-w-xs">
-                        <div className="flex items-start gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 border border-emerald-100 mt-0.5">
-                            <Icon className="w-5 h-5" />
+                    <tr key={scheme.id} className="hover:bg-emerald-50/50 transition-colors even:bg-slate-50/50">
+                      <td className="py-2 px-3 font-bold text-slate-400 text-center text-[11px]">{idx + 1}</td>
+                      <td className="py-2 px-3">
+                        <div className="flex items-center gap-2">
+                          <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 border border-emerald-200/60">
+                            <Icon className="w-3.5 h-3.5" />
                           </div>
-                          <div>
+                          <div className="min-w-0">
                             <Link 
                               to={`/schemes/${scheme.id}`}
-                              className="font-extrabold text-slate-900 hover:text-emerald-700 leading-snug line-clamp-2 transition-colors"
+                              className="font-bold text-slate-900 hover:text-emerald-700 leading-tight line-clamp-1 transition-colors block text-xs"
+                              title={scheme.name}
                             >
                               {scheme.name}
                             </Link>
-                            <span className="inline-block mt-1 text-xs font-bold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                            <span className="inline-block mt-0.5 text-[10px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.2 rounded-full border border-emerald-200/80">
                               {scheme.category}
                             </span>
                           </div>
                         </div>
                       </td>
-                      <td className="py-4 px-4 whitespace-nowrap">
-                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider border shadow-2xs ${
+                      <td className="py-2 px-3 whitespace-nowrap">
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider border ${
                           isCentral ? 'bg-blue-50 text-blue-900 border-blue-200' : 'bg-amber-50 text-amber-900 border-amber-200'
                         }`}>
                           {isCentral ? '🏛️ Central' : `📍 State: ${scheme.state || 'State'}`}
                         </span>
                       </td>
-                      <td className="py-4 px-5 max-w-sm">
-                        <p className="text-xs sm:text-sm text-slate-800 font-semibold line-clamp-2">
+                      <td className="py-2 px-3">
+                        <p className="text-xs text-slate-800 font-medium line-clamp-2 leading-relaxed" title={scheme.benefits}>
                           {scheme.benefits}
                         </p>
                       </td>
-                      <td className="py-4 px-5 max-w-xs">
-                        <p className="text-xs sm:text-sm text-slate-600 line-clamp-2">
+                      <td className="py-2 px-3">
+                        <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed" title={scheme.eligibility}>
                           {scheme.eligibility}
                         </p>
                       </td>
-                      <td className="py-4 px-4 text-center whitespace-nowrap">
-                        <div className="inline-flex items-center gap-2">
+                      <td className="py-2 px-3 text-center whitespace-nowrap">
+                        <div className="inline-flex items-center gap-1.5">
                           <Link
                             to={`/schemes/${scheme.id}`}
-                            className="px-3.5 py-2 rounded-xl text-xs font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 transition-colors"
+                            className="px-2.5 py-1 rounded-lg text-[11px] font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 transition-colors"
                           >
-                            Full Details
+                            Details
                           </Link>
                           {scheme.official_url && (
                             <a
                               href={scheme.official_url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-xs transition-colors"
+                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-2xs transition-colors"
                             >
                               <span>Apply ↗</span>
                             </a>
