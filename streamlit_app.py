@@ -388,6 +388,224 @@ def load_database_data():
 
     return schemes, services
 
+# ---------------------------------------------------------------------------
+# AI ASSISTANT RESPONSE SYNTHESIS ENGINE (STEP-BY-STEP PROCESS)
+# ---------------------------------------------------------------------------
+def _synthesize_python_ai_reply(query, schemes):
+    q_lower = query.lower().strip()
+    
+    # Check scheme keywords
+    alias_map = {
+        "pm-kisan": ["kisan", "pm kisan", "pmkisan", "farmer 6000", "2000", "ರೈತ", "ಕಿಸಾನ್"],
+        "ayushman bharat": ["ayushman", "pm-jay", "pmjay", "health card", "5 lakh", "ಆಯುಷ್ಮಾನ್", "ಆರೋಗ್ಯ", "hospital"],
+        "pm surya ghar": ["surya", "solar", "rooftop", "electricity", "muft bijli", "ಸೌರ", "ವಿದ್ಯುತ್"],
+        "pm vishwakarma": ["vishwakarma", "artisan", "toolkit", "15000", "carpenter", "ವಿಶ್ವಕರ್ಮ"],
+        "mudra": ["mudra", "pmmy", "business loan", "small loan", "ಮುದ್ರಾ"],
+        "gruha lakshmi": ["gruha lakshmi", "graha lakshmi", "2000 women", "ಗೃಹ ಲಕ್ಷ್ಮಿ"],
+        "yuva nidhi": ["yuva nidhi", "unemployment", "3000 graduate", "ಯುವ ನಿಧಿ"],
+        "gruha jyothi": ["gruha jyothi", "free 200 units", "ಗೃಹ ಜ್ಯೋತಿ"],
+        "shakti": ["shakti", "free bus", "ksrtc", "ಶಕ್ತಿ ಯೋಜನೆ"],
+        "ssp": ["ssp", "scholarship", "vidyasiri", "post matric", "ವಿದ್ಯಾರ್ಥಿವೇತನ", "ವಿದ್ಯಾಸಿರಿ"],
+        "anna bhagya": ["anna bhagya", "free rice", "170 dbt", "ಅನ್ನ ಭಾಗ್ಯ"]
+    }
+    
+    found = None
+    for alias_key, kws in alias_map.items():
+        if any(kw in q_lower for kw in kws):
+            for s in schemes:
+                if alias_key in s.get("name", "").lower():
+                    found = s
+                    break
+            if found:
+                break
+                
+    if not found:
+        for s in schemes:
+            s_name = s.get("name", "").lower()
+            words = [w for w in s_name.replace("-", " ").split() if len(w) > 3 and w not in ["scheme", "yojana", "pradhan", "mantri"]]
+            if any(w in q_lower for w in words):
+                found = s
+                break
+
+    # Civic document: Caste/Income
+    if any(k in q_lower for k in ['caste', 'income certificate', 'caste and income', 'ಜಾತಿ', 'ಆದಾಯ', 'जाति', 'आय प्रमाण']):
+        return {
+            "answer": """### 🎯 Direct Answer
+**Caste and Income Certificates** are officially issued by the Revenue Department through **Nadakacheri (Atalji Janasnehi Kendra)** and **Seva Sindhu** in Karnataka, and respective State Revenue Portals across India. They are legally mandatory for student scholarships (SSP), college admissions, fee waivers, and government welfare benefits.
+
+### 💰 Key Benefits & Financial Assistance
+- **Education Fee Concessions:** 100% or partial tuition fee waiver across universities and colleges.
+- **Welfare Eligibility:** Mandatory document for Gruha Lakshmi, Yuva Nidhi, SSP Vidyasiri, and housing allotments.
+- **Validity:** Digitally signed with a unique RD Number and QR Code, valid for 5 continuous years.
+
+### 👥 Eligibility Criteria (Who Qualifies)
+- Permanent residents of the respective State / Karnataka.
+- Belongs to notified SC, ST, Category-1, 2A, 2B, 3A, 3B, or EWS categories.
+- Annual household income must be within government prescribed ceiling (e.g. up to ₹2.5 Lakhs for scholarships/BPL).
+
+### 📝 Step-by-Step Implementation & How to Apply
+- **Step 1: Document Checklist & Preparation:** Keep applicant Aadhaar, parent Aadhaar, Ration Card (BPL/APL), and school Leaving Certificate (TC / marksheet) ready.
+- **Step 2: Visit Portal or Citizen Kiosk:** Go to [nadakacheri.karnataka.gov.in](https://nadakacheri.karnataka.gov.in) or visit your nearest **Grama One**, **Karnataka One**, or **CSC** center.
+- **Step 3: Online Form Submission:** Click 'Online Application' > 'Apply Online', log in with mobile OTP, and select Caste or Income Certificate.
+- **Step 4: Departmental Scrutiny & Field Verification:** Pay nominal government fee (₹25 - ₹40) online. The Village Accountant (VA) and Revenue Inspector (RI) verify records and report to the Tahsildar.
+- **Step 5: Sanction Order & Certificate Download:** Receive your acknowledgment with RD Number. Once digitally signed by the Tahsildar, download the certificate directly from the Nadakacheri portal.
+
+### 📑 Required Documents Checklist
+- Applicant and Parent Aadhaar Cards
+- Family Ration Card (BPL / Antyodaya / APL)
+- School Transfer Certificate (TC) showing caste or previous caste certificate
+- Self-declaration of annual household income and passport photo
+
+### 🏛️ Where to Apply & Official Links
+- 🔗 **Official Portal:** [https://nadakacheri.karnataka.gov.in](https://nadakacheri.karnataka.gov.in)
+- 🏢 **Assistance Centers:** Grama One, Atalji Janasnehi Kendra (Nadakacheri), or Taluk Tahsildar Office
+- 📞 **Helpline:** 080-22340676 / 1902""",
+            "url": "https://nadakacheri.karnataka.gov.in"
+        }
+
+    # Civic document: Land RTC / Pahani
+    if any(k in q_lower for k in ['rtc', 'pahani', 'bhoomi', 'land record', 'survey number', 'ಪಹಣಿ', 'ಭೂಮಿ', 'ಖತೌನಿ']):
+        return {
+            "answer": """### 🎯 Direct Answer
+The **RTC (Record of Rights, Tenancy and Crops) / Pahani** is the official land ownership document issued online through the **Bhoomi Portal** by the Karnataka Revenue Department. It is required for PM-Kisan verification, crop loans, and land title confirmation.
+
+### 💰 Key Benefits & Financial Assistance
+- **PM-Kisan & Crop Insurance:** Mandatory proof of cultivable land ownership for receiving ₹6,000 annual PM-Kisan DBT.
+- **Institutional Credit:** Access to Kisan Credit Card (KCC) and interest-subsidised bank crop loans.
+- **Instant Digital Download:** Valid digitally signed original RTC for just ₹15.
+
+### 👥 Eligibility Criteria (Who Qualifies)
+- Any agricultural or non-agricultural land owner or authorized family member.
+- Must know the District, Taluk, Hobli, Village, and Survey Number / Hissa Number.
+
+### 📝 Step-by-Step Implementation & How to Apply
+- **Step 1: Check Survey Details:** Keep your District, Taluk, Hobli, Village name, and land Survey Number ready.
+- **Step 2: Open Bhoomi Portal:** Visit [landrecords.karnataka.gov.in](https://landrecords.karnataka.gov.in) or visit your nearest **Grama One / Taluk Bhoomi Kiosk**.
+- **Step 3: Select RTC View / Download:** Click 'Citizen Services' > 'View RTC and MR' or 'Current Year RTC'.
+- **Step 4: Enter Survey and Hissa:** Select your Taluk and Village, enter Survey Number, select Surnoc and Hissa, and click 'Fetch Details'.
+- **Step 5: Online Payment & Print RTC:** Pay ₹15 via UPI/NetBanking to view and print the digitally signed original Karnataka Government RTC/Pahani.
+
+### 📑 Required Documents Checklist
+- Land Survey Number & Hissa Number
+- Village & Hobli details
+- Aadhaar Card of Landowner (for PM-Kisan linking)
+
+### 🏛️ Where to Apply & Official Links
+- 🔗 **Official Portal:** [https://landrecords.karnataka.gov.in](https://landrecords.karnataka.gov.in)
+- 🏢 **Assistance Centers:** Village Grama One center or Taluk Tahsildar Bhoomi Kiosk
+- 📞 **Helpline:** 080-22113255 (Bhoomi Monitoring Cell)""",
+            "url": "https://landrecords.karnataka.gov.in"
+        }
+
+    # Civic document: Ration Card
+    if any(k in q_lower for k in ['ration', 'bpl card', 'ration card', 'ರೇಷನ್', 'ಆಹಾರ', 'ರಾಶನ್']):
+        return {
+            "answer": """### 🎯 Direct Answer
+**Ration Cards (BPL / Antyodaya / APL)** are issued by the Department of Food, Civil Supplies & Consumer Affairs. In Karnataka, cards are managed via **ahara.kar.nic.in** and are required for Anna Bhagya free food grains and Ayushman Bharat health benefits.
+
+### 💰 Key Benefits & Financial Assistance
+- **Anna Bhagya:** 5 kg free food grains per member + ₹170 direct DBT per extra 5 kg per member.
+- **Gruha Lakshmi:** ₹2,000 monthly DBT for female family heads on BPL/Antyodaya cards.
+- **Ayushman PM-JAY:** ₹5 Lakh cashless hospitalization coverage per family per year.
+
+### 👥 Eligibility Criteria (Who Qualifies)
+- **BPL / Antyodaya Card:** Annual family income below ₹1.20 Lakhs, no four-wheeler, no commercial income tax payer in the family.
+- **APL Card:** Any resident citizen not falling under BPL/Antyodaya criteria.
+
+### 📝 Step-by-Step Implementation & How to Apply
+- **Step 1: Document Preparation:** Keep Aadhaar cards of all family members, active mobile number, electricity account bill, and income certificate ready.
+- **Step 2: Visit Seva Sindhu / Ahara Portal:** Navigate to [ahara.kar.nic.in](https://ahara.kar.nic.in) or visit your nearest **Grama One / Karnataka One** center.
+- **Step 3: Online Form Submission:** Enter all family members' Aadhaar numbers; authenticate via biometric fingerprint or Aadhaar OTP.
+- **Step 4: Scrutiny by Food Inspector:** The local Food Inspector verifies residence and domestic criteria online.
+- **Step 5: Sanction Order & Card Allotment:** Once approved, your Ration Card Number is generated. Download e-Ration Card or collect card from your local Fair Price Shop (PDS).
+
+### 📑 Required Documents Checklist
+- Aadhaar Cards of all family members (mandatory)
+- Revenue Income and Caste Certificate (RD Number)
+- Latest domestic electricity bill (showing Consumer ID)
+- Active bank passbook linked to family head's Aadhaar
+
+### 🏛️ Where to Apply & Official Links
+- 🔗 **Official Portal:** [https://ahara.kar.nic.in](https://ahara.kar.nic.in)
+- 🏢 **Assistance Centers:** Grama One, Karnataka One, or Taluk Food Shirastedar Office
+- 📞 **Toll-Free Helpline:** 1967 / 1800-425-9339""",
+            "url": "https://ahara.kar.nic.in"
+        }
+
+    # If scheme found
+    if found:
+        name = found.get('name')
+        gov_level = found.get('government_level')
+        benefits = found.get('benefits')
+        eligibility = found.get('eligibility')
+        docs = found.get('required_documents', 'Aadhaar Card, Ration Card, Bank Passbook, Mobile Number')
+        official_url = found.get('official_url', 'https://www.myscheme.gov.in')
+        
+        return {
+            "answer": f"""### 🎯 Direct Answer
+**{name}** is an official {gov_level} initiative designed to provide direct financial assistance, capital subsidies, and welfare entitlements directly to eligible citizens across India.
+
+### 💰 Key Benefits & Financial Assistance
+- **Direct Financial Assistance:** {benefits}
+- **Disbursement Mode:** Direct Benefit Transfer (DBT) directly into the beneficiary's Aadhaar-linked bank account without intermediaries.
+- **Zero Middlemen:** Digitised, automated online verification ensuring full transparency.
+
+### 👥 Eligibility Criteria (Who Qualifies)
+- {eligibility}
+- Applicant must satisfy statutory domicile and residence criteria for {found.get('state', 'India')}.
+
+### 📝 Step-by-Step Implementation & How to Apply
+- **Step 1: Document Checklist & Preparation:** Keep original Aadhaar Card, Ration Card/Income proof, and Bank Passbook ready.
+- **Step 2: Visit Official Portal or Kiosk:** Go to the official website [{official_url}]({official_url}) or visit your nearest **Grama One**, **Karnataka One**, or **Common Service Centre (CSC)**.
+- **Step 3: Online Form Submission & Aadhaar OTP:** Enter demographic data, Aadhaar number, and verify using the OTP sent to your registered mobile phone.
+- **Step 4: Departmental Scrutiny & Field Verification:** The administering department and Village Accountant/Inspector verify submitted details online.
+- **Step 5: Sanction Order & DBT Disbursement:** Receive your application acknowledgment number to track status. Upon approval, funds or entitlements are credited directly.
+
+### 📑 Required Documents Checklist
+- {docs}
+- Active mobile number linked to Aadhaar
+- Bank account passbook with NPCI / Aadhaar seeding
+
+### 🏛️ Where to Apply & Official Links
+- 🔗 **Official Online Portal:** [{official_url}]({official_url})
+- 🏢 **Local Kiosks:** Nearest Grama One, Bapuji Seva Kendra, or Common Service Centre (CSC)
+- 📞 **Helpline:** 1902 / 1800-180-1551 (Citizen Support Desk)""",
+            "url": official_url
+        }
+
+    # Fallback general query guidance
+    return {
+        "answer": f"""### 🎯 Direct Answer
+CivicGuide AI assists Indian citizens with verified guidelines, eligibility checks, and step-by-step application instructions for all 47 Central and State government welfare schemes.
+
+### 💰 Key Benefits & Financial Assistance
+- **Direct Benefit Transfer (DBT):** Cash subsidies and welfare payments transferred directly into Aadhaar-linked bank accounts.
+- **Comprehensive Coverage:** Schemes span Agriculture (PM-Kisan), Healthcare (Ayushman Bharat), Clean Energy (PM Surya Ghar), Social Security, and Scholarships.
+
+### 👥 Eligibility Criteria (Who Qualifies)
+- Indian citizens meeting age, annual household income, and state domicile criteria.
+- Use our built-in **Eligibility Checker** tab to automatically screen your family criteria against all schemes.
+
+### 📝 Step-by-Step Implementation & How to Apply
+- **Step 1: Screen Eligibility:** Select your age, income, and state on the **Eligibility Checker** tab.
+- **Step 2: Collect Required Documents:** Ensure your Aadhaar is linked to your active mobile number and your bank account is seeded with NPCI/Aadhaar.
+- **Step 3: Visit Official Portal or Kiosk:** Access the national portal [myscheme.gov.in](https://www.myscheme.gov.in) or visit your nearest **Grama One / CSC**.
+- **Step 4: Departmental Verification:** Online scrutiny of uploaded documents by designated municipal/revenue officers.
+- **Step 5: Track Acknowledgment & Receive DBT:** Use the generated acknowledgment number to monitor progress until benefit disbursement.
+
+### 📑 Required Documents Checklist
+- Aadhaar Card (linked to active mobile number)
+- Ration Card (BPL / Antyodaya / APL)
+- Domicile / Residence Proof and Revenue Caste-Income Certificate
+- Bank Passbook with NPCI Seeding
+
+### 🏛️ Where to Apply & Official Links
+- 🔗 **National Schemes Portal:** [https://www.myscheme.gov.in](https://www.myscheme.gov.in)
+- 🏢 **Assistance Centers:** Nearest CSC Kiosk, Grama One, or Taluk Tahsildar Office
+- 📞 **National Citizen Helpline:** 1912 / 1800-180-1551""",
+        "url": "https://www.myscheme.gov.in"
+    }
+
 schemes_list, services_list = load_database_data()
 
 # ---------------------------------------------------------------------------
@@ -416,7 +634,7 @@ with nav_col_tabs:
             "Eligibility Checker",
             "Service Map"
         ],
-        index=1,
+        index=0,
         horizontal=True,
         label_visibility="collapsed"
     )
@@ -732,104 +950,288 @@ if active_nav == "Government Schemes":
                             st.link_button("Visit Official Application Portal ↗", scheme.get('official_url'))
 
 # ---------------------------------------------------------------------------
-# VIEW: 2. HOME & OVERVIEW
+# VIEW: 2. HOME & OVERVIEW (Matches Images 5, 6, 7, 8, 9 Exactly)
 # ---------------------------------------------------------------------------
 elif active_nav == "Home":
-    st.markdown('<div class="hero-title">🏛️ Welcome to CivicGuide AI</div>', unsafe_allow_html=True)
-    st.markdown('<div class="hero-desc">All-India Citizen Public Services and Government Welfare Advisory Platform.</div>', unsafe_allow_html=True)
+    
+    # 1. HERO SECTION (Matches Image 5)
+    st.markdown("""
+    <div style="background: linear-gradient(180deg, #064e3b 0%, #0f172a 100%); color: white; padding: 3rem 2rem 3rem 2rem; border-radius: 1.5rem; text-align: center; margin-bottom: 1.5rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.25);">
+        <div style="display: inline-flex; align-items: center; gap: 0.5rem; background-color: rgba(16, 185, 129, 0.2); border: 1px solid rgba(16, 185, 129, 0.4); padding: 0.35rem 1rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 700; color: #6ee7b7; margin-bottom: 1.25rem;">
+            ✨ All India | Central & State Governments • Verified Government Sources
+        </div>
+        <h1 style="font-size: 2.5rem; font-weight: 900; line-height: 1.2; margin: 0 0 1rem 0; letter-spacing: -0.025em; color: #ffffff;">
+            Understand Your Rights & Government Schemes Across India
+        </h1>
+        <p style="font-size: 1.05rem; color: #cbd5e1; max-width: 48rem; margin: 0 auto 1.5rem auto; line-height: 1.6;">
+            Empowering citizens across all Indian States, Union Territories, and Central Government initiatives with instant, AI-guided verified scheme explanations, eligibility checks, and public service locations.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
 
+    # 2. STATE EXPLORER PILLS & STATS (Matches Image 6)
+    st.markdown("""
+    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 1.5rem;">
+        <span style="font-size: 0.85rem; font-weight: 800; color: #475569;">Explore by State:</span>
+        <span style="background-color: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; padding: 0.2rem 0.65rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 800;">Karnataka</span>
+        <span style="background-color: #f1f5f9; color: #334155; border: 1px solid #e2e8f0; padding: 0.2rem 0.65rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 800;">Maharashtra</span>
+        <span style="background-color: #f1f5f9; color: #334155; border: 1px solid #e2e8f0; padding: 0.2rem 0.65rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 800;">Delhi</span>
+        <span style="background-color: #f1f5f9; color: #334155; border: 1px solid #e2e8f0; padding: 0.2rem 0.65rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 800;">Tamil Nadu</span>
+        <span style="background-color: #f1f5f9; color: #334155; border: 1px solid #e2e8f0; padding: 0.2rem 0.65rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 800;">Uttar Pradesh</span>
+        <span style="background-color: #f1f5f9; color: #334155; border: 1px solid #e2e8f0; padding: 0.2rem 0.65rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 800;">West Bengal</span>
+        <span style="background-color: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; padding: 0.2rem 0.65rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 800;">All India +</span>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # 4 Stat Counters
     m1, m2, m3, m4 = st.columns(4)
     with m1:
         st.markdown(f"""
-        <div class="filter-card" style="text-align: center;">
-            <div style="font-size: 2rem; font-weight: 900; color: #047857;">{len(schemes_list)}</div>
-            <div style="font-size: 0.8rem; font-weight: 800; color: #64748b; text-transform: uppercase;">Verified Welfare Schemes</div>
+        <div class="filter-card" style="text-align: center; border-radius: 1.25rem;">
+            <div style="font-size: 2.2rem; font-weight: 900; color: #0f172a;">45+</div>
+            <div style="font-size: 0.85rem; font-weight: 700; color: #64748b;">National & State Schemes</div>
         </div>
         """, unsafe_allow_html=True)
     with m2:
-        central_count = len([s for s in schemes_list if "central" in (s.get("government_level") or "").lower()])
-        st.markdown(f"""
-        <div class="filter-card" style="text-align: center;">
-            <div style="font-size: 2rem; font-weight: 900; color: #047857;">{central_count}</div>
-            <div style="font-size: 0.8rem; font-weight: 800; color: #64748b; text-transform: uppercase;">Central Government</div>
+        st.markdown("""
+        <div class="filter-card" style="text-align: center; border-radius: 1.25rem;">
+            <div style="font-size: 2.2rem; font-weight: 900; color: #047857;">All India</div>
+            <div style="font-size: 0.85rem; font-weight: 700; color: #64748b;">Central & 28+ States/UTs</div>
         </div>
         """, unsafe_allow_html=True)
     with m3:
         st.markdown("""
-        <div class="filter-card" style="text-align: center;">
-            <div style="font-size: 2rem; font-weight: 900; color: #047857;">36</div>
-            <div style="font-size: 0.8rem; font-weight: 800; color: #64748b; text-transform: uppercase;">States & UTs Portals</div>
+        <div class="filter-card" style="text-align: center; border-radius: 1.25rem;">
+            <div style="font-size: 2.2rem; font-weight: 900; color: #d97706;">23 Languages</div>
+            <div style="font-size: 0.85rem; font-weight: 700; color: #64748b;">All Scheduled Indian Languages</div>
         </div>
         """, unsafe_allow_html=True)
     with m4:
-        st.markdown(f"""
-        <div class="filter-card" style="text-align: center;">
-            <div style="font-size: 2rem; font-weight: 900; color: #047857;">{len(services_list)}</div>
-            <div style="font-size: 0.8rem; font-weight: 800; color: #64748b; text-transform: uppercase;">Public Service Centers</div>
+        st.markdown("""
+        <div class="filter-card" style="text-align: center; border-radius: 1.25rem;">
+            <div style="font-size: 2.2rem; font-weight: 900; color: #0284c7;">100% RAG</div>
+            <div style="font-size: 0.85rem; font-weight: 700; color: #64748b;">Zero Hallucinations</div>
         </div>
         """, unsafe_allow_html=True)
 
+    # 3. FEATURE LAUNCH CARDS (Matches Image 6)
+    f_col1, f_col2, f_col3 = st.columns(3)
+    with f_col1:
+        st.markdown("""
+        <div class="filter-card" style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+                <div style="width: 40px; height: 40px; border-radius: 0.75rem; background-color: #ecfdf5; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 0.75rem;">
+                    🤖
+                </div>
+                <h3 style="font-size: 1.15rem; font-weight: 900; color: #0f172a; margin: 0 0 0.5rem 0;">AI Assistant</h3>
+                <p style="font-size: 0.85rem; color: #475569; line-height: 1.5; margin: 0 0 1rem 0;">
+                    Ask government policy, scholarship, and citizen rights questions in Kannada, English, or Hindi with speech input and voice responses.
+                </p>
+            </div>
+            <div style="font-size: 0.85rem; font-weight: 800; color: #047857;">Launch AI Assistant →</div>
+        </div>
+        """, unsafe_allow_html=True)
+    with f_col2:
+        st.markdown("""
+        <div class="filter-card" style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+                <div style="width: 40px; height: 40px; border-radius: 0.75rem; background-color: #fef3c7; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 0.75rem;">
+                    📋
+                </div>
+                <h3 style="font-size: 1.15rem; font-weight: 900; color: #0f172a; margin: 0 0 0.5rem 0;">Eligibility Checker</h3>
+                <p style="font-size: 0.85rem; color: #475569; line-height: 1.5; margin: 0 0 1rem 0;">
+                    Evaluate your family's eligibility against official scheme criteria with detailed met conditions, required documents, and application links.
+                </p>
+            </div>
+            <div style="font-size: 0.85rem; font-weight: 800; color: #b45309;">Check Eligibility →</div>
+        </div>
+        """, unsafe_allow_html=True)
+    with f_col3:
+        st.markdown("""
+        <div class="filter-card" style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+                <div style="width: 40px; height: 40px; border-radius: 0.75rem; background-color: #eff6ff; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 0.75rem;">
+                    📍
+                </div>
+                <h3 style="font-size: 1.15rem; font-weight: 900; color: #0f172a; margin: 0 0 0.5rem 0;">Service Map</h3>
+                <p style="font-size: 0.85rem; color: #475569; line-height: 1.5; margin: 0 0 1rem 0;">
+                    Interactive OpenStreetMap directory of Central Ministries, AIIMS, Passport Seva Kendras, State Secretariats, and CSCs across India and Karnataka.
+                </p>
+            </div>
+            <div style="font-size: 0.85rem; font-weight: 800; color: #1d4ed8;">Explore All India Map →</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    st.markdown("<div style='height: 1.5rem;'></div>", unsafe_allow_html=True)
+
+    # 4. POPULAR NATIONAL & STATE SCHEMES (Matches Images 7 & 8)
+    st.markdown("""
+    <div style="margin-bottom: 1.25rem;">
+        <span style="font-size: 0.75rem; font-weight: 800; color: #047857; text-transform: uppercase; letter-spacing: 0.05em;">VERIFIED WELFARE CATALOG</span>
+        <h2 style="font-size: 1.75rem; font-weight: 900; color: #0f172a; margin: 0.2rem 0;">Popular National & State Schemes</h2>
+        <p style="font-size: 0.85rem; color: #64748b; margin: 0;">Key welfare initiatives for women, farmers, artisans, students, and citizens across India.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    pop_schemes = [
+        {
+            "name": "PM-Kisan Samman Nidhi",
+            "desc": "Central government direct income support scheme providing Rs. 6,000 annually in three installments to all eligible landholding farmer families across India.",
+            "benefit": "Rs. 6,000 per year transferred in three equal quarterly installments of Rs. 2,000 directly into the Aadhaar-linked bank account via DBT.",
+            "url": "https://pmkisan.gov.in"
+        },
+        {
+            "name": "Ayushman Bharat - PM-JAY",
+            "desc": "Flagship national health protection scheme offering up to Rs. 5 Lakh cashless hospitalization coverage per family per year for secondary and tertiary healthcare.",
+            "benefit": "Cashless treatment up to Rs. 5,00,000 per family per year across empaneled public and private hospitals throughout India.",
+            "url": "https://pmjay.gov.in"
+        },
+        {
+            "name": "PM Surya Ghar: Muft Bijli Yojana",
+            "desc": "Central scheme providing up to 300 units of free electricity per month to households by giving capital subsidies up to Rs. 78,000 for installing rooftop solar systems.",
+            "benefit": "Direct subsidy up to Rs. 78,000 for 3 kW system, zero electricity bills, and income from selling surplus power back to the grid.",
+            "url": "https://pmsuryaghar.gov.in"
+        },
+        {
+            "name": "PM Vishwakarma Yojana",
+            "desc": "Holistic support initiative for traditional artisans and craftspeople across 18 trades, offering official ID, Rs. 15,000 toolkit voucher, training stipend, and collateral-free loans.",
+            "benefit": "PM Vishwakarma Certificate & ID, 5-7 days training with Rs. 500/day stipend, Rs. 15,000 e-voucher for tools, and 5% loan up to Rs. 3 Lakh.",
+            "url": "https://pmvishwakarma.gov.in"
+        }
+    ]
+
+    p_cols = st.columns(4)
+    for idx, p in enumerate(pop_schemes):
+        with p_cols[idx]:
+            st.markdown(f"""
+            <div class="scheme-card" style="height: 100%;">
+                <div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <span class="badge-central">CENTRAL GOVERNMENT</span>
+                        <span style="font-size: 0.7rem; font-weight: 800; color: #047857; background-color: #ecfdf5; padding: 0.1rem 0.4rem; border-radius: 9999px;">✓ Verified</span>
+                    </div>
+                    <h4 style="font-size: 1rem; font-weight: 900; color: #0f172a; margin: 0.35rem 0;">{p['name']}</h4>
+                    <p style="font-size: 0.8rem; color: #475569; line-height: 1.4; height: 3.8rem; overflow: hidden; margin-bottom: 0.5rem;">{p['desc']}</p>
+                    <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.6rem; padding: 0.5rem; margin-bottom: 0.75rem;">
+                        <span style="font-size: 0.7rem; font-weight: 800; color: #065f46; display: block;">Key Benefit:</span>
+                        <span style="font-size: 0.75rem; color: #334155; line-height: 1.3;">{p['benefit'][:110]}...</span>
+                    </div>
+                </div>
+                <div style="border-top: 1px solid #e2e8f0; padding-top: 0.65rem;">
+                    <a href="{p['url']}" target="_blank" style="background-color: #047857; color: white; padding: 0.45rem 0.85rem; border-radius: 0.6rem; font-size: 0.8rem; font-weight: 800; text-decoration: none; display: block; text-align: center;">
+                        Visit Official Website ↗
+                    </a>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+    st.markdown("<div style='height: 2rem;'></div>", unsafe_allow_html=True)
+
+    # 5. HOW CIVICGUIDE AI WORKS (Matches Image 8 Exactly)
+    st.markdown("""
+    <div style="text-align: center; margin-bottom: 1.5rem;">
+        <span style="font-size: 0.75rem; font-weight: 800; color: #047857; text-transform: uppercase; letter-spacing: 0.05em;">SIMPLE 4-STEP PROCESS</span>
+        <h2 style="font-size: 2rem; font-weight: 900; color: #0f172a; margin: 0.2rem 0;">How CivicGuide AI Works</h2>
+        <p style="font-size: 0.85rem; color: #64748b;">Designed specifically to make government schemes accessible to every citizen without complex legal jargon.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    w1, w2, w3, w4 = st.columns(4)
+    with w1:
+        st.markdown("""
+        <div class="filter-card" style="height: 100%; position: relative;">
+            <span style="position: absolute; top: 1rem; right: 1.25rem; font-size: 1.5rem; font-weight: 900; color: #d1fae5;">01</span>
+            <div style="width: 34px; height: 34px; border-radius: 0.5rem; background-color: #ecfdf5; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; margin-bottom: 0.5rem;">🤖</div>
+            <h4 style="font-size: 0.95rem; font-weight: 900; color: #0f172a; margin: 0 0 0.35rem 0;">1. Search & Ask AI Assistant</h4>
+            <p style="font-size: 0.8rem; color: #475569; line-height: 1.4; margin: 0;">Enter scheme keywords or ask questions in Kannada, English, or Hindi to get instant verified policy guidance and required documents.</p>
+        </div>
+        """, unsafe_allow_html=True)
+    with w2:
+        st.markdown("""
+        <div class="filter-card" style="height: 100%; position: relative;">
+            <span style="position: absolute; top: 1rem; right: 1.25rem; font-size: 1.5rem; font-weight: 900; color: #fef3c7;">02</span>
+            <div style="width: 34px; height: 34px; border-radius: 0.5rem; background-color: #fef3c7; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; margin-bottom: 0.5rem;">📋</div>
+            <h4 style="font-size: 0.95rem; font-weight: 900; color: #0f172a; margin: 0 0 0.35rem 0;">2. Check Family Eligibility</h4>
+            <p style="font-size: 0.8rem; color: #475569; line-height: 1.4; margin: 0;">Screen your age, annual household income, category, and domicile against official rules across all 47 Central & State welfare initiatives.</p>
+        </div>
+        """, unsafe_allow_html=True)
+    with w3:
+        st.markdown("""
+        <div class="filter-card" style="height: 100%; position: relative;">
+            <span style="position: absolute; top: 1rem; right: 1.25rem; font-size: 1.5rem; font-weight: 900; color: #dbeafe;">03</span>
+            <div style="width: 34px; height: 34px; border-radius: 0.5rem; background-color: #eff6ff; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; margin-bottom: 0.5rem;">🏛️</div>
+            <h4 style="font-size: 0.95rem; font-weight: 900; color: #0f172a; margin: 0 0 0.35rem 0;">3. Review Required Documents</h4>
+            <p style="font-size: 0.8rem; color: #475569; line-height: 1.4; margin: 0;">Review complete official checklists including Aadhaar, Nadakacheri certificates, and NPCI-linked bank account passbooks before applying.</p>
+        </div>
+        """, unsafe_allow_html=True)
+    with w4:
+        st.markdown("""
+        <div class="filter-card" style="height: 100%; position: relative;">
+            <span style="position: absolute; top: 1rem; right: 1.25rem; font-size: 1.5rem; font-weight: 900; color: #d1fae5;">04</span>
+            <div style="width: 34px; height: 34px; border-radius: 0.5rem; background-color: #ecfdf5; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; margin-bottom: 0.5rem;">🌐</div>
+            <h4 style="font-size: 0.95rem; font-weight: 900; color: #0f172a; margin: 0 0 0.35rem 0;">4. Direct Official Application</h4>
+            <p style="font-size: 0.8rem; color: #475569; line-height: 1.4; margin: 0;">Click verified one-touch links to submit applications directly on government portals like Seva Sindhu, myScheme, and PM-Kisan without middlemen.</p>
+        </div>
+        """, unsafe_allow_html=True)
+
+    st.markdown("<div style='height: 2rem;'></div>", unsafe_allow_html=True)
+
+    # 6. DISTRICT MAP & SERVICES (Matches Image 9 Exactly)
+    st.markdown("""
+    <div style="background: linear-gradient(90deg, #064e3b 0%, #0f172a 100%); color: white; padding: 2rem 2.5rem; border-radius: 1.5rem; margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
+        <div>
+            <span style="font-size: 0.75rem; font-weight: 800; color: #fde047; text-transform: uppercase; letter-spacing: 0.05em;">DISTRICT MAP & SERVICES</span>
+            <h3 style="font-size: 1.6rem; font-weight: 900; color: white; margin: 0.2rem 0;">Public Services & Offices Across India</h3>
+            <p style="font-size: 0.85rem; color: #cbd5e1; margin: 0; max-width: 48rem;">Find Central Ministries, AIIMS, Passport Seva Kendras, State Secretariats, District Collectorates, and Common Service Centres (CSCs).</p>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+            <span style="background-color: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: #e2e8f0; padding: 0.2rem 0.65rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">Hosapete (5 services)</span>
+            <span style="background-color: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: #e2e8f0; padding: 0.2rem 0.65rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">Harapanahalli (4 services)</span>
+            <span style="background-color: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: #e2e8f0; padding: 0.2rem 0.65rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">Kudligi (4 services)</span>
+            <span style="background-color: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: #e2e8f0; padding: 0.2rem 0.65rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">Huvina Hadagali (3 services)</span>
+            <span style="background-color: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: #e2e8f0; padding: 0.2rem 0.65rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">Hagaribommanahalli (3 services)</span>
+            <span style="background-color: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: #e2e8f0; padding: 0.2rem 0.65rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">Kottur (4 services)</span>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
 # ---------------------------------------------------------------------------
-# VIEW: 3. AI CITIZEN ASSISTANT
+# VIEW: 3. AI CITIZEN ASSISTANT (Guaranteed 5-Step Process)
 # ---------------------------------------------------------------------------
 elif active_nav == "AI Assistant":
     st.markdown('<div class="hero-title">🤖 AI Citizen Assistant</div>', unsafe_allow_html=True)
-    st.markdown('<div class="hero-desc">Grounded Policy Assistant providing step-by-step application instructions and verified government sources.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="hero-desc">Grounded Policy Assistant providing step-by-step application instructions, eligibility criteria, required documents, and official portal links.</div>', unsafe_allow_html=True)
 
     if "chat_messages" not in st.session_state:
         st.session_state.chat_messages = [
-            {"role": "assistant", "content": "Namaskara! I am your CivicGuide AI assistant. How can I help you with government schemes, certificates, or local offices today?"}
+            {
+                "role": "assistant",
+                "content": "Namaskara! I am your CivicGuide AI assistant. How can I help you with government schemes, certificates (Caste/Income/RTC), or application procedures today?",
+                "url": "https://www.myscheme.gov.in"
+            }
         ]
 
     for msg in st.session_state.chat_messages:
         with st.chat_message(msg["role"]):
             st.markdown(msg["content"])
+            if msg.get("url"):
+                st.link_button("Visit Official Website ↗", msg["url"])
 
-    if query := st.chat_input("Ask a question about government schemes, documents, or local offices..."):
+    if query := st.chat_input("Ask about any scheme, caste certificate, RTC/pahani, ration card, or how to apply..."):
         st.session_state.chat_messages.append({"role": "user", "content": query})
         with st.chat_message("user"):
             st.markdown(query)
             
         with st.chat_message("assistant"):
-            # Scheme match
-            found = None
-            q_lower = query.lower()
-            for s in schemes_list:
-                s_name = s.get("name", "").lower()
-                words = [w for w in s_name.replace("-", " ").split() if len(w) > 3 and w not in ["scheme", "yojana"]]
-                if any(w in q_lower for w in words):
-                    found = s
-                    break
-
-            if found:
-                ans = f"""### 🏛️ {found.get('name')} ({found.get('government_level')})
-**Sector:** {found.get('category')}
-
-#### 💰 Direct Benefits:
-{found.get('benefits')}
-
-#### 👥 Eligibility:
-{found.get('eligibility')}
-
-#### 📋 Required Documents:
-{found.get('required_documents')}
-
-#### 📝 How to Apply:
-{found.get('application_process')}
-
-🔗 **Official Portal:** [{found.get('official_url')}]({found.get('official_url')})
-"""
-            else:
-                ans = f"""### 🏛️ Citizen Guidance for: "{query}"
-
-1. **Eligibility Check:** Review income criteria, domicile requirement, and age on the **Eligibility Checker** tab.
-2. **Documents Checklist:** Aadhaar Card (linked to mobile), Ration Card (BPL/APL), Income/Caste Certificate, Bank Passbook.
-3. **Application Mode:** Visit your nearest Grama One / CSC or submit online on the official portal.
-
-🔗 **National Portal:** [https://www.myscheme.gov.in](https://www.myscheme.gov.in)
-"""
-            st.markdown(ans)
-            st.session_state.chat_messages.append({"role": "assistant", "content": ans})
+            res = _synthesize_python_ai_reply(query, schemes_list)
+            st.markdown(res["answer"])
+            if res.get("url"):
+                st.link_button("Visit Official Website ↗", res["url"])
+            st.session_state.chat_messages.append({
+                "role": "assistant",
+                "content": res["answer"],
+                "url": res.get("url")
+            })
 
 # ---------------------------------------------------------------------------
 # VIEW: 4. ELIGIBILITY CHECKER

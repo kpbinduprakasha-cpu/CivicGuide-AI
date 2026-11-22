@@ -91,6 +91,53 @@ const renderFormattedContent = (text) => {
       return;
     }
 
+    // Numbered Steps with bold title (e.g. - **Step 1: Document Preparation:** or **Step 1: ...**)
+    const stepMatch = line.match(/^(-\s+)?\*\*(Step|ಹಂತ|चरण)\s+(\d+)[:.]?\s*([^*]+)?\*\*:?\s*(.*)$/i);
+    if (stepMatch) {
+      const stepWord = stepMatch[2];
+      const stepNum = stepMatch[3];
+      const stepTitle = stepMatch[4] ? stepMatch[4].trim() : '';
+      const stepRest = stepMatch[5] ? stepMatch[5].trim() : '';
+      elements.push(
+        <div key={`step-${idx}`} className="my-2.5 p-3.5 rounded-xl bg-emerald-50/50 border border-emerald-200/90 shadow-2xs hover:bg-emerald-50/80 transition-all">
+          <div className="flex items-center gap-2 mb-1.5">
+            <span className="px-2.5 py-0.5 rounded-lg bg-emerald-700 text-white font-extrabold text-xs shadow-xs">
+              {stepWord} {stepNum}
+            </span>
+            {stepTitle && (
+              <span className="font-bold text-slate-900 text-sm sm:text-base">
+                {parseInlineMarkdown(stepTitle, `st-${idx}`)}
+              </span>
+            )}
+          </div>
+          {stepRest && (
+            <div className="text-slate-700 text-sm sm:text-base leading-relaxed pl-0.5">
+              {parseInlineMarkdown(stepRest, `sr-${idx}`)}
+            </div>
+          )}
+        </div>
+      );
+      return;
+    }
+
+    // Standard numbered list items (e.g. 1. Step description...)
+    const numListMatch = line.match(/^(\d+)\.\s+(.*)$/);
+    if (numListMatch) {
+      const num = numListMatch[1];
+      const content = numListMatch[2];
+      elements.push(
+        <div key={`num-${idx}`} className="flex items-start gap-3 my-2 p-2.5 rounded-xl bg-slate-50 border border-slate-200/70">
+          <span className="w-6 h-6 rounded-full bg-emerald-600 text-white font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
+            {num}
+          </span>
+          <div className="flex-1 text-slate-800 text-sm sm:text-base leading-relaxed">
+            {parseInlineMarkdown(content, `numc-${idx}`)}
+          </div>
+        </div>
+      );
+      return;
+    }
+
     // Bullet points (- ... or * ...)
     if (line.startsWith('- ') || line.startsWith('* ')) {
       const bulletContent = line.substring(2).trim();

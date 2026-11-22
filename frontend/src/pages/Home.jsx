@@ -315,23 +315,24 @@ const Home = () => {
                   </div>
                 </div>
 
-                <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between">
+                <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between gap-2">
                   <Link
                     to={`/schemes/${scheme.id}`}
-                    className="text-xs font-semibold text-slate-700 hover:text-emerald-700 flex items-center gap-1"
+                    className="text-xs font-semibold text-slate-700 hover:text-emerald-700 flex items-center gap-1 shrink-0"
                   >
                     <span>{t('details')}</span>
                     <ChevronRight className="w-3.5 h-3.5" />
                   </Link>
 
                   <a
-                    href={scheme.official_url}
+                    href={scheme.official_url || "https://www.myscheme.gov.in"}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[11px] font-medium text-emerald-600 hover:text-emerald-800 flex items-center gap-1"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 transition-colors shadow-xs shrink-0"
+                    title={`Open official portal for ${scheme.name}`}
                   >
-                    <span>Official Portal</span>
-                    <ExternalLink className="w-3 h-3" />
+                    <span>Visit Official Website</span>
+                    <ExternalLink className="w-3 h-3 shrink-0" />
                   </a>
                 </div>
               </div>
@@ -358,28 +359,80 @@ const Home = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             
-            <div className="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-xs space-y-2 relative">
-              <span className="text-2xl font-black text-emerald-100 absolute top-4 right-4">01</span>
-              <h3 className="font-bold text-sm text-slate-900">{t('howStep1Title')}</h3>
-              <p className="text-xs text-slate-600 leading-relaxed">{t('howStep1Desc')}</p>
+            {/* Step 1 */}
+            <div className="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-4 relative group hover:border-emerald-300 hover:shadow-md transition-all">
+              <span className="text-2xl font-black text-emerald-100 group-hover:text-emerald-200 transition-colors absolute top-4 right-4">01</span>
+              <div className="space-y-2">
+                <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold text-sm">
+                  <Bot className="w-5 h-5 text-emerald-600" />
+                </div>
+                <h3 className="font-bold text-sm sm:text-base text-slate-900">{t('howStep1Title')}</h3>
+                <p className="text-xs text-slate-600 leading-relaxed">{t('howStep1Desc')}</p>
+              </div>
+              <Link
+                to="/chat"
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 hover:text-emerald-900 group-hover:underline pt-2 border-t border-slate-100"
+              >
+                <span>{t('howStep1Btn') || 'Launch AI Assistant'}</span>
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+              </Link>
             </div>
 
-            <div className="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-xs space-y-2 relative">
-              <span className="text-2xl font-black text-emerald-100 absolute top-4 right-4">02</span>
-              <h3 className="font-bold text-sm text-slate-900">{t('howStep2Title')}</h3>
-              <p className="text-xs text-slate-600 leading-relaxed">{t('howStep2Desc')}</p>
+            {/* Step 2 */}
+            <div className="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-4 relative group hover:border-amber-300 hover:shadow-md transition-all">
+              <span className="text-2xl font-black text-amber-100 group-hover:text-amber-200 transition-colors absolute top-4 right-4">02</span>
+              <div className="space-y-2">
+                <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center font-bold text-sm">
+                  <FileCheck2 className="w-5 h-5 text-amber-600" />
+                </div>
+                <h3 className="font-bold text-sm sm:text-base text-slate-900">{t('howStep2Title')}</h3>
+                <p className="text-xs text-slate-600 leading-relaxed">{t('howStep2Desc')}</p>
+              </div>
+              <Link
+                to="/eligibility"
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-700 hover:text-amber-900 group-hover:underline pt-2 border-t border-slate-100"
+              >
+                <span>{t('howStep2Btn') || 'Check Eligibility'}</span>
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+              </Link>
             </div>
 
-            <div className="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-xs space-y-2 relative">
-              <span className="text-2xl font-black text-emerald-100 absolute top-4 right-4">03</span>
-              <h3 className="font-bold text-sm text-slate-900">{t('howStep3Title')}</h3>
-              <p className="text-xs text-slate-600 leading-relaxed">{t('howStep3Desc')}</p>
+            {/* Step 3 */}
+            <div className="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-4 relative group hover:border-blue-300 hover:shadow-md transition-all">
+              <span className="text-2xl font-black text-blue-100 group-hover:text-blue-200 transition-colors absolute top-4 right-4">03</span>
+              <div className="space-y-2">
+                <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center font-bold text-sm">
+                  <Landmark className="w-5 h-5 text-blue-600" />
+                </div>
+                <h3 className="font-bold text-sm sm:text-base text-slate-900">{t('howStep3Title')}</h3>
+                <p className="text-xs text-slate-600 leading-relaxed">{t('howStep3Desc')}</p>
+              </div>
+              <Link
+                to="/schemes"
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-700 hover:text-blue-900 group-hover:underline pt-2 border-t border-slate-100"
+              >
+                <span>{t('howStep3Btn') || 'Browse Schemes Directory'}</span>
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+              </Link>
             </div>
 
-            <div className="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-xs space-y-2 relative">
-              <span className="text-2xl font-black text-emerald-100 absolute top-4 right-4">04</span>
-              <h3 className="font-bold text-sm text-slate-900">{t('howStep4Title')}</h3>
-              <p className="text-xs text-slate-600 leading-relaxed">{t('howStep4Desc')}</p>
+            {/* Step 4 */}
+            <div className="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-4 relative group hover:border-emerald-300 hover:shadow-md transition-all">
+              <span className="text-2xl font-black text-emerald-100 group-hover:text-emerald-200 transition-colors absolute top-4 right-4">04</span>
+              <div className="space-y-2">
+                <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold text-sm">
+                  <MapPin className="w-5 h-5 text-emerald-600" />
+                </div>
+                <h3 className="font-bold text-sm sm:text-base text-slate-900">{t('howStep4Title')}</h3>
+                <p className="text-xs text-slate-600 leading-relaxed">{t('howStep4Desc')}</p>
+              </div>
+              <Link
+                to="/map"
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 hover:text-emerald-900 group-hover:underline pt-2 border-t border-slate-100"
+              >
+                <span>{t('howStep4Btn') || 'Explore Service Map & Portals'}</span>
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+              </Link>
             </div>
 
           </div>
