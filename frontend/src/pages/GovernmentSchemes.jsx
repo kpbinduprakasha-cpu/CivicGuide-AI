@@ -361,6 +361,9 @@ const GovernmentSchemes = () => {
         params.append('mode', 'central');
       } else if (jurisdiction === 'State Government') {
         params.append('mode', 'state');
+        if (selectedState && selectedState !== 'All India') {
+          params.append('state', selectedState);
+        }
       } else {
         // All combined schemes across Central & State governments
         params.append('mode', 'all');
@@ -376,7 +379,7 @@ const GovernmentSchemes = () => {
     } finally {
       setLoading(false);
     }
-  }, [searchQuery, selectedCategory, jurisdiction, language]);
+  }, [searchQuery, selectedCategory, jurisdiction, selectedState, language]);
 
   useEffect(() => {
     fetchSchemes();
@@ -763,7 +766,7 @@ const GovernmentSchemes = () => {
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                📍 State Government ({jurisdiction === 'State Government' ? schemes.length : '37'})
+                📍 State Government {jurisdiction === 'State Government' && selectedState && selectedState !== 'All India' ? `(${selectedState}: ${schemes.length})` : ''}
               </button>
               <button
                 type="button"
@@ -935,23 +938,53 @@ const GovernmentSchemes = () => {
           <div className="w-10 h-10 border-3 border-emerald-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
           <p className="text-sm text-slate-500 font-medium">Loading verified welfare schemes across India...</p>
         </div>
+      ) : jurisdiction === 'State Government' && (!selectedState || selectedState === 'All India') ? (
+        <div className="text-center py-14 bg-gradient-to-b from-amber-50/70 via-white to-amber-50/30 rounded-3xl border-2 border-dashed border-amber-300 p-8 sm:p-10 space-y-6">
+          <div className="w-16 h-16 rounded-3xl bg-amber-100 text-amber-800 mx-auto flex items-center justify-center shadow-xs">
+            <MapPin className="w-8 h-8 text-amber-700" />
+          </div>
+          <div className="space-y-2 max-w-xl mx-auto">
+            <h3 className="font-extrabold text-slate-900 text-xl sm:text-2xl">
+              Please Select a State to View State Government Schemes
+            </h3>
+            <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-medium">
+              State Government schemes are specific to individual states. Select your state from the dropdown above or click on your state below to view its verified schemes.
+            </p>
+          </div>
+          <div className="flex flex-wrap justify-center gap-2.5 max-w-3xl mx-auto pt-2">
+            {['Karnataka', 'Maharashtra', 'Delhi', 'Tamil Nadu', 'Uttar Pradesh', 'Gujarat', 'Rajasthan', 'Kerala', 'West Bengal', 'Andhra Pradesh', 'Telangana', 'Bihar'].map(st => (
+              <button
+                key={st}
+                type="button"
+                onClick={() => handleStateChange(st)}
+                className="px-4 py-2.5 rounded-2xl text-sm sm:text-base font-bold bg-white text-slate-800 border border-slate-300 hover:border-amber-500 hover:bg-amber-50 hover:text-amber-950 transition-all shadow-xs hover:scale-105"
+              >
+                📍 {st}
+              </button>
+            ))}
+          </div>
+        </div>
       ) : displayedSchemes.length === 0 ? (
         <div className="text-center py-16 bg-white rounded-3xl border border-slate-200/80 p-8 space-y-4">
           <div className="w-12 h-12 rounded-2xl bg-slate-50 text-slate-400 mx-auto flex items-center justify-center">
             <Landmark className="w-6 h-6" />
           </div>
-          <h3 className="font-bold text-slate-900 text-base">
-            No schemes found matching your active filters.
+          <h3 className="font-bold text-slate-900 text-base sm:text-lg">
+            {jurisdiction === 'State Government'
+              ? `No state-specific schemes currently listed for ${selectedState}.`
+              : "No schemes found matching your active filters."}
           </h3>
-          <p className="text-xs text-slate-500 max-w-md mx-auto">
-            {showSavedOnly 
-              ? "You haven't bookmarked any schemes yet. Click the bookmark icon on any scheme card to save it."
-              : "Try switching to All India, clearing search keywords, or resetting your filter criteria."}
+          <p className="text-xs sm:text-sm text-slate-500 max-w-md mx-auto">
+            {jurisdiction === 'State Government'
+              ? `Please use the official ${selectedState} government portal link above to access state welfare programs, or switch to Central Government / All Combined.`
+              : showSavedOnly 
+                ? "You haven't bookmarked any schemes yet. Click the bookmark icon on any scheme card to save it."
+                : "Try switching to All India, clearing search keywords, or resetting your filter criteria."}
           </p>
           <button
             type="button"
             onClick={() => {
-              setJurisdiction('All');
+              setJurisdiction('Central Government');
               setSelectedCategory('All');
               setSelectedBeneficiary('All');
               setSearchQuery('');
@@ -961,7 +994,7 @@ const GovernmentSchemes = () => {
             }}
             className="px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-600 text-white hover:bg-emerald-700 transition-colors shadow-xs"
           >
-            Reset All Filters & View Full Directory
+            Reset Filters & View Central Schemes
           </button>
         </div>
       ) : viewMode === 'table' ? (

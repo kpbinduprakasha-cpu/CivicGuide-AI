@@ -60,12 +60,20 @@ def list_schemes():
 
     # Jurisdiction / Mode / State filtering:
     # 1. Central Government: shows central government schemes
-    # 2. State Government: shows state government schemes across India (not restricted to a single state)
+    # 2. State Government: only when selecting a state, show that particular state's schemes; otherwise no show
     # 3. All: combines both Central and State government schemes together
     if mode == 'central' or level == 'Central Government' or scope == 'central_only':
         query = query.filter(Scheme.government_level.ilike('%Central%'))
     elif mode == 'state' or level == 'State Government' or scope == 'state_only':
-        query = query.filter(~Scheme.government_level.ilike('%Central%'))
+        if state and state not in ['All', 'All India', 'All States', '']:
+            clean_state = state.replace(' State', '').strip()
+            query = query.filter(
+                (Scheme.state.ilike(f'%{clean_state}%')) |
+                (Scheme.government_level.ilike(f'%{clean_state}%'))
+            )
+        else:
+            # When State Government is selected without a particular state: otherwise no show
+            query = query.filter(Scheme.id == -1)
     # All / default queries return all verified schemes combining Central & State Government
 
     if q:
