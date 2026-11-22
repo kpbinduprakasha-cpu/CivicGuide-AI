@@ -214,39 +214,23 @@ st.markdown("""
     /* =========================================================================
        EXACT REACT-STYLE TOP NAVBAR BUTTONS & RADIO TABS (Matches User Image)
        ========================================================================= */
-    /* Hide ALL native radio input circles, bullets, and dots across all radios */
-    div[data-testid="stRadio"] [data-baseweb="radio"] > div:first-of-type,
-    div[data-testid="stRadio"] [data-baseweb="radio"] > div:first-of-type *,
-    div[data-testid="stRadio"] [data-baseweb="radio"] > div:not([data-testid="stMarkdownContainer"]),
-    div[data-testid="stRadio"] [data-baseweb="radio"] input[type="radio"],
-    div[data-testid="stRadio"] [data-baseweb="radio"] svg,
-    div[data-testid="stRadio"] label > div:first-of-type,
-    div[data-testid="stRadio"] label > div:first-of-type *,
-    div[data-testid="stRadio"] label > div:not([data-testid="stMarkdownContainer"]),
-    div[data-testid="stRadio"] label input[type="radio"],
-    div[data-testid="stRadio"] label svg,
-    div[data-testid="stRadio"] div[role="radiogroup"] label > div:first-child,
-    div[data-testid="stRadio"] div[role="radiogroup"] label > div:first-of-type,
-    div[data-testid="stRadio"] div[role="radiogroup"] label > span {
+    /* Hide native radio input */
+    div[data-testid="stRadio"] div[role="radiogroup"] input[type="radio"] {
         display: none !important;
-        visibility: hidden !important;
+    }
+
+    /* Hide the radio circle / bullet (the element that is NOT the last child) */
+    div[data-testid="stRadio"] div[role="radiogroup"] label > div:not(:last-child),
+    div[data-testid="stRadio"] div[role="radiogroup"] label > div:not(:has(p)),
+    div[data-testid="stRadio"] div[role="radiogroup"] label svg {
+        display: none !important;
         width: 0 !important;
         height: 0 !important;
-        opacity: 0 !important;
         margin: 0 !important;
         padding: 0 !important;
         border: none !important;
-        outline: none !important;
-        position: absolute !important;
-        left: -9999px !important;
-    }
-    
-    div[data-testid="stRadio"] label > [data-testid="stMarkdownContainer"] {
-        display: inline-flex !important;
-        align-items: center !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-        position: static !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
     }
 
     /* Strict ONE-LINE flex row without wrapping */
@@ -255,7 +239,7 @@ st.markdown("""
         flex-direction: row !important;
         align-items: center !important;
         justify-content: flex-start !important;
-        gap: 0.2rem !important;
+        gap: 0.25rem !important;
         flex-wrap: nowrap !important;
         white-space: nowrap !important;
         overflow-x: auto !important;
@@ -272,7 +256,7 @@ st.markdown("""
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
-        padding: 0.35rem 0.6rem !important;
+        padding: 0.35rem 0.65rem !important;
         border-radius: 0.75rem !important;
         background-color: transparent !important;
         border: 1px solid transparent !important;
@@ -285,7 +269,17 @@ st.markdown("""
     div[data-testid="stRadio"] div[role="radiogroup"] label:hover {
         background-color: #f1f5f9 !important;
     }
+
+    /* Label text - GUARANTEED 100% VISIBLE */
+    div[data-testid="stRadio"] div[role="radiogroup"] label > div:last-child,
+    div[data-testid="stRadio"] div[role="radiogroup"] label [data-testid="stMarkdownContainer"],
     div[data-testid="stRadio"] div[role="radiogroup"] label p {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        position: static !important;
         font-size: 0.88rem !important;
         font-weight: 700 !important;
         color: #475569 !important;
@@ -297,13 +291,15 @@ st.markdown("""
         color: #0f172a !important;
     }
 
-    /* ACTIVE TAB: Mint green pill with dark green bold text (Exact match to Image) */
+    /* ACTIVE TAB: Mint green pill with dark green bold text (Exact match to React Image) */
     div[data-testid="stRadio"] div[role="radiogroup"] label:has(input:checked) {
         background-color: #d1fae5 !important;
         border: 1px solid #a7f3d0 !important;
         box-shadow: 0 1px 2px rgba(16, 185, 129, 0.15) !important;
     }
-    div[data-testid="stRadio"] div[role="radiogroup"] label:has(input:checked) p {
+    div[data-testid="stRadio"] div[role="radiogroup"] label:has(input:checked) p,
+    div[data-testid="stRadio"] div[role="radiogroup"] label:has(input:checked) div,
+    div[data-testid="stRadio"] div[role="radiogroup"] label:has(input:checked) span {
         color: #065f46 !important;
         font-weight: 900 !important;
     }
@@ -791,7 +787,7 @@ schemes_list, services_list = load_database_data()
 if "top_navbar_tab" not in st.session_state:
     st.session_state.top_navbar_tab = "🧭 Home"
 
-nav_col_logo, nav_col_tabs, nav_col_right = st.columns([1.9, 7.3, 2.8], vertical_alignment="center")
+nav_col_logo, nav_col_tabs, nav_col_right = st.columns([1.6, 7.8, 2.6], vertical_alignment="center")
 
 with nav_col_logo:
     st.markdown("""
