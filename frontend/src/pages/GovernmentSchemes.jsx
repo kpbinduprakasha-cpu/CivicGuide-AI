@@ -481,30 +481,38 @@ const GovernmentSchemes = () => {
         </div>
 
         {/* Action Buttons: Saved & Recommendations Toggle */}
-        <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+        <div className="flex flex-wrap items-center gap-3 shrink-0">
+          <Link
+            to="/map"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl text-sm font-bold text-slate-800 bg-white hover:bg-slate-50 border border-slate-200 shadow-xs transition-all hover:scale-102"
+          >
+            <MapPin className="w-4 h-4 text-emerald-600" />
+            <span>Offices & Taluk Map</span>
+          </Link>
+
           <button
             type="button"
             onClick={() => setShowSavedOnly(!showSavedOnly)}
-            className={`inline-flex items-center gap-1.5 px-4 py-2.5 rounded-2xl text-xs font-bold transition-all border ${
+            className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl text-sm font-bold transition-all border ${
               showSavedOnly
                 ? 'bg-rose-50 text-rose-700 border-rose-300 shadow-sm'
                 : 'bg-white text-slate-700 hover:bg-slate-50 border-slate-200 shadow-xs'
             }`}
           >
-            <Bookmark className={`w-3.5 h-3.5 ${showSavedOnly ? 'fill-rose-500 text-rose-500' : 'text-slate-500'}`} />
+            <Bookmark className={`w-4 h-4 ${showSavedOnly ? 'fill-rose-500 text-rose-500' : 'text-slate-500'}`} />
             <span>Saved Schemes ({savedSchemeIds.length})</span>
           </button>
 
           <button
             type="button"
             onClick={() => setAiMode(!aiMode)}
-            className={`inline-flex items-center gap-1.5 px-4 py-2.5 rounded-2xl text-xs font-bold transition-all border ${
+            className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-bold transition-all border ${
               aiMode
                 ? 'bg-emerald-600 text-white border-emerald-700 shadow-md shadow-emerald-600/20'
                 : 'bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border-emerald-200 shadow-xs'
             }`}
           >
-            <Sparkles className="w-3.5 h-3.5" />
+            <Sparkles className="w-4 h-4" />
             <span>{aiMode ? 'AI Matching Active' : `AI Matched for You (${aiRecommendedCount || 8})`}</span>
           </button>
         </div>
@@ -603,19 +611,19 @@ const GovernmentSchemes = () => {
         </div>
 
         {/* Row 2: Jurisdiction Levels & State Picker */}
-        <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-100">
+        <div className="flex flex-wrap items-center justify-between gap-4 pt-3 border-t border-slate-100">
           
-          <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 font-medium">
-            <div className="flex items-center gap-1.5 text-slate-600">
-              <Filter className="w-3.5 h-3.5 text-slate-400" />
+          <div className="flex flex-wrap items-center gap-3 text-sm text-slate-600 font-semibold">
+            <div className="flex items-center gap-2 text-slate-800 text-sm font-bold">
+              <Filter className="w-4 h-4 text-emerald-600" />
               <span>Jurisdiction:</span>
             </div>
             
-            <div className="inline-flex rounded-xl bg-slate-100 p-0.5 flex-wrap">
+            <div className="inline-flex rounded-2xl bg-slate-100 p-1 flex-wrap gap-1">
               <button
                 type="button"
                 onClick={() => handleJurisdictionSelect('All')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
                   jurisdiction === 'All'
                     ? 'bg-white text-emerald-800 shadow-xs'
                     : 'text-slate-600 hover:text-slate-900'
@@ -626,7 +634,7 @@ const GovernmentSchemes = () => {
               <button
                 type="button"
                 onClick={() => handleJurisdictionSelect('Central Government')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
                   jurisdiction === 'Central Government'
                     ? 'bg-white text-emerald-800 shadow-xs'
                     : 'text-slate-600 hover:text-slate-900'
@@ -637,24 +645,13 @@ const GovernmentSchemes = () => {
               <button
                 type="button"
                 onClick={() => handleJurisdictionSelect('State Government')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                  jurisdiction === 'State Government'
+                className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
+                  jurisdiction === 'State Government' || jurisdiction.includes('State')
                     ? 'bg-white text-emerald-800 shadow-xs'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 State Governments
-              </button>
-              <button
-                type="button"
-                onClick={() => handleJurisdictionSelect(`${selectedState} State`)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                  jurisdiction === `${selectedState} State`
-                    ? 'bg-white text-emerald-800 shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                {selectedState} State
               </button>
             </div>
 
@@ -663,8 +660,8 @@ const GovernmentSchemes = () => {
               <select
                 value={selectedState}
                 onChange={(e) => handleStateChange(e.target.value)}
-                className="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200/80 border border-slate-200/60 text-xs font-semibold text-slate-700 cursor-pointer focus:outline-hidden focus:ring-2 focus:ring-emerald-500"
-                title="Change Selected State"
+                className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200/80 border border-slate-200 text-sm font-bold text-slate-800 cursor-pointer focus:outline-hidden focus:ring-2 focus:ring-emerald-500"
+                title="Select State for State Welfare Initiatives"
               >
                 {ALL_INDIAN_STATES.map((st) => (
                   <option key={st} value={st}>
@@ -676,8 +673,8 @@ const GovernmentSchemes = () => {
           </div>
 
           {/* Scheme Counter */}
-          <div className="text-xs text-slate-500 font-medium">
-            Showing <strong className="text-slate-900">{displayedSchemes.length}</strong> of {schemes.length} verified schemes
+          <div className="text-sm text-slate-600 font-semibold">
+            Showing <strong className="text-slate-900 text-base">{displayedSchemes.length}</strong> of {schemes.length} verified schemes
           </div>
         </div>
 
@@ -792,136 +789,136 @@ const GovernmentSchemes = () => {
                   
                   {/* Top Badges & Bookmark Action */}
                   <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${badgeClass}`}>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className={`text-xs font-black uppercase tracking-wider px-3 py-1 rounded-full border shadow-2xs ${badgeClass}`}>
                         {scheme.government_level}
                       </span>
                       {isEligible && (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-300">
-                          <CheckCircle2 className="w-3 h-3 text-emerald-700" />
+                        <span className="inline-flex items-center gap-1.5 text-xs font-extrabold text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full border border-emerald-300 shadow-2xs">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" />
                           <span>Qualified</span>
                         </span>
                       )}
                       {isPartially && (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
+                        <span className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-900 bg-amber-100 px-3 py-1 rounded-full border border-amber-300">
                           <span>Conditions Apply</span>
                         </span>
                       )}
                     </div>
 
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1.5">
                       <button
                         type="button"
                         onClick={() => handleCopyLink(scheme)}
-                        className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+                        className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
                         title="Copy direct scheme link"
                       >
-                        <Share2 className="w-4 h-4" />
+                        <Share2 className="w-4.5 h-4.5" />
                       </button>
                       <button
                         type="button"
                         onClick={() => toggleBookmark(scheme.id, scheme.name)}
-                        className={`p-1.5 rounded-lg transition-colors ${
+                        className={`p-2 rounded-xl transition-colors ${
                           isSaved 
                             ? 'text-rose-600 bg-rose-50 hover:bg-rose-100' 
                             : 'text-slate-400 hover:text-slate-700 hover:bg-slate-100'
                         }`}
                         title={isSaved ? "Remove bookmark" : "Save scheme"}
                       >
-                        <Bookmark className={`w-4 h-4 ${isSaved ? 'fill-rose-600' : ''}`} />
+                        <Bookmark className={`w-4.5 h-4.5 ${isSaved ? 'fill-rose-600' : ''}`} />
                       </button>
                     </div>
                   </div>
 
                   {/* Header: Icon & Scheme Name */}
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-2xl bg-emerald-50 border border-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                      <Icon className="w-5 h-5" />
+                  <div className="flex items-start gap-3.5 pt-1">
+                    <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-2xs">
+                      <Icon className="w-6 h-6" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-bold text-base text-slate-900 leading-snug line-clamp-2">
+                      <h3 className="font-extrabold text-xl sm:text-2xl text-slate-900 leading-snug line-clamp-2">
                         {scheme.name}
                       </h3>
-                      <span className="text-[11px] text-emerald-600 font-semibold block mt-0.5">
+                      <span className="text-sm font-bold text-emerald-700 block mt-1 tracking-wide">
                         {scheme.category}
                       </span>
                     </div>
                   </div>
 
                   {/* Description */}
-                  <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed">
+                  <p className="text-sm sm:text-base text-slate-700 leading-relaxed font-normal line-clamp-3">
                     {scheme.description}
                   </p>
 
                   {/* Direct Financial / Material Benefit Callout */}
-                  <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100 text-xs space-y-1">
-                    <div className="flex items-center gap-1 text-[11px] font-bold text-slate-800">
-                      <Coins className="w-3.5 h-3.5 text-amber-600" />
+                  <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 space-y-1.5 shadow-2xs">
+                    <div className="flex items-center gap-1.5 text-sm sm:text-base font-extrabold text-slate-900">
+                      <Coins className="w-4 h-4 text-amber-600 shrink-0" />
                       <span>Direct Benefit:</span>
                     </div>
-                    <p className="text-[11px] text-slate-700 font-medium line-clamp-2">
+                    <p className="text-sm sm:text-base text-slate-800 font-semibold leading-relaxed line-clamp-2">
                       {scheme.benefits}
                     </p>
                   </div>
 
                   {/* AI Criteria Match Pill (if citizen screening available) */}
                   {aiEval && aiEval.satisfied_criteria && aiEval.satisfied_criteria.length > 0 && (
-                    <div className="p-2.5 rounded-xl bg-emerald-50/70 border border-emerald-200/80 text-[11px] text-emerald-950 space-y-1">
-                      <div className="flex items-center gap-1 font-bold text-[10px] uppercase text-emerald-800 tracking-wider">
-                        <Check className="w-3 h-3 text-emerald-600" />
+                    <div className="p-3.5 rounded-2xl bg-emerald-50/80 border border-emerald-200 text-emerald-950 space-y-1 shadow-2xs">
+                      <div className="flex items-center gap-1.5 font-black text-xs sm:text-sm uppercase text-emerald-900 tracking-wide">
+                        <Check className="w-4 h-4 text-emerald-700 shrink-0" />
                         <span>Profile Matched Criteria ({aiEval.satisfied_criteria.length}):</span>
                       </div>
-                      <p className="line-clamp-1 text-emerald-900 text-[11px]">
+                      <p className="line-clamp-2 text-emerald-950 text-xs sm:text-sm font-semibold">
                         {aiEval.satisfied_criteria.join(' • ')}
                       </p>
                     </div>
                   )}
 
                   {/* Documents Required Snippet */}
-                  <div className="text-[11px] text-slate-500 line-clamp-1">
-                    <strong className="text-slate-700">Documents:</strong> {docsList.slice(0, 3).join(', ')}{docsList.length > 3 ? ` +${docsList.length - 3} more` : ''}
+                  <div className="text-xs sm:text-sm text-slate-700 font-medium line-clamp-1 pt-0.5">
+                    <strong className="text-slate-900 font-bold">Documents:</strong> {docsList.slice(0, 3).join(', ')}{docsList.length > 3 ? ` +${docsList.length - 3} more` : ''}
                   </div>
 
                 </div>
 
                 {/* Card Footer Actions */}
-                <div className="pt-4 mt-4 border-t border-slate-100 space-y-2.5">
+                <div className="pt-4 mt-4 border-t border-slate-100 space-y-3">
                   <div className="flex items-center justify-between gap-2">
                     <Link
                       to={`/schemes/${scheme.id}`}
-                      className="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 hover:text-emerald-900 transition-colors"
+                      className="inline-flex items-center gap-1 text-sm sm:text-base font-black text-emerald-700 hover:text-emerald-900 transition-colors"
                     >
                       <span>Full Details</span>
-                      <ChevronRight className="w-3.5 h-3.5" />
+                      <ChevronRight className="w-4 h-4" />
                     </Link>
 
                     <div className="flex items-center gap-2">
                       <button
                         type="button"
                         onClick={() => handleOpenChecklist(scheme)}
-                        className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors"
+                        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold text-slate-800 bg-slate-100 hover:bg-slate-200 transition-colors"
                         title="Check required documents checklist"
                       >
-                        <FileCheck2 className="w-3.5 h-3.5 text-slate-600" />
+                        <FileCheck2 className="w-4 h-4 text-slate-700" />
                         <span>Docs</span>
                       </button>
 
                       <button
                         type="button"
                         onClick={() => handleOpenApplyModal(scheme)}
-                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-xs transition-colors"
+                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-black text-white bg-emerald-600 hover:bg-emerald-700 shadow-md shadow-emerald-600/20 transition-all hover:scale-102"
                       >
                         <span>Apply / Track</span>
-                        <ArrowUpRight className="w-3.5 h-3.5" />
+                        <ArrowUpRight className="w-4 h-4" />
                       </button>
                     </div>
                   </div>
 
                   {/* External Portal Link */}
-                  <div className="flex items-center justify-between text-[11px] text-slate-400 pt-1 border-t border-slate-50">
+                  <div className="flex items-center justify-between text-xs sm:text-sm pt-2 border-t border-slate-100 font-semibold">
                     <Link
                       to={`/eligibility?scheme_id=${scheme.id}`}
-                      className="text-emerald-600 hover:underline font-semibold"
+                      className="text-emerald-700 hover:underline font-bold"
                     >
                       Detailed Eligibility Test
                     </Link>
@@ -929,10 +926,10 @@ const GovernmentSchemes = () => {
                       href={scheme.official_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-slate-500 hover:text-slate-800 font-medium"
+                      className="inline-flex items-center gap-1 text-slate-600 hover:text-slate-900 font-bold"
                     >
                       <span>Official Portal</span>
-                      <ExternalLink className="w-3 h-3" />
+                      <ExternalLink className="w-3.5 h-3.5" />
                     </a>
                   </div>
                 </div>

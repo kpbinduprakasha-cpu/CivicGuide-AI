@@ -111,6 +111,23 @@ def get_states():
         'states': state_list
     }), 200
 
+@public_service_bp.route('/hierarchy', methods=['GET'])
+def get_hierarchy():
+    """Return nested structure of State -> District -> Taluks available in database."""
+    services = PublicService.query.all()
+    hierarchy = {}
+    for s in services:
+        st = s.state or 'All India'
+        dst = s.district_city or 'General'
+        tlk = s.taluk or 'General'
+        if st not in hierarchy:
+            hierarchy[st] = {}
+        if dst not in hierarchy[st]:
+            hierarchy[st][dst] = []
+        if tlk not in hierarchy[st][dst] and tlk != 'General':
+            hierarchy[st][dst].append(tlk)
+    return jsonify({'hierarchy': hierarchy}), 200
+
 @public_service_bp.route('/taluks', methods=['GET'])
 def get_taluks():
     TALUKS = [
