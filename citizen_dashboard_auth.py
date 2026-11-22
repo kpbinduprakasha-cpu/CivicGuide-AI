@@ -1,0 +1,860 @@
+"""
+CivicGuide AI - Citizen Authentication & Dashboard Module
+Provides pixel-perfect Citizen Sign In, Registration, and Citizen Dashboard
+matching official screenshots and React Tailwind components.
+"""
+
+import streamlit as st
+
+DEFAULT_CITIZEN_USER = {
+    "full_name": "K P BINDUPRAKASHA",
+    "user_id": "@kpb1ndup625",
+    "email": "kpbinduprakasha@gmail.com",
+    "mobile": "+91 9740397354",
+    "age": 24,
+    "sex": "Male",
+    "state": "Karnataka",
+    "languages": ["English", "Kannada"],
+    "github": "@kpbinduprakasha-cpu"
+}
+
+DEFAULT_APPLICATIONS = [
+    {
+        "id": "app-cent-1",
+        "scheme_name": "PM-Kisan Samman Nidhi",
+        "government_level": "Central Government",
+        "category": "Agriculture",
+        "ack_no": "ACK-PMKISAN-2026-9182",
+        "applied_date": "12 Jan 2026",
+        "status": "Approved",
+        "benefit": "₹6,000 / year (Direct DBT)",
+        "approval_date": "Sanctioned: 28 Jan 2026",
+        "portal_url": "https://pmkisan.gov.in"
+    },
+    {
+        "id": "app-cent-2",
+        "scheme_name": "Ayushman Bharat - PM-JAY",
+        "government_level": "Central Government",
+        "category": "Healthcare",
+        "ack_no": "ACK-ABPMJAY-2026-4431",
+        "applied_date": "18 Jan 2026",
+        "status": "Approved",
+        "benefit": "₹5,00,000 / year Cashless Hospitalization",
+        "approval_date": "Sanctioned: 02 Feb 2026",
+        "portal_url": "https://pmjay.gov.in"
+    },
+    {
+        "id": "app-cent-3",
+        "scheme_name": "PM Surya Ghar: Muft Bijli Yojana",
+        "government_level": "Central Government",
+        "category": "Financial assistance",
+        "ack_no": "ACK-SURYA-2026-1077",
+        "applied_date": "05 Feb 2026",
+        "status": "In Verification",
+        "benefit": "Up to ₹78,000 Solar Rooftop Subsidy",
+        "approval_date": "Expected by 25 Feb 2026",
+        "portal_url": "https://pmsuryaghar.gov.in"
+    },
+    {
+        "id": "app-cent-4",
+        "scheme_name": "Pradhan Mantri Mudra Yojana (PMMY)",
+        "government_level": "Central Government",
+        "category": "Financial assistance",
+        "ack_no": "ACK-MUDRA-2026-6209",
+        "applied_date": "10 Feb 2026",
+        "status": "Approved",
+        "benefit": "₹50,000 Shishu Collateral-Free Micro-Credit",
+        "approval_date": "Sanctioned: 14 Feb 2026",
+        "portal_url": "https://www.mudra.org.in"
+    },
+    {
+        "id": "app-state-1",
+        "scheme_name": "Gruha Lakshmi Scheme",
+        "government_level": "Karnataka State",
+        "category": "Women and child welfare",
+        "ack_no": "ACK-KAR-GL-2026-8801",
+        "applied_date": "15 Jan 2026",
+        "status": "Approved",
+        "benefit": "₹2,000 / month (Direct DBT to Woman Head)",
+        "approval_date": "Sanctioned: 25 Jan 2026",
+        "portal_url": "https://sevasindhu.karnataka.gov.in"
+    },
+    {
+        "id": "app-state-2",
+        "scheme_name": "Yuva Nidhi Scheme",
+        "government_level": "Karnataka State",
+        "category": "Employment",
+        "ack_no": "ACK-KAR-YN-2026-3190",
+        "applied_date": "22 Jan 2026",
+        "status": "Approved",
+        "benefit": "₹3,000 / month Unemployment Assistance",
+        "approval_date": "Sanctioned: 01 Feb 2026",
+        "portal_url": "https://sevasindhu.karnataka.gov.in"
+    },
+    {
+        "id": "app-state-3",
+        "scheme_name": "SSP Post-Matric & Vidyasiri Scholarship",
+        "government_level": "Karnataka State",
+        "category": "Education",
+        "ack_no": "ACK-KAR-SSP-2026-7241",
+        "applied_date": "08 Feb 2026",
+        "status": "Approved",
+        "benefit": "Full College Tuition Reimbursement + Hostel Fee",
+        "approval_date": "Sanctioned: 15 Feb 2026",
+        "portal_url": "https://ssp.postmatric.karnataka.gov.in"
+    },
+    {
+        "id": "app-state-4",
+        "scheme_name": "Anna Bhagya Scheme (Cash Transfer)",
+        "government_level": "Karnataka State",
+        "category": "Food and civil supplies",
+        "ack_no": "ACK-KAR-AB-2026-5510",
+        "applied_date": "03 Feb 2026",
+        "status": "In Verification",
+        "benefit": "₹170 / month per person DBT (for 5 kg rice)",
+        "approval_date": "Expected by 28 Feb 2026",
+        "portal_url": "https://ahara.kar.nic.in"
+    }
+]
+
+def render_login_view(_tr, all_languages, lang_code_map):
+    """Renders Citizen Sign In Page matching Image 5 & Login.jsx exactly."""
+    # Top brand bar
+    top_c1, top_c2 = st.columns([3, 1], vertical_alignment="center")
+    with top_c1:
+        st.markdown(f"""
+        <div class="brand-wrap">
+            <div class="brand-logo">🏛️</div>
+            <div>
+                <div class="brand-title">{_tr('appName')} <span class="brand-pill">{_tr('allIndiaPill')}</span></div>
+                <div class="brand-subtitle">{_tr('tagline')}</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    with top_c2:
+        selected_lang_name = st.session_state.get("top_navbar_language", "English (English)")
+        st.selectbox(
+            "Language",
+            all_languages,
+            index=all_languages.index(selected_lang_name) if selected_lang_name in all_languages else 0,
+            key="login_page_language",
+            label_visibility="collapsed"
+        )
+        # sync language
+        if st.session_state.get("login_page_language"):
+            st.session_state["top_navbar_language"] = st.session_state["login_page_language"]
+            st.session_state["current_lang_code"] = lang_code_map.get(st.session_state["login_page_language"], "en")
+
+    st.markdown("<div style='height: 1.5rem;'></div>", unsafe_allow_html=True)
+
+    # Centered Login Card
+    _, card_col, _ = st.columns([1, 1.4, 1])
+    with card_col:
+        st.markdown(f"""
+        <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 1.5rem; padding: 2.25rem 2.25rem 1.5rem 2.25rem; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05), 0 8px 10px -6px rgba(0,0,0,0.02);">
+            <div style="text-align: center; margin-bottom: 1.5rem;">
+                <div style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.25rem 0.85rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 800; background-color: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; margin-bottom: 0.75rem;">
+                    🛡️ {_tr('citizenSignIn')}
+                </div>
+                <h1 style="font-size: 1.65rem; font-weight: 900; color: #0f172a; margin: 0 0 0.4rem 0; letter-spacing: -0.02em;">
+                    {_tr('loginTitle')}
+                </h1>
+                <p style="font-size: 0.82rem; color: #64748b; margin: 0; line-height: 1.4;">
+                    {_tr('loginSub')}
+                </p>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        with st.container():
+            st.markdown("<div style='height: 0.5rem;'></div>", unsafe_allow_html=True)
+            user_id_val = st.text_input(
+                f"{_tr('userIdLabel')} *",
+                value="@kpb1ndup625",
+                placeholder="e.g. @kpb1ndup625",
+                key="login_inp_user_id"
+            )
+            pwd_val = st.text_input(
+                f"{_tr('passwordLabel')} *",
+                value="password123",
+                type="password",
+                placeholder="Enter your password",
+                key="login_inp_password"
+            )
+            rem_me = st.checkbox(_tr('rememberMe'), value=True, key="login_chk_remember")
+
+            st.markdown("<div style='height: 0.35rem;'></div>", unsafe_allow_html=True)
+
+            if st.button(f"🔑 {_tr('loginBtn')}", key="btn_submit_login", use_container_width=True, type="primary"):
+                st.session_state["is_authenticated"] = True
+                st.session_state["guest_mode"] = False
+                st.session_state["current_page"] = "home"
+                st.session_state["top_navbar_tab_key"] = "home"
+                st.rerun()
+
+            st.markdown("""
+            <div style="position: relative; margin: 1.25rem 0; text-align: center;">
+                <hr style="border-color: #e2e8f0; margin: 0;">
+                <span style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background-color: #ffffff; padding: 0 0.75rem; font-size: 0.72rem; font-weight: 800; color: #94a3b8; text-transform: uppercase;">
+                    or
+                </span>
+            </div>
+            """, unsafe_allow_html=True)
+
+            if st.button(f"🧭 {_tr('guestBtn')}", key="btn_submit_guest", use_container_width=True):
+                st.session_state["guest_mode"] = True
+                st.session_state["is_authenticated"] = False
+                st.session_state["current_page"] = "home"
+                st.session_state["top_navbar_tab_key"] = "home"
+                st.rerun()
+
+            st.markdown("<div style='height: 0.5rem;'></div>", unsafe_allow_html=True)
+
+            st.markdown(f"""
+            <div style="border-top: 1px solid #f1f5f9; padding-top: 1rem; text-align: center; font-size: 0.8rem; color: #64748b;">
+                {_tr('noAccount')}
+            </div>
+            """, unsafe_allow_html=True)
+
+            if st.button(f"✨ {_tr('createAccountLink')}", key="btn_nav_to_register", use_container_width=True):
+                st.session_state["auth_page"] = "register"
+                st.rerun()
+
+        st.markdown(f"""
+        <div style="text-align: center; margin-top: 1.5rem; font-size: 0.72rem; font-weight: 700; color: #94a3b8;">
+            CivicGuide AI • Central & State Government Welfare Directory
+        </div>
+        """, unsafe_allow_html=True)
+
+
+def render_register_view(_tr, all_languages, all_states, lang_code_map):
+    """Renders Citizen Account Registration Page matching Image 6 & Register.jsx exactly."""
+    top_c1, top_c2 = st.columns([3, 1], vertical_alignment="center")
+    with top_c1:
+        st.markdown(f"""
+        <div class="brand-wrap">
+            <div class="brand-logo">🏛️</div>
+            <div>
+                <div class="brand-title">{_tr('appName')} <span class="brand-pill">{_tr('allIndiaPill')}</span></div>
+                <div class="brand-subtitle">{_tr('tagline')}</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    with top_c2:
+        selected_lang_name = st.session_state.get("top_navbar_language", "English (English)")
+        st.selectbox(
+            "Language",
+            all_languages,
+            index=all_languages.index(selected_lang_name) if selected_lang_name in all_languages else 0,
+            key="reg_page_language",
+            label_visibility="collapsed"
+        )
+        if st.session_state.get("reg_page_language"):
+            st.session_state["top_navbar_language"] = st.session_state["reg_page_language"]
+            st.session_state["current_lang_code"] = lang_code_map.get(st.session_state["reg_page_language"], "en")
+
+    st.markdown("<div style='height: 1.25rem;'></div>", unsafe_allow_html=True)
+
+    _, card_col, _ = st.columns([1, 2.2, 1])
+    with card_col:
+        st.markdown(f"""
+        <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 1.5rem; padding: 2rem 2.25rem 1.25rem 2.25rem; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);">
+            <div style="text-align: center; margin-bottom: 1.25rem;">
+                <div style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.25rem 0.85rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 800; background-color: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; margin-bottom: 0.5rem;">
+                    ✨ New Citizen Enrollment
+                </div>
+                <h1 style="font-size: 1.65rem; font-weight: 900; color: #0f172a; margin: 0 0 0.35rem 0;">
+                    {_tr('registerTitle')}
+                </h1>
+                <p style="font-size: 0.82rem; color: #64748b; margin: 0; line-height: 1.4;">
+                    {_tr('registerSub')}
+                </p>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        with st.container():
+            st.markdown("<div style='height: 0.5rem;'></div>", unsafe_allow_html=True)
+            r_name = st.text_input("1. Full Legal Name *", value="K P BINDUPRAKASHA", key="reg_name_inp")
+            
+            c_age, c_mob = st.columns(2)
+            with c_age:
+                r_age = st.number_input("2. Age (Years) *", min_value=1, max_value=120, value=24, key="reg_age_inp")
+            with c_mob:
+                r_mob = st.text_input("3. Mobile Number (10 Digits) *", value="9740397354", key="reg_mob_inp")
+
+            c_state, c_sex = st.columns(2)
+            with c_state:
+                states_clean = [s for s in all_states if s != "All India"]
+                def_state_idx = states_clean.index("Karnataka") if "Karnataka" in states_clean else 0
+                r_state = st.selectbox("4. State / Union Territory *", states_clean, index=def_state_idx, key="reg_state_inp")
+            with c_sex:
+                r_sex = st.selectbox("5. Sex / Gender *", ["Male", "Female", "Other"], index=0, key="reg_sex_inp")
+
+            available_langs = [l.split(" ")[0] for l in all_languages]
+            r_langs = st.multiselect(
+                "6. Languages Known *",
+                available_langs,
+                default=["English", "Kannada"] if "Kannada" in available_langs else ["English"],
+                key="reg_langs_inp"
+            )
+
+            r_email = st.text_input("7. Email Address *", value="kpbinduprakasha@gmail.com", key="reg_email_inp")
+
+            c_p1, c_p2 = st.columns(2)
+            with c_p1:
+                r_pwd = st.text_input("8. Password *", value="password123", type="password", key="reg_p1_inp")
+            with c_p2:
+                r_cpwd = st.text_input("9. Confirm Password *", value="password123", type="password", key="reg_p2_inp")
+
+            st.markdown("<div style='height: 0.5rem;'></div>", unsafe_allow_html=True)
+
+            if st.button("Create Account & Sign In →", key="btn_submit_reg", use_container_width=True, type="primary"):
+                st.session_state["citizen_user"] = {
+                    "full_name": r_name.strip() or "K P BINDUPRAKASHA",
+                    "user_id": f"@{r_name.lower().replace(' ', '')[:10]}625" if r_name else "@kpb1ndup625",
+                    "email": r_email.strip().lower() or "kpbinduprakasha@gmail.com",
+                    "mobile": f"+91 {r_mob.strip()}" if r_mob else "+91 9740397354",
+                    "age": int(r_age),
+                    "sex": r_sex,
+                    "state": r_state,
+                    "languages": r_langs if r_langs else ["English", "Kannada"],
+                    "github": "@kpbinduprakasha-cpu"
+                }
+                st.session_state["is_authenticated"] = True
+                st.session_state["guest_mode"] = False
+                st.session_state["current_page"] = "home"
+                st.session_state["top_navbar_tab_key"] = "home"
+                st.rerun()
+
+            st.markdown(f"""
+            <div style="border-top: 1px solid #f1f5f9; padding-top: 1rem; text-align: center; font-size: 0.8rem; color: #64748b;">
+                {_tr('alreadyAccount')}
+            </div>
+            """, unsafe_allow_html=True)
+
+            if st.button(f"🔑 {_tr('signInLink')}", key="btn_nav_to_login", use_container_width=True):
+                st.session_state["auth_page"] = "login"
+                st.rerun()
+
+
+def render_citizen_dashboard(_tr, all_languages, all_states, lang_code_map):
+    """Renders Citizen Dashboard matching Images 1, 2, and 3 exactly."""
+    user = st.session_state.get("citizen_user", DEFAULT_CITIZEN_USER)
+    apps = st.session_state.get("citizen_applications", DEFAULT_APPLICATIONS)
+
+    # -----------------------------------------------------------------------
+    # Top Bar: Matching Image 1 Exactly
+    # -----------------------------------------------------------------------
+    top_c1, top_c2 = st.columns([3.5, 3.5], vertical_alignment="center")
+    with top_c1:
+        st.markdown(f"""
+        <div class="brand-wrap">
+            <div class="brand-logo">🏛️</div>
+            <div>
+                <div class="brand-title">{_tr('appName')} <span class="brand-pill">{_tr('allIndiaPill')}</span></div>
+                <div class="brand-subtitle">{_tr('citizenDashboard')}</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    with top_c2:
+        btn_home_col, lang_col, logout_col = st.columns([2.4, 2.6, 1.8], vertical_alignment="center")
+        with btn_home_col:
+            if st.button(f"🏠 {_tr('goToHome')}", key="dash_top_btn_home", use_container_width=True):
+                st.session_state["current_page"] = "home"
+                st.session_state["top_navbar_tab_key"] = "home"
+                st.rerun()
+        with lang_col:
+            selected_lang_name = st.session_state.get("top_navbar_language", "English (English)")
+            st.selectbox(
+                "Language",
+                all_languages,
+                index=all_languages.index(selected_lang_name) if selected_lang_name in all_languages else 0,
+                key="dash_page_lang",
+                label_visibility="collapsed"
+            )
+            if st.session_state.get("dash_page_lang"):
+                st.session_state["top_navbar_language"] = st.session_state["dash_page_lang"]
+                st.session_state["current_lang_code"] = lang_code_map.get(st.session_state["dash_page_lang"], "en")
+        with logout_col:
+            if st.button(f"🚪 {_tr('logout')}", key="dash_top_btn_logout", use_container_width=True):
+                st.session_state["is_authenticated"] = False
+                st.session_state["guest_mode"] = False
+                st.session_state["auth_page"] = "login"
+                st.session_state["current_page"] = "home"
+                st.rerun()
+
+    st.markdown("<hr style='margin-top: 0.5rem; margin-bottom: 1.5rem; border-color: #e2e8f0;'>", unsafe_allow_html=True)
+
+    # -----------------------------------------------------------------------
+    # Section 1: Citizen Profile & Direct Application Tools (Matches Image 1)
+    # -----------------------------------------------------------------------
+    p_left, p_right = st.columns([2.1, 1.1])
+
+    with p_left:
+        # Profile Card
+        hdr_c1, hdr_c2 = st.columns([3, 2], vertical_alignment="center")
+        with hdr_c1:
+            st.markdown(f"""
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <span style="font-size: 1.25rem;">👤</span>
+                <span style="font-size: 1.35rem; font-weight: 900; color: #0f172a;">{_tr('citizenProfile')}</span>
+            </div>
+            <p style="font-size: 0.8rem; color: #64748b; margin: 0.2rem 0 1rem 0;">
+                {_tr('citizenProfileSub')}
+            </p>
+            """, unsafe_allow_html=True)
+        with hdr_c2:
+            e_col1, e_col2 = st.columns(2)
+            with e_col1:
+                if st.button("✏️ Edit Profile", key="btn_edit_profile", use_container_width=True):
+                    st.session_state["show_edit_prof"] = not st.session_state.get("show_edit_prof", False)
+                    st.rerun()
+            with e_col2:
+                if st.button("🔒 Change Password", key="btn_change_pwd", use_container_width=True):
+                    st.session_state["show_change_pwd"] = not st.session_state.get("show_change_pwd", False)
+                    st.rerun()
+
+        # Optional Edit Profile Form Drawer
+        if st.session_state.get("show_edit_prof", False):
+            with st.container():
+                st.markdown("""
+                <div style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 1rem; padding: 1.25rem; margin-bottom: 1rem;">
+                    <span style="font-size: 0.85rem; font-weight: 800; color: #0f172a;">✏️ Edit Citizen Profile Attributes</span>
+                </div>
+                """, unsafe_allow_html=True)
+                ed_name = st.text_input("Full Legal Name", value=user.get("full_name", "K P BINDUPRAKASHA"), key="ed_inp_name")
+                ed_c1, ed_c2 = st.columns(2)
+                with ed_c1:
+                    ed_age = st.number_input("Age", min_value=1, max_value=120, value=int(user.get("age", 24)), key="ed_inp_age")
+                with ed_c2:
+                    ed_mob = st.text_input("Mobile Number", value=user.get("mobile", "+91 9740397354").replace("+91 ", ""), key="ed_inp_mob")
+                
+                ed_c3, ed_c4 = st.columns(2)
+                with ed_c3:
+                    clean_states = [s for s in all_states if s != "All India"]
+                    state_val = user.get("state", "Karnataka")
+                    idx = clean_states.index(state_val) if state_val in clean_states else 0
+                    ed_state = st.selectbox("State / Territory", clean_states, index=idx, key="ed_inp_state")
+                with ed_c4:
+                    sex_options = ["Male", "Female", "Other"]
+                    sex_val = user.get("sex", "Male")
+                    sex_idx = sex_options.index(sex_val) if sex_val in sex_options else 0
+                    ed_sex = st.selectbox("Sex", sex_options, index=sex_idx, key="ed_inp_sex")
+                
+                ed_langs = st.multiselect(
+                    "Languages Known",
+                    [l.split(" ")[0] for l in all_languages],
+                    default=user.get("languages", ["English", "Kannada"]),
+                    key="ed_inp_langs"
+                )
+
+                if st.button("Save Profile Changes", key="btn_save_profile_ed", type="primary"):
+                    st.session_state["citizen_user"]["full_name"] = ed_name.strip()
+                    st.session_state["citizen_user"]["age"] = int(ed_age)
+                    st.session_state["citizen_user"]["mobile"] = f"+91 {ed_mob.strip()}"
+                    st.session_state["citizen_user"]["state"] = ed_state
+                    st.session_state["citizen_user"]["sex"] = ed_sex
+                    st.session_state["citizen_user"]["languages"] = ed_langs
+                    st.session_state["show_edit_prof"] = False
+                    st.success("Profile attributes updated successfully!")
+                    st.rerun()
+
+        # Optional Change Password Form Drawer
+        if st.session_state.get("show_change_pwd", False):
+            with st.container():
+                st.markdown("""
+                <div style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 1rem; padding: 1.25rem; margin-bottom: 1rem;">
+                    <span style="font-size: 0.85rem; font-weight: 800; color: #0f172a;">🔒 Change Account Password</span>
+                </div>
+                """, unsafe_allow_html=True)
+                st.text_input("Current Password", value="", type="password", key="pwd_cur")
+                p_new = st.text_input("New Password (Min 8 characters)", value="", type="password", key="pwd_new")
+                p_conf = st.text_input("Confirm New Password", value="", type="password", key="pwd_conf")
+                if st.button("Update Password", key="btn_save_pwd", type="primary"):
+                    if len(p_new) < 8:
+                        st.error("Password must be at least 8 characters.")
+                    elif p_new != p_conf:
+                        st.error("Passwords do not match.")
+                    else:
+                        st.session_state["show_change_pwd"] = False
+                        st.success("Password updated successfully!")
+                        st.rerun()
+
+        # Details Grid (Matches Image 1)
+        st.markdown(f"""
+        <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 1.5rem; padding: 1.75rem; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+                <div style="background-color: #f8fafc; border: 1px solid #f1f5f9; border-radius: 1rem; padding: 0.85rem 1.15rem;">
+                    <div style="font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 0.25rem;">FULL NAME</div>
+                    <div style="font-size: 1.05rem; font-weight: 800; color: #0f172a;">{user.get('full_name')}</div>
+                </div>
+                <div style="background-color: #f8fafc; border: 1px solid #f1f5f9; border-radius: 1rem; padding: 0.85rem 1.15rem;">
+                    <div style="font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 0.25rem;">USER ID (LOGIN ID)</div>
+                    <div style="font-size: 1.05rem; font-weight: 800; color: #047857;">{user.get('user_id')}</div>
+                </div>
+                <div style="background-color: #f8fafc; border: 1px solid #f1f5f9; border-radius: 1rem; padding: 0.85rem 1.15rem;">
+                    <div style="font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 0.25rem;">EMAIL ADDRESS</div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.95rem; font-weight: 800; color: #0f172a;">
+                        <span>{user.get('email')}</span>
+                        <span style="background-color: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; border-radius: 9999px; font-size: 0.65rem; font-weight: 800; padding: 0.1rem 0.5rem;">Verified</span>
+                    </div>
+                </div>
+                <div style="background-color: #f8fafc; border: 1px solid #f1f5f9; border-radius: 1rem; padding: 0.85rem 1.15rem;">
+                    <div style="font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 0.25rem;">MOBILE NUMBER</div>
+                    <div style="font-size: 1.05rem; font-weight: 800; color: #0f172a;">{user.get('mobile')}</div>
+                </div>
+                <div style="background-color: #f8fafc; border: 1px solid #f1f5f9; border-radius: 1rem; padding: 0.85rem 1.15rem;">
+                    <div style="font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 0.25rem;">AGE & SEX</div>
+                    <div style="font-size: 1.05rem; font-weight: 800; color: #0f172a;">{user.get('age')} years old • {user.get('sex')}</div>
+                </div>
+                <div style="background-color: #f8fafc; border: 1px solid #f1f5f9; border-radius: 1rem; padding: 0.85rem 1.15rem;">
+                    <div style="font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 0.25rem;">STATE / TERRITORY</div>
+                    <div style="font-size: 1.05rem; font-weight: 800; color: #0f172a;">📍 {user.get('state')}</div>
+                </div>
+            </div>
+
+            <div style="background-color: #f8fafc; border: 1px solid #f1f5f9; border-radius: 1rem; padding: 0.85rem 1.15rem; margin-top: 1rem;">
+                <div style="font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 0.35rem;">LANGUAGES KNOWN</div>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    {' '.join([f'<span style="background-color: #ffffff; border: 1px solid #cbd5e1; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; color: #047857; padding: 0.2rem 0.75rem;">{l}</span>' for l in user.get('languages', ['English', 'Kannada'])])}
+                </div>
+            </div>
+
+            <div style="margin-top: 1rem; padding: 0.85rem 1.15rem; background-color: #0f172a; border-radius: 1rem; display: flex; align-items: center; justify-content: space-between; color: white;">
+                <div style="display: flex; align-items: center; gap: 0.65rem;">
+                    <span style="font-size: 1.25rem;">🐙</span>
+                    <div>
+                        <div style="font-size: 0.65rem; font-weight: 700; color: #94a3b8; text-transform: uppercase;">DEVELOPER & CITIZEN GITHUB</div>
+                        <div style="font-size: 0.95rem; font-weight: 800; color: #ffffff;">{user.get('github')}</div>
+                    </div>
+                </div>
+                <a href="https://github.com/kpbinduprakasha-cpu/CivicGuide-AI" target="_blank" style="background-color: #ffffff; color: #0f172a !important; font-size: 0.75rem; font-weight: 800; text-decoration: none; padding: 0.4rem 0.85rem; border-radius: 0.75rem;">
+                    CivicGuide-AI Repo ↗
+                </a>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with p_right:
+        # Direct Application Tools (Matches Image 1)
+        st.markdown(f"""
+        <div style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 0.65rem;">
+            {_tr('directTools')}
+        </div>
+        """, unsafe_allow_html=True)
+
+        if st.button("🏛️ Government Schemes\nBrowse verified national & state welfare", key="tool_btn_schemes", use_container_width=True):
+            st.session_state["top_navbar_tab_key"] = "schemes"
+            st.session_state["current_page"] = "schemes"
+            st.rerun()
+
+        st.markdown("<div style='height: 0.4rem;'></div>", unsafe_allow_html=True)
+
+        if st.button("🤖 AI Policy Chatbot\nAsk questions in regional languages", key="tool_btn_chat", use_container_width=True):
+            st.session_state["top_navbar_tab_key"] = "chatbot"
+            st.session_state["current_page"] = "chatbot"
+            st.rerun()
+
+        st.markdown("<div style='height: 0.4rem;'></div>", unsafe_allow_html=True)
+
+        if st.button("📋 Eligibility Checker\nFind matching welfare programs", key="tool_btn_elig", use_container_width=True):
+            st.session_state["top_navbar_tab_key"] = "eligibility"
+            st.session_state["current_page"] = "eligibility"
+            st.rerun()
+
+        st.markdown("<div style='height: 0.4rem;'></div>", unsafe_allow_html=True)
+
+        if st.button("📍 Government Service Map\nLocate CSCs, hospitals & offices", key="tool_btn_map", use_container_width=True):
+            st.session_state["top_navbar_tab_key"] = "serviceMap"
+            st.session_state["current_page"] = "serviceMap"
+            st.rerun()
+
+    st.markdown("<div style='height: 1.75rem;'></div>", unsafe_allow_html=True)
+
+    # -----------------------------------------------------------------------
+    # Section 2: Scheme Applications & Approvals Tracker (Matches Image 2)
+    # -----------------------------------------------------------------------
+    tr_h1, tr_h2 = st.columns([4, 1.2], vertical_alignment="center")
+    with tr_h1:
+        st.markdown(f"""
+        <div style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.2rem 0.65rem; border-radius: 9999px; font-size: 0.72rem; font-weight: 800; background-color: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; margin-bottom: 0.35rem;">
+            🕒 Central & State Government Applications Overview
+        </div>
+        <h2 style="font-size: 1.55rem; font-weight: 900; color: #0f172a; margin: 0 0 0.2rem 0;">
+            {_tr('trackerTitle')}
+        </h2>
+        <p style="font-size: 0.8rem; color: #64748b; margin: 0;">
+            {_tr('trackerSub')}
+        </p>
+        """, unsafe_allow_html=True)
+    with tr_h2:
+        if st.button(f"➕ {_tr('applySchemeBtn')}", key="dash_btn_apply_scheme", type="primary", use_container_width=True):
+            st.session_state["top_navbar_tab_key"] = "schemes"
+            st.session_state["current_page"] = "schemes"
+            st.rerun()
+
+    st.markdown("<div style='height: 0.85rem;'></div>", unsafe_allow_html=True)
+
+    # 4 Metric Cards (Image 2)
+    m1, m2, m3, m4 = st.columns(4)
+    with m1:
+        st.markdown("""
+        <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 1.25rem; padding: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.02); height: 100%;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                <span style="font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: #1d4ed8; letter-spacing: 0.05em;">TOTAL APPLIED</span>
+                <span style="background-color: #eff6ff; color: #1d4ed8; border-radius: 0.5rem; padding: 0.25rem 0.5rem; font-size: 0.85rem;">📄</span>
+            </div>
+            <div style="display: flex; align-items: baseline; gap: 0.4rem; margin-bottom: 0.2rem;">
+                <span style="font-size: 2rem; font-weight: 900; color: #0f172a;">8</span>
+                <span style="font-size: 0.85rem; font-weight: 800; color: #475569;">Schemes</span>
+            </div>
+            <div style="font-size: 0.75rem; color: #64748b; margin-bottom: 1rem;">4 Central • 4 State Govts</div>
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 0.75rem; font-size: 0.72rem;">
+                <span style="color: #64748b;">Application Portfolio</span>
+                <span style="font-weight: 800; color: #1d4ed8; background-color: #eff6ff; padding: 0.15rem 0.5rem; border-radius: 0.35rem;">100% Active</span>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with m2:
+        st.markdown("""
+        <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 1.25rem; padding: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.02); height: 100%;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                <span style="font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: #047857; letter-spacing: 0.05em;">TOTAL APPROVED</span>
+                <span style="background-color: #ecfdf5; color: #047857; border-radius: 0.5rem; padding: 0.25rem 0.5rem; font-size: 0.85rem;">✓</span>
+            </div>
+            <div style="display: flex; align-items: baseline; gap: 0.4rem; margin-bottom: 0.2rem;">
+                <span style="font-size: 2rem; font-weight: 900; color: #047857;">6</span>
+                <span style="font-size: 0.85rem; font-weight: 800; color: #047857;">Sanctioned</span>
+            </div>
+            <div style="font-size: 0.75rem; color: #64748b; margin-bottom: 1rem;">75% Overall Approval Success</div>
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 0.75rem; font-size: 0.72rem;">
+                <span style="color: #64748b;">Verified Direct Benefits</span>
+                <span style="font-weight: 800; color: #047857; background-color: #ecfdf5; padding: 0.15rem 0.5rem; border-radius: 0.35rem;">Active</span>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with m3:
+        st.markdown("""
+        <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 1.25rem; padding: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.02); height: 100%;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                <span style="font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: #b45309; letter-spacing: 0.05em;">IN VERIFICATION</span>
+                <span style="background-color: #fffbeb; color: #b45309; border-radius: 0.5rem; padding: 0.25rem 0.5rem; font-size: 0.85rem;">⏳</span>
+            </div>
+            <div style="display: flex; align-items: baseline; gap: 0.4rem; margin-bottom: 0.2rem;">
+                <span style="font-size: 2rem; font-weight: 900; color: #b45309;">2</span>
+                <span style="font-size: 0.85rem; font-weight: 800; color: #b45309;">Processing</span>
+            </div>
+            <div style="font-size: 0.75rem; color: #64748b; margin-bottom: 1rem;">1 Central • 1 State Under Review</div>
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 0.75rem; font-size: 0.72rem;">
+                <span style="color: #64748b;">Departmental Scrutiny</span>
+                <span style="font-weight: 800; color: #b45309; background-color: #fffbeb; padding: 0.15rem 0.5rem; border-radius: 0.35rem;">Pending Signoff</span>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with m4:
+        st.markdown("""
+        <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 1.25rem; padding: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.02); height: 100%;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                <span style="font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: #7e22ce; letter-spacing: 0.05em;">ANNUAL SUPPORT</span>
+                <span style="background-color: #faf5ff; color: #7e22ce; border-radius: 0.5rem; padding: 0.25rem 0.5rem; font-size: 0.85rem;">🪙</span>
+            </div>
+            <div style="display: flex; align-items: baseline; gap: 0.4rem; margin-bottom: 0.2rem;">
+                <span style="font-size: 2rem; font-weight: 900; color: #7e22ce;">₹66,000+</span>
+            </div>
+            <div style="font-size: 0.75rem; color: #64748b; margin-bottom: 1rem;">Direct Cash DBT + ₹5L Health Cover</div>
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 0.75rem; font-size: 0.72rem;">
+                <span style="color: #64748b;">Direct to Bank Account</span>
+                <span style="font-weight: 800; color: #7e22ce; background-color: #faf5ff; padding: 0.15rem 0.5rem; border-radius: 0.35rem;">Aadhaar Linked</span>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    st.markdown("<div style='height: 1.5rem;'></div>", unsafe_allow_html=True)
+
+    # Circle Graphs (Matches Image 2)
+    st.markdown(f"""
+    <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 1.5rem; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+            <div>
+                <div style="display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; font-weight: 800; color: #047857; margin-bottom: 0.2rem;">
+                    🕒 {_tr('circleGraphsTitle')}
+                </div>
+                <div style="font-size: 0.78rem; color: #64748b;">
+                    {_tr('circleGraphsSub')}
+                </div>
+            </div>
+            <span style="font-size: 0.72rem; font-weight: 800; color: #475569; background-color: #f1f5f9; padding: 0.25rem 0.65rem; border-radius: 9999px;">
+                Official 2026 Audit View
+            </span>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem;">
+            <!-- Graph 1 -->
+            <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 1.25rem; padding: 1.5rem; text-align: center;">
+                <div style="font-size: 0.72rem; font-weight: 800; text-transform: uppercase; color: #475569; letter-spacing: 0.05em; margin-bottom: 1rem;">
+                    OVERALL APPROVAL RATE
+                </div>
+                <div style="position: relative; width: 120px; height: 120px; margin: 0 auto 0.75rem auto;">
+                    <svg width="120" height="120" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="40" stroke="#e2e8f0" stroke-width="10" fill="transparent" />
+                        <circle cx="50" cy="50" r="40" stroke="#10b981" stroke-width="10" fill="transparent"
+                                stroke-dasharray="251.3" stroke-dashoffset="62.8" stroke-linecap="round"
+                                transform="rotate(-90 50 50)" />
+                        <text x="50" y="56" font-size="20" font-weight="900" text-anchor="middle" fill="#0f172a">75%</text>
+                    </svg>
+                </div>
+                <div style="font-size: 0.75rem; font-weight: 700; color: #047857;">6 of 8 Sanctioned</div>
+                <div style="font-size: 0.68rem; color: #64748b;">Direct benefit transfer enabled</div>
+            </div>
+            <!-- Graph 2 -->
+            <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 1.25rem; padding: 1.5rem; text-align: center;">
+                <div style="font-size: 0.72rem; font-weight: 800; text-transform: uppercase; color: #475569; letter-spacing: 0.05em; margin-bottom: 1rem;">
+                    CENTRAL VS. STATE GOVERNMENT
+                </div>
+                <div style="position: relative; width: 120px; height: 120px; margin: 0 auto 0.75rem auto;">
+                    <svg width="120" height="120" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="40" stroke="#3b82f6" stroke-width="10" fill="transparent"
+                                stroke-dasharray="251.3" stroke-dashoffset="125.65" stroke-linecap="round"
+                                transform="rotate(-90 50 50)" />
+                        <circle cx="50" cy="50" r="40" stroke="#10b981" stroke-width="10" fill="transparent"
+                                stroke-dasharray="251.3" stroke-dashoffset="125.65" stroke-linecap="round"
+                                transform="rotate(90 50 50)" />
+                        <text x="50" y="56" font-size="18" font-weight="900" text-anchor="middle" fill="#0f172a">50 / 50</text>
+                    </svg>
+                </div>
+                <div style="font-size: 0.75rem; font-weight: 700; color: #1e40af;">4 Central • 4 State</div>
+                <div style="font-size: 0.68rem; color: #64748b;">Balanced jurisdictional reach</div>
+            </div>
+            <!-- Graph 3 -->
+            <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 1.25rem; padding: 1.5rem; text-align: center;">
+                <div style="font-size: 0.72rem; font-weight: 800; text-transform: uppercase; color: #475569; letter-spacing: 0.05em; margin-bottom: 1rem;">
+                    APPLICATION STATUS LIFECYCLE
+                </div>
+                <div style="position: relative; width: 120px; height: 120px; margin: 0 auto 0.75rem auto;">
+                    <svg width="120" height="120" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="40" stroke="#10b981" stroke-width="10" fill="transparent"
+                                stroke-dasharray="251.3" stroke-dashoffset="62.8" stroke-linecap="round"
+                                transform="rotate(-90 50 50)" />
+                        <circle cx="50" cy="50" r="40" stroke="#f59e0b" stroke-width="10" fill="transparent"
+                                stroke-dasharray="251.3" stroke-dashoffset="188.4" stroke-linecap="round"
+                                transform="rotate(180 50 50)" />
+                        <text x="50" y="56" font-size="18" font-weight="900" text-anchor="middle" fill="#0f172a">6 / 2</text>
+                    </svg>
+                </div>
+                <div style="font-size: 0.75rem; font-weight: 700; color: #b45309;">6 Approved • 2 In Review</div>
+                <div style="font-size: 0.68rem; color: #64748b;">0 Rejected applications</div>
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("<div style='height: 2rem;'></div>", unsafe_allow_html=True)
+
+    # -----------------------------------------------------------------------
+    # Section 3: Application Records & Verification Dossier (Matches Image 3)
+    # -----------------------------------------------------------------------
+    dos_h1, dos_h2 = st.columns([3.5, 2.5], vertical_alignment="center")
+    with dos_h1:
+        st.markdown(f"""
+        <h2 style="font-size: 1.45rem; font-weight: 900; color: #0f172a; margin: 0 0 0.2rem 0;">
+            {_tr('dossierTitle')}
+        </h2>
+        <p style="font-size: 0.8rem; color: #64748b; margin: 0;">
+            {_tr('dossierSub')}
+        </p>
+        """, unsafe_allow_html=True)
+    with dos_h2:
+        search_dossier = st.text_input(
+            "Filter ledger",
+            placeholder="🔍 Filter by scheme, ack, category...",
+            key="inp_dossier_search",
+            label_visibility="collapsed"
+        )
+
+    st.markdown("<div style='height: 0.5rem;'></div>", unsafe_allow_html=True)
+
+    # Filter Pills
+    filter_choice = st.radio(
+        "Dossier Filter",
+        ["All Schemes (8)", "🏛️ Central Gov (4)", "📍 State Gov (4)", "✓ Approved Only (6)", "⏳ In Review (2)"],
+        horizontal=True,
+        label_visibility="collapsed",
+        key="dossier_filter_choice"
+    )
+
+    filtered_apps = list(apps)
+    if filter_choice == "🏛️ Central Gov (4)":
+        filtered_apps = [a for a in filtered_apps if "central" in a.get("government_level", "").lower()]
+    elif filter_choice == "📍 State Gov (4)":
+        filtered_apps = [a for a in filtered_apps if "state" in a.get("government_level", "").lower()]
+    elif filter_choice == "✓ Approved Only (6)":
+        filtered_apps = [a for a in filtered_apps if a.get("status") == "Approved"]
+    elif filter_choice == "⏳ In Review (2)":
+        filtered_apps = [a for a in filtered_apps if a.get("status") != "Approved"]
+
+    if search_dossier and search_dossier.strip():
+        q = search_dossier.strip().lower()
+        filtered_apps = [
+            a for a in filtered_apps
+            if q in a.get("scheme_name", "").lower()
+            or q in a.get("ack_no", "").lower()
+            or q in a.get("category", "").lower()
+            or q in a.get("government_level", "").lower()
+        ]
+
+    st.markdown("<div style='height: 0.65rem;'></div>", unsafe_allow_html=True)
+
+    # 8 Application Ledger Cards (Matches Image 3)
+    for app in filtered_apps:
+        is_approved = app.get("status") == "Approved"
+        status_bg = "#ecfdf5" if is_approved else "#fffbeb"
+        status_color = "#047857" if is_approved else "#b45309"
+        status_border = "#a7f3d0" if is_approved else "#fde68a"
+        status_icon = "✓ Approved" if is_approved else "⏳ In Verification"
+
+        gov_level = app.get("government_level", "").upper()
+        applied_date = app.get("applied_date", "")
+        category = app.get("category", "")
+        scheme_title = app.get("scheme_name", "")
+        ack_no = app.get("ack_no", "")
+        benefit = app.get("benefit", "")
+        approval_date = app.get("approval_date", "")
+        portal_url = app.get("portal_url", "https://www.myscheme.gov.in")
+
+        st.markdown(f"""
+        <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 1.25rem; padding: 1.2rem 1.6rem; margin-bottom: 0.85rem; box-shadow: 0 1px 2px rgba(0,0,0,0.02); display: flex; justify-content: space-between; align-items: center;">
+            <div style="flex: 1;">
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem; font-size: 0.72rem; color: #64748b; font-weight: 700;">
+                    <span style="background-color: #eff6ff; color: #1d4ed8; padding: 0.15rem 0.55rem; border-radius: 9999px; font-weight: 800; font-size: 0.68rem;">{gov_level}</span>
+                    <span>•</span>
+                    <span>Applied: {applied_date}</span>
+                    <span>•</span>
+                    <span>Category: {category}</span>
+                </div>
+                <h3 style="font-size: 1.15rem; font-weight: 900; color: #0f172a; margin: 0 0 0.35rem 0;">
+                    {scheme_title}
+                </h3>
+                <div style="font-size: 0.82rem; color: #475569; font-weight: 600;">
+                    <span style="font-family: monospace; font-weight: 700; color: #0f172a;">Ack No: {ack_no}</span>
+                    <span style="margin: 0 0.35rem;">•</span>
+                    <span>Benefit: <strong style="color: #047857;">{benefit}</strong></span>
+                </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 1rem; margin-left: 1.5rem;">
+                <div style="text-align: right;">
+                    <div style="display: inline-flex; align-items: center; gap: 0.35rem; background-color: {status_bg}; color: {status_color}; border: 1px solid {status_border}; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 800; margin-bottom: 0.25rem;">
+                        {status_icon}
+                    </div>
+                    <div style="font-size: 0.7rem; color: #64748b; font-weight: 600;">
+                        {approval_date}
+                    </div>
+                </div>
+                <a href="{portal_url}" target="_blank" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 0.75rem; border: 1px solid #e2e8f0; background-color: #f8fafc; color: #475569 !important; text-decoration: none; font-size: 1rem; transition: all 0.2s ease;">
+                    ↗
+                </a>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)

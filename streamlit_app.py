@@ -365,6 +365,39 @@ st.markdown("""
         color: #334155 !important;
         min-height: 2.3rem !important;
     }
+
+    /* Navbar Action Buttons (Dashboard Avatar & Logout) */
+    button:has(p:contains("▦ K")) {
+        background-color: #ecfdf5 !important;
+        color: #047857 !important;
+        border: 1.5px solid #a7f3d0 !important;
+        border-radius: 0.75rem !important;
+        font-weight: 900 !important;
+        font-size: 0.95rem !important;
+        padding: 0.45rem 0.65rem !important;
+        transition: all 0.2s ease !important;
+    }
+    button:has(p:contains("▦ K")):hover {
+        background-color: #047857 !important;
+        color: #ffffff !important;
+        border-color: #047857 !important;
+    }
+    
+    button:has(p:contains("🚪")) {
+        background-color: #f8fafc !important;
+        color: #64748b !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 0.75rem !important;
+        font-weight: 800 !important;
+        font-size: 0.95rem !important;
+        padding: 0.45rem 0.65rem !important;
+        transition: all 0.2s ease !important;
+    }
+    button:has(p:contains("🚪")):hover {
+        background-color: #fee2e2 !important;
+        color: #b91c1c !important;
+        border-color: #fecaca !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -373,6 +406,13 @@ st.markdown("""
 # ---------------------------------------------------------------------------
 from translations import ALL_INDIAN_LANGUAGES, LANG_CODE_MAP, t, TRANSLATIONS
 from state_districts_data import ALL_STATES_DISTRICTS_TALUKS, DISTRICT_COORDINATES
+from citizen_dashboard_auth import (
+    DEFAULT_CITIZEN_USER,
+    DEFAULT_APPLICATIONS,
+    render_login_view,
+    render_register_view,
+    render_citizen_dashboard
+)
 
 def _tr(key, default=None):
     cur_code = st.session_state.get("current_lang_code", "en")
@@ -780,16 +820,47 @@ CivicGuide AI assists Indian citizens with verified guidelines, eligibility chec
 schemes_list, services_list = load_database_data()
 
 # ---------------------------------------------------------------------------
-# TOP NAVBAR: Matches User Image Exactly (Single Line Layout & Multilingual)
+# SESSION STATE & CITIZEN AUTHENTICATION GATE
 # ---------------------------------------------------------------------------
+if "is_authenticated" not in st.session_state:
+    st.session_state["is_authenticated"] = False
+if "guest_mode" not in st.session_state:
+    st.session_state["guest_mode"] = False
+if "auth_page" not in st.session_state:
+    st.session_state["auth_page"] = "login"
+if "current_page" not in st.session_state:
+    st.session_state["current_page"] = "home"
+if "citizen_user" not in st.session_state:
+    st.session_state["citizen_user"] = dict(DEFAULT_CITIZEN_USER)
+if "citizen_applications" not in st.session_state:
+    st.session_state["citizen_applications"] = list(DEFAULT_APPLICATIONS)
+
 selected_lang_name = st.session_state.get("top_navbar_language", "English (English)")
 cur_lang_code = LANG_CODE_MAP.get(selected_lang_name, "en")
 st.session_state["current_lang_code"] = cur_lang_code
 
+# If user is not authenticated and not in guest mode, render Citizen Sign In / Registration
+if not st.session_state.get("is_authenticated", False) and not st.session_state.get("guest_mode", False):
+    if st.session_state.get("auth_page", "login") == "login":
+        render_login_view(_tr, ALL_INDIAN_LANGUAGES, LANG_CODE_MAP)
+    else:
+        render_register_view(_tr, ALL_INDIAN_LANGUAGES, ALL_INDIAN_STATES, LANG_CODE_MAP)
+    st.stop()
+
+# ---------------------------------------------------------------------------
+# CITIZEN DASHBOARD ROUTE (When active page is "dashboard")
+# ---------------------------------------------------------------------------
+if st.session_state.get("current_page") == "dashboard":
+    render_citizen_dashboard(_tr, ALL_INDIAN_LANGUAGES, ALL_INDIAN_STATES, LANG_CODE_MAP)
+    st.stop()
+
+# ---------------------------------------------------------------------------
+# TOP NAVBAR: Matches User Image Exactly (Single Line Layout & Multilingual)
+# ---------------------------------------------------------------------------
 if "top_navbar_tab_key" not in st.session_state:
     st.session_state.top_navbar_tab_key = "home"
 
-nav_col_logo, nav_col_tabs, nav_col_right = st.columns([1.8, 7.4, 2.8], vertical_alignment="center")
+nav_col_logo, nav_col_tabs, nav_col_right = st.columns([1.8, 6.2, 4.0], vertical_alignment="center")
 
 with nav_col_logo:
     st.markdown(f"""
@@ -821,23 +892,46 @@ with nav_col_tabs:
     )
 
 with nav_col_right:
-    c_lang, c_gh, c_user = st.columns([5.0, 2.2, 1.0], vertical_alignment="center")
-    with c_lang:
-        selected_lang = st.selectbox(
-            "Language",
-            ALL_INDIAN_LANGUAGES,
-            index=ALL_INDIAN_LANGUAGES.index(selected_lang_name) if selected_lang_name in ALL_INDIAN_LANGUAGES else 0,
-            key="top_navbar_language",
-            label_visibility="collapsed"
-        )
-    with c_gh:
-        st.link_button("GitHub", "https://github.com/kpbinduprakasha-cpu/CivicGuide-AI")
-    with c_user:
-        st.markdown("""
-        <div style="width: 34px; height: 34px; border-radius: 50%; background-color: #047857; color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.95rem; border: 2px solid #a7f3d0;" title="Citizen: K P BINDUPRAKASHA">
-            K
-        </div>
-        """, unsafe_allow_html=True)
+    if st.session_state.get("is_authenticated", False):
+        c_lang, c_gh, c_dash, c_logout = st.columns([3.8, 1.8, 1.3, 1.1], vertical_alignment="center")
+        with c_lang:
+            selected_lang = st.selectbox(
+                "Language",
+                ALL_INDIAN_LANGUAGES,
+                index=ALL_INDIAN_LANGUAGES.index(selected_lang_name) if selected_lang_name in ALL_INDIAN_LANGUAGES else 0,
+                key="top_navbar_language",
+                label_visibility="collapsed"
+            )
+        with c_gh:
+            st.link_button("GitHub", "https://github.com/kpbinduprakasha-cpu/CivicGuide-AI")
+        with c_dash:
+            if st.button("▦ K", key="top_navbar_dash_btn", help="Citizen Dashboard: K P BINDUPRAKASHA", use_container_width=True):
+                st.session_state["current_page"] = "dashboard"
+                st.rerun()
+        with c_logout:
+            if st.button("🚪", key="top_navbar_logout_btn", help="Logout", use_container_width=True):
+                st.session_state["is_authenticated"] = False
+                st.session_state["guest_mode"] = False
+                st.session_state["auth_page"] = "login"
+                st.session_state["current_page"] = "home"
+                st.rerun()
+    else:
+        c_lang, c_gh, c_login = st.columns([4.2, 2.0, 2.0], vertical_alignment="center")
+        with c_lang:
+            selected_lang = st.selectbox(
+                "Language",
+                ALL_INDIAN_LANGUAGES,
+                index=ALL_INDIAN_LANGUAGES.index(selected_lang_name) if selected_lang_name in ALL_INDIAN_LANGUAGES else 0,
+                key="top_navbar_language",
+                label_visibility="collapsed"
+            )
+        with c_gh:
+            st.link_button("GitHub", "https://github.com/kpbinduprakasha-cpu/CivicGuide-AI")
+        with c_login:
+            if st.button("🔑 Sign In", key="top_navbar_signin_btn", use_container_width=True):
+                st.session_state["guest_mode"] = False
+                st.session_state["auth_page"] = "login"
+                st.rerun()
 
 st.markdown("<hr style='margin-top: 0.2rem; margin-bottom: 1.25rem; border-color: #e2e8f0;'>", unsafe_allow_html=True)
 
