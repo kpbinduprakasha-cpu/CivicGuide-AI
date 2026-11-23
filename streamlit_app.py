@@ -16,6 +16,11 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
+def render_html(html_str: str):
+    """Safely renders HTML in Streamlit without triggering Markdown 4-space code block formatting."""
+    clean_lines = [line.strip() for line in html_str.strip().splitlines() if line.strip()]
+    st.markdown(" ".join(clean_lines), unsafe_allow_html=True)
+
 # ---------------------------------------------------------------------------
 # Custom CSS: Perfectly matches React Tailwind CSS Design System
 # ---------------------------------------------------------------------------
@@ -1008,7 +1013,7 @@ if "top_navbar_tab_key" not in st.session_state:
 nav_col_logo, nav_col_tabs, nav_col_right = st.columns([1.8, 6.2, 4.0], vertical_alignment="center")
 
 with nav_col_logo:
-    st.markdown(f"""
+    render_html(f"""
     <div class="brand-wrap">
         <div class="brand-logo">🏛️</div>
         <div>
@@ -1016,7 +1021,7 @@ with nav_col_logo:
             <div class="brand-subtitle">{_tr('tagline')}</div>
         </div>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
 NAV_ICONS = {
     "home": "🧭",
@@ -1148,15 +1153,15 @@ if active_nav_key == "schemes":
         view_mode = st.radio("Display Mode", ["Cards View", "Combined Table"], horizontal=True, label_visibility="collapsed")
     with ctrl4:
         # Counter pill
-        st.markdown(f"""
+        render_html(f"""
         <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 0.45rem 0.75rem; font-size: 0.8rem; font-weight: 800; color: #334155; text-align: center;">
             Showing <span style="color: #047857;">{len(schemes_list)}</span> schemes
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
     # Official State Government Portal Banner (Matches Image 2)
     portal_info = STATE_OFFICIAL_PORTALS.get(selected_state, STATE_OFFICIAL_PORTALS["All India"])
-    st.markdown(f"""
+    render_html(f"""
     <div class="portal-banner">
         <div style="display: flex; align-items: center; gap: 0.75rem;">
             <div style="width: 40px; height: 40px; background-color: #047857; color: white; border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0;">
@@ -1180,15 +1185,15 @@ if active_nav_key == "schemes":
             </a>
         </div>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
     # Row 3: Target Citizen Group Filter (Matches Image 2)
-    st.markdown("""
+    render_html("""
     <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.75rem; margin-bottom: 0.35rem;">
         <span style="font-size: 0.75rem; font-weight: 800; color: #334155; text-transform: uppercase; letter-spacing: 0.05em;">Target Citizen Group:</span>
         <span style="font-size: 0.7rem; font-weight: 700; color: #94a3b8; text-transform: uppercase;">Select audience filter</span>
     </div>
-    """, unsafe_allow_html=True)
+    """)
     
     target_group = st.radio(
         "Target Citizen Group",
@@ -1206,12 +1211,12 @@ if active_nav_key == "schemes":
     )
 
     # Row 4: Welfare Sector Filter
-    st.markdown("""
+    render_html("""
     <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.75rem; margin-bottom: 0.35rem;">
         <span style="font-size: 0.75rem; font-weight: 800; color: #334155; text-transform: uppercase; letter-spacing: 0.05em;">Welfare Sector:</span>
         <span style="font-size: 0.7rem; font-weight: 700; color: #94a3b8; text-transform: uppercase;">Select sector filter</span>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
     welfare_sector = st.radio(
         "Welfare Sector",
@@ -1356,7 +1361,7 @@ if active_nav_key == "schemes":
                         doc_text = scheme.get('required_documents') or "Aadhaar Card, Identity Proof, Bank Passbook, Address Proof"
                         portal_url = scheme.get('official_url') or "https://www.myscheme.gov.in"
                         
-                        st.markdown(f"""
+                        render_html(f"""
                         <div class="scheme-card" style="height: 560px; min-height: 560px; max-height: 560px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; margin-bottom: 0.5rem; box-sizing: border-box;">
                             <div>
                                 <div style="height: 24px; margin-bottom: 0.25rem;">{badge_html}</div>
@@ -1391,10 +1396,10 @@ if active_nav_key == "schemes":
                                 </a>
                             </div>
                         </div>
-                        """, unsafe_allow_html=True)
+                        """)
                         
                         with st.expander(f"⚡ 3-Minute Quick Application Guide: {scheme.get('name')}"):
-                            st.markdown(f"""
+                            render_html(f"""
                             <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 0.85rem; margin-bottom: 0.65rem;">
                                 <div style="font-size: 0.85rem; font-weight: 800; color: #0f172a; margin-bottom: 0.35rem;">
                                     ⏱️ Complete Application in Only 3 Minutes:
@@ -1405,7 +1410,7 @@ if active_nav_key == "schemes":
                                     • <strong>Minute 3:</strong> Final submission & instant ACK receipt generation.
                                 </div>
                             </div>
-                            """, unsafe_allow_html=True)
+                            """)
                             st.markdown(f"**How to Apply:** {scheme.get('application_process', 'Apply online via the official portal with required documents.')}")
                             if scheme.get('official_url'):
                                 st.markdown(f"**Official Portal:** [{scheme.get('official_url')}]({scheme.get('official_url')})")
@@ -1436,7 +1441,7 @@ if active_nav_key == "schemes":
 elif active_nav_key == "home":
     
     # 1. HERO SECTION (Matches Images 4 & 5)
-    st.markdown(f"""
+    render_html(f"""
     <div style="background: linear-gradient(180deg, #064e3b 0%, #0f172a 100%); color: white; padding: 3rem 2rem 2.5rem 2rem; border-radius: 1.5rem; text-align: center; margin-bottom: 1.5rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.25);">
         <div style="display: inline-flex; align-items: center; gap: 0.5rem; background-color: rgba(16, 185, 129, 0.2); border: 1px solid rgba(16, 185, 129, 0.4); padding: 0.35rem 1rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 700; color: #6ee7b7; margin-bottom: 1.25rem;">
             {_tr('districtTag')} • {_tr('verifiedBadge')}
@@ -1448,7 +1453,7 @@ elif active_nav_key == "home":
             {_tr('heroSubtitle')}
         </p>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
     # Hero Search Bar (Matches Image 4)
     h_s_col1, h_s_col2 = st.columns([5, 1.2])
@@ -1461,7 +1466,7 @@ elif active_nav_key == "home":
     st.markdown("<div style='height: 1rem;'></div>", unsafe_allow_html=True)
 
     # 2. STATE EXPLORER PILLS & STATS (Matches Image 5)
-    st.markdown(f"""
+    render_html(f"""
     <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 1.5rem;">
         <span style="font-size: 0.85rem; font-weight: 800; color: #475569;">{_tr('exploreByState')}</span>
         <span style="background-color: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; padding: 0.2rem 0.65rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 800;">Karnataka</span>
@@ -1472,43 +1477,43 @@ elif active_nav_key == "home":
         <span style="background-color: #f1f5f9; color: #334155; border: 1px solid #e2e8f0; padding: 0.2rem 0.65rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 800;">West Bengal</span>
         <span style="background-color: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; padding: 0.2rem 0.65rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 800;">All India +</span>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
     # 4 Stat Counters (Matches Image 5 - Uniform Height)
     m1, m2, m3, m4 = st.columns(4)
     with m1:
-        st.markdown(f"""
+        render_html(f"""
         <div class="filter-card" style="text-align: center; border-radius: 1.25rem; height: 110px; min-height: 110px; max-height: 110px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-sizing: border-box; margin-bottom: 1rem;">
             <div style="font-size: 2.2rem; font-weight: 900; color: #0f172a; line-height: 1;">{_tr('stat1Num')}</div>
             <div style="font-size: 0.82rem; font-weight: 700; color: #64748b; margin-top: 0.35rem;">{_tr('stat1Label')}</div>
         </div>
-        """, unsafe_allow_html=True)
+        """)
     with m2:
-        st.markdown(f"""
+        render_html(f"""
         <div class="filter-card" style="text-align: center; border-radius: 1.25rem; height: 110px; min-height: 110px; max-height: 110px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-sizing: border-box; margin-bottom: 1rem;">
             <div style="font-size: 2.2rem; font-weight: 900; color: #047857; line-height: 1;">{_tr('stat2Num')}</div>
             <div style="font-size: 0.82rem; font-weight: 700; color: #64748b; margin-top: 0.35rem;">{_tr('stat2Label')}</div>
         </div>
-        """, unsafe_allow_html=True)
+        """)
     with m3:
-        st.markdown(f"""
+        render_html(f"""
         <div class="filter-card" style="text-align: center; border-radius: 1.25rem; height: 110px; min-height: 110px; max-height: 110px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-sizing: border-box; margin-bottom: 1rem;">
             <div style="font-size: 2.2rem; font-weight: 900; color: #d97706; line-height: 1;">{_tr('stat3Num')}</div>
             <div style="font-size: 0.82rem; font-weight: 700; color: #64748b; margin-top: 0.35rem;">{_tr('stat3Label')}</div>
         </div>
-        """, unsafe_allow_html=True)
+        """)
     with m4:
-        st.markdown(f"""
+        render_html(f"""
         <div class="filter-card" style="text-align: center; border-radius: 1.25rem; height: 110px; min-height: 110px; max-height: 110px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-sizing: border-box; margin-bottom: 1rem;">
             <div style="font-size: 2.2rem; font-weight: 900; color: #0284c7; line-height: 1;">{_tr('stat4Num')}</div>
             <div style="font-size: 0.82rem; font-weight: 700; color: #64748b; margin-top: 0.35rem;">{_tr('stat4Label')}</div>
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
     # 3. FEATURE LAUNCH CARDS (Matches Image 5 Exactly - Uniform height & level buttons)
     f_col1, f_col2, f_col3 = st.columns(3)
     with f_col1:
-        st.markdown(f"""
+        render_html(f"""
         <div class="filter-card" style="height: 215px; min-height: 215px; max-height: 215px; display: flex; flex-direction: column; justify-content: flex-start; margin-bottom: 0.75rem; box-sizing: border-box; overflow: hidden;">
             <div style="width: 40px; height: 40px; min-height: 40px; border-radius: 0.75rem; background-color: #ecfdf5; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 0.65rem;">
                 🤖
@@ -1518,11 +1523,11 @@ elif active_nav_key == "home":
                 {_tr('feature1Desc')}
             </p>
         </div>
-        """, unsafe_allow_html=True)
+        """)
         if st.button(_tr('feature1Btn'), key="btn_f1", use_container_width=True):
             navigate_to("chatbot")
     with f_col2:
-        st.markdown(f"""
+        render_html(f"""
         <div class="filter-card" style="height: 215px; min-height: 215px; max-height: 215px; display: flex; flex-direction: column; justify-content: flex-start; margin-bottom: 0.75rem; box-sizing: border-box; overflow: hidden;">
             <div style="width: 40px; height: 40px; min-height: 40px; border-radius: 0.75rem; background-color: #fef3c7; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 0.65rem;">
                 📋
@@ -1532,11 +1537,11 @@ elif active_nav_key == "home":
                 {_tr('feature2Desc')}
             </p>
         </div>
-        """, unsafe_allow_html=True)
+        """)
         if st.button(_tr('feature2Btn'), key="btn_f2", use_container_width=True):
             navigate_to("eligibility")
     with f_col3:
-        st.markdown(f"""
+        render_html(f"""
         <div class="filter-card" style="height: 215px; min-height: 215px; max-height: 215px; display: flex; flex-direction: column; justify-content: flex-start; margin-bottom: 0.75rem; box-sizing: border-box; overflow: hidden;">
             <div style="width: 40px; height: 40px; min-height: 40px; border-radius: 0.75rem; background-color: #eff6ff; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 0.65rem;">
                 📍
@@ -1546,7 +1551,7 @@ elif active_nav_key == "home":
                 {_tr('feature3Desc')}
             </p>
         </div>
-        """, unsafe_allow_html=True)
+        """)
         if st.button(_tr('feature3Btn'), key="btn_f3", use_container_width=True):
             navigate_to("serviceMap")
 
@@ -1555,13 +1560,13 @@ elif active_nav_key == "home":
     # 4. POPULAR NATIONAL & STATE SCHEMES (Matches Image 6)
     col_pop_title, col_pop_btn = st.columns([3.5, 1.5], vertical_alignment="center")
     with col_pop_title:
-        st.markdown(f"""
+        render_html(f"""
         <div style="margin-bottom: 0.5rem;">
             <span style="font-size: 0.75rem; font-weight: 800; color: #047857; text-transform: uppercase; letter-spacing: 0.05em;">{_tr('popSchemesTag')}</span>
             <h2 style="font-size: 1.75rem; font-weight: 900; color: #0f172a; margin: 0.2rem 0;">{_tr('popSchemesTitle')}</h2>
             <p style="font-size: 0.85rem; color: #64748b; margin: 0;">{_tr('popSchemesSub')}</p>
         </div>
-        """, unsafe_allow_html=True)
+        """)
     with col_pop_btn:
         if st.button(_tr('viewAllSchemes'), key="btn_view_all_pop", use_container_width=True):
             navigate_to("schemes")
@@ -1600,7 +1605,7 @@ elif active_nav_key == "home":
     p_cols = st.columns(4)
     for idx, p in enumerate(pop_schemes):
         with p_cols[idx]:
-            st.markdown(f"""
+            render_html(f"""
             <div class="scheme-card" style="height: 495px; min-height: 495px; max-height: 495px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; margin-bottom: 0.5rem; box-sizing: border-box;">
                 <div>
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem; height: 24px;">
@@ -1632,69 +1637,69 @@ elif active_nav_key == "home":
                     </a>
                 </div>
             </div>
-            """, unsafe_allow_html=True)
+            """)
 
     st.markdown("<div style='height: 2rem;'></div>", unsafe_allow_html=True)
 
     # 5. HOW CIVICGUIDE AI WORKS (Matches Image 6 / 4-Step Process - Uniform Height & Aligned Buttons)
-    st.markdown(f"""
+    render_html(f"""
     <div style="text-align: center; margin-bottom: 1.5rem;">
         <span style="font-size: 0.75rem; font-weight: 800; color: #047857; text-transform: uppercase; letter-spacing: 0.05em;">{_tr('howItWorksTag')}</span>
         <h2 style="font-size: 2rem; font-weight: 900; color: #0f172a; margin: 0.2rem 0;">{_tr('howItWorksTitle')}</h2>
         <p style="font-size: 0.85rem; color: #64748b;">{_tr('howItWorksSub')}</p>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
     w1, w2, w3, w4 = st.columns(4)
     with w1:
-        st.markdown(f"""
+        render_html(f"""
         <div class="filter-card" style="height: 195px; min-height: 195px; max-height: 195px; position: relative; display: flex; flex-direction: column; justify-content: flex-start; margin-bottom: 0.75rem; box-sizing: border-box; overflow: hidden;">
             <span style="position: absolute; top: 1rem; right: 1.25rem; font-size: 1.5rem; font-weight: 900; color: #d1fae5;">01</span>
             <div style="width: 34px; height: 34px; min-height: 34px; border-radius: 0.5rem; background-color: #ecfdf5; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; margin-bottom: 0.5rem;">🤖</div>
             <h4 style="font-size: 0.95rem; font-weight: 900; color: #0f172a; margin: 0 0 0.35rem 0; height: 2.2rem; min-height: 2.2rem; max-height: 2.2rem; overflow: hidden; line-height: 1.3;">{_tr('howStep1Title')}</h4>
             <p style="font-size: 0.8rem; color: #475569; line-height: 1.4; margin: 0; height: 4.5rem; min-height: 4.5rem; max-height: 4.5rem; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">{_tr('howStep1Desc')}</p>
         </div>
-        """, unsafe_allow_html=True)
+        """)
         if st.button(_tr('howStep1Btn'), key="btn_w1", use_container_width=True):
             navigate_to("chatbot")
     with w2:
-        st.markdown(f"""
+        render_html(f"""
         <div class="filter-card" style="height: 195px; min-height: 195px; max-height: 195px; position: relative; display: flex; flex-direction: column; justify-content: flex-start; margin-bottom: 0.75rem; box-sizing: border-box; overflow: hidden;">
             <span style="position: absolute; top: 1rem; right: 1.25rem; font-size: 1.5rem; font-weight: 900; color: #fef3c7;">02</span>
             <div style="width: 34px; height: 34px; min-height: 34px; border-radius: 0.5rem; background-color: #fef3c7; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; margin-bottom: 0.5rem;">📋</div>
             <h4 style="font-size: 0.95rem; font-weight: 900; color: #0f172a; margin: 0 0 0.35rem 0; height: 2.2rem; min-height: 2.2rem; max-height: 2.2rem; overflow: hidden; line-height: 1.3;">{_tr('howStep2Title')}</h4>
             <p style="font-size: 0.8rem; color: #475569; line-height: 1.4; margin: 0; height: 4.5rem; min-height: 4.5rem; max-height: 4.5rem; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">{_tr('howStep2Desc')}</p>
         </div>
-        """, unsafe_allow_html=True)
+        """)
         if st.button(_tr('howStep2Btn'), key="btn_w2", use_container_width=True):
             navigate_to("eligibility")
     with w3:
-        st.markdown(f"""
+        render_html(f"""
         <div class="filter-card" style="height: 195px; min-height: 195px; max-height: 195px; position: relative; display: flex; flex-direction: column; justify-content: flex-start; margin-bottom: 0.75rem; box-sizing: border-box; overflow: hidden;">
             <span style="position: absolute; top: 1rem; right: 1.25rem; font-size: 1.5rem; font-weight: 900; color: #dbeafe;">03</span>
             <div style="width: 34px; height: 34px; min-height: 34px; border-radius: 0.5rem; background-color: #eff6ff; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; margin-bottom: 0.5rem;">🏛️</div>
             <h4 style="font-size: 0.95rem; font-weight: 900; color: #0f172a; margin: 0 0 0.35rem 0; height: 2.2rem; min-height: 2.2rem; max-height: 2.2rem; overflow: hidden; line-height: 1.3;">{_tr('howStep3Title')}</h4>
             <p style="font-size: 0.8rem; color: #475569; line-height: 1.4; margin: 0; height: 4.5rem; min-height: 4.5rem; max-height: 4.5rem; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">{_tr('howStep3Desc')}</p>
         </div>
-        """, unsafe_allow_html=True)
+        """)
         if st.button(_tr('howStep3Btn'), key="btn_w3", use_container_width=True):
             navigate_to("schemes")
     with w4:
-        st.markdown(f"""
+        render_html(f"""
         <div class="filter-card" style="height: 195px; min-height: 195px; max-height: 195px; position: relative; display: flex; flex-direction: column; justify-content: flex-start; margin-bottom: 0.75rem; box-sizing: border-box; overflow: hidden;">
             <span style="position: absolute; top: 1rem; right: 1.25rem; font-size: 1.5rem; font-weight: 900; color: #d1fae5;">04</span>
             <div style="width: 34px; height: 34px; min-height: 34px; border-radius: 0.5rem; background-color: #ecfdf5; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; margin-bottom: 0.5rem;">🌐</div>
             <h4 style="font-size: 0.95rem; font-weight: 900; color: #0f172a; margin: 0 0 0.35rem 0; height: 2.2rem; min-height: 2.2rem; max-height: 2.2rem; overflow: hidden; line-height: 1.3;">{_tr('howStep4Title')}</h4>
             <p style="font-size: 0.8rem; color: #475569; line-height: 1.4; margin: 0; height: 4.5rem; min-height: 4.5rem; max-height: 4.5rem; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">{_tr('howStep4Desc')}</p>
         </div>
-        """, unsafe_allow_html=True)
+        """)
         if st.button(_tr('howStep4Btn'), key="btn_w4", use_container_width=True):
             navigate_to("serviceMap")
 
     st.markdown("<div style='height: 2rem;'></div>", unsafe_allow_html=True)
 
     # 6. DISTRICT MAP & SERVICES (Matches Image 9 Exactly)
-    st.markdown(f"""
+    render_html(f"""
     <div style="background: linear-gradient(90deg, #064e3b 0%, #0f172a 100%); color: white; padding: 2rem 2.5rem; border-radius: 1.5rem; margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
         <div>
             <span style="font-size: 0.75rem; font-weight: 800; color: #fde047; text-transform: uppercase; letter-spacing: 0.05em;">{_tr('districtMapTag')}</span>
@@ -1710,7 +1715,7 @@ elif active_nav_key == "home":
             <span style="background-color: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: #e2e8f0; padding: 0.2rem 0.65rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">Kottur (4 services)</span>
         </div>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
 # ---------------------------------------------------------------------------
 # VIEW: 3. AI CITIZEN ASSISTANT (Guaranteed 5-Step Process)
@@ -1793,14 +1798,28 @@ elif active_nav_key == "eligibility":
 
         for item in matched[:6]:
             s = item["scheme"]
-            st.markdown(f"""
-            <div class="scheme-card" style="margin-bottom: 0.5rem;">
-                <span class="badge-central">{s.get('government_level')}</span>
-                <span style="float: right; font-weight: bold; color: {'#047857' if item['status'] == 'Qualified' else '#b45309'};">● {item['status']}</span>
-                <h4 style="margin: 0.4rem 0;">{s.get('name')}</h4>
-                <div class="benefit-box">💰 {s.get('benefits')}</div>
+            portal_url = s.get('official_url') or "https://www.myscheme.gov.in"
+            render_html(f"""
+            <div class="scheme-card" style="margin-bottom: 0.75rem; padding: 1.25rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+                    <span class="badge-central">{s.get('government_level')}</span>
+                    <span style="font-weight: 800; font-size: 0.8rem; color: {'#047857' if item['status'] == 'Qualified' else '#b45309'};">● {item['status']}</span>
+                </div>
+                <h4 style="margin: 0.35rem 0 0.25rem 0; font-weight: 800; font-size: 1.05rem; color: #0f172a;">{s.get('name')}</h4>
+                <div class="benefit-box" style="margin: 0.35rem 0;">💰 <strong>Benefit:</strong> {s.get('benefits')}</div>
+                <div style="background-color: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 0.65rem; padding: 0.45rem 0.65rem; margin-top: 0.35rem; font-size: 0.76rem; color: #065f46;">
+                    📑 <strong>Mandatory Documents:</strong> {s.get('required_documents', 'Aadhaar Card, Identity Proof, Bank Passbook')}
+                </div>
+                <div style="border-top: 1px solid #e2e8f0; padding-top: 0.65rem; margin-top: 0.75rem; display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 0.72rem; font-weight: 800; color: #047857; background-color: #ecfdf5; border: 1px solid #a7f3d0; padding: 0.15rem 0.5rem; border-radius: 9999px;">
+                        ⚡ Complete in only 3 minutes
+                    </span>
+                    <a href="{portal_url}" target="_blank" style="background: linear-gradient(135deg, #059669 0%, #047857 100%); color: white !important; padding: 0.45rem 0.85rem; border-radius: 0.65rem; font-size: 0.8rem; font-weight: 800; text-decoration: none;">
+                        🚀 Apply on Official Portal ↗
+                    </a>
+                </div>
             </div>
-            """, unsafe_allow_html=True)
+            """)
 
 # ---------------------------------------------------------------------------
 # VIEW: 5. SERVICE MAP (Matches User Screenshot Exactly)
@@ -1942,7 +1961,7 @@ elif active_nav_key == "serviceMap":
     else:
         display_taluks = taluk_options[:25]
 
-    st.markdown(f"""
+    render_html(f"""
     <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.75rem; margin-bottom: 0.35rem;">
         <span style="font-size: 0.75rem; font-weight: 800; color: #334155; text-transform: uppercase; letter-spacing: 0.05em;">
             📍 {_tr('taluksInDistrictLabel')} {selected_dist_clean if selected_dist_clean != 'All' else selected_state_clean} ({len(available_taluks)} TALUKS):
@@ -1951,7 +1970,7 @@ elif active_nav_key == "serviceMap":
             {_tr('clickToZoom')}
         </span>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
     selected_taluk = st.radio(
         "Taluks",
@@ -1974,13 +1993,13 @@ elif active_nav_key == "serviceMap":
         "Welfare & Pension Offices"
     ]
 
-    st.markdown(f"""
+    render_html(f"""
     <div style="margin-top: 0.75rem; margin-bottom: 0.35rem;">
         <span style="font-size: 0.75rem; font-weight: 800; color: #334155; text-transform: uppercase; letter-spacing: 0.05em;">
             {_tr('filterOfficeCategoryLabel')}
         </span>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
     selected_cat = st.radio(
         "Categories",
@@ -2291,7 +2310,7 @@ elif active_nav_key == "serviceMap":
 
     with col_list:
         # Header matching screenshot
-        st.markdown(f"""
+        render_html(f"""
         <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.6rem; border-bottom: 1px solid #e2e8f0; margin-bottom: 0.75rem;">
             <div>
                 <span style="font-size: 1.15rem; font-weight: 900; color: #0f172a; display: block;">
@@ -2305,7 +2324,7 @@ elif active_nav_key == "serviceMap":
                 {_tr('verifiedBadge')}
             </span>
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
         if len(filtered_services) == 0:
             st.info("ℹ️ No offices found for selected filters.")
@@ -2319,7 +2338,7 @@ elif active_nav_key == "serviceMap":
                     phone_label = s.get('phone') or 'Official Office'
                     nav_url = f"https://www.google.com/maps/dir/?api=1&destination={s.get('latitude')},{s.get('longitude')}"
 
-                    st.markdown(f"""
+                    render_html(f"""
                     <div class="office-card">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
                             <span class="{badge_class}">{badge_label}</span>
@@ -2338,6 +2357,6 @@ elif active_nav_key == "serviceMap":
                             </a>
                         </div>
                     </div>
-                    """, unsafe_allow_html=True)
+                    """)
 
         st.caption(_tr("clickOfficeNotice"))

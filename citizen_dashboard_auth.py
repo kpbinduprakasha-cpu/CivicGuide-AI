@@ -9,7 +9,7 @@ import streamlit as st
 def render_html(html_str: str):
     """Safely renders HTML in Streamlit without triggering Markdown 4-space code block formatting."""
     clean_lines = [line.strip() for line in html_str.strip().splitlines() if line.strip()]
-    st.markdown("\n".join(clean_lines), unsafe_allow_html=True)
+    st.markdown(" ".join(clean_lines), unsafe_allow_html=True)
 
 DEFAULT_CITIZEN_USER = {
     "full_name": "K P BINDUPRAKASHA",
@@ -453,11 +453,7 @@ def render_register_view(_tr, all_languages, all_states, lang_code_map):
                 st.rerun()
 
             # Render 23 language pills matching Screenshot 2
-            with st.container():
-                st.markdown("""
-                <div style="background-color: rgba(248, 250, 252, 0.7); border: 1px solid #e2e8f0; border-radius: 1.25rem; padding: 0.75rem 0.65rem; margin-bottom: 0.85rem;">
-                """, unsafe_allow_html=True)
-                
+            with st.container(border=True):
                 # 3 rows of 7, 7, 7, 2
                 l_cols1 = st.columns(7)
                 for i, lang in enumerate(REGISTER_LANGUAGES_LIST[:7]):
@@ -490,8 +486,6 @@ def render_register_view(_tr, all_languages, all_states, lang_code_map):
                         lbl = f"✓ {lang}" if is_sel else lang
                         if st.button(lbl, key=f"btn_lang_{lang}", use_container_width=True):
                             toggle_lang(lang)
-
-                st.markdown("</div>", unsafe_allow_html=True)
 
             # Field 7: EMAIL ADDRESS
             render_html("""
@@ -663,11 +657,11 @@ def render_citizen_dashboard(_tr, all_languages, all_states, lang_code_map):
         # Optional Edit Profile Form Drawer
         if st.session_state.get("show_edit_prof", False):
             with st.container():
-                st.markdown("""
+                render_html("""
                 <div style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 1rem; padding: 1.25rem; margin-bottom: 1rem;">
                     <span style="font-size: 0.85rem; font-weight: 800; color: #0f172a;">✏️ Edit Citizen Profile Attributes</span>
                 </div>
-                """, unsafe_allow_html=True)
+                """)
                 ed_name = st.text_input("Full Legal Name", value=user.get("full_name", "K P BINDUPRAKASHA"), key="ed_inp_name")
                 ed_c1, ed_c2 = st.columns(2)
                 with ed_c1:
@@ -708,11 +702,11 @@ def render_citizen_dashboard(_tr, all_languages, all_states, lang_code_map):
         # Optional Change Password Form Drawer
         if st.session_state.get("show_change_pwd", False):
             with st.container():
-                st.markdown("""
+                render_html("""
                 <div style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 1rem; padding: 1.25rem; margin-bottom: 1rem;">
                     <span style="font-size: 0.85rem; font-weight: 800; color: #0f172a;">🔒 Change Account Password</span>
                 </div>
-                """, unsafe_allow_html=True)
+                """)
                 st.text_input("Current Password", value="", type="password", key="pwd_cur")
                 p_new = st.text_input("New Password (Min 8 characters)", value="", type="password", key="pwd_new")
                 p_conf = st.text_input("Confirm New Password", value="", type="password", key="pwd_conf")
